@@ -6,8 +6,20 @@
 from __future__ import annotations
 
 import argparse
+import os
+from pathlib import Path
 
-from . import analyze, fetch, holdings, preset, trade
+# 加载 .env（CLI 直连 DB 时需要 QODER_PERSONAL_ACCESS_TOKEN 等环境变量）
+_env_file = Path(__file__).resolve().parent.parent / ".env"
+if _env_file.exists():
+    for line in _env_file.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        os.environ.setdefault(key.strip(), value.strip())
+
+from . import ai_analyze, analyze, bundle, fetch, holdings, preset, trade
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -53,7 +65,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.set_defaults(fn=fetch.cmd_industry)
     for name, fn, helptext in [("detail", fetch.cmd_detail, "基金详情"),
                                ("holdings", fetch.cmd_holdings, "基金持仓"),
-                               ("nav", fetch.cmd_nav, "基金净值")]:
+                               ("nav", fetch.cmd_nav, "基金净值"),
+                               ("manager", fetch.cmd_manager, "基金经理任职史(东财F10)")]:
         p = g.add_parser(name, parents=[common], help=helptext)
         p.add_argument("--codes", help="基金代码(逗号)；省略则按 --types 或全量")
         p.add_argument("--types", help="基金类型(逗号)")
@@ -70,6 +83,18 @@ def build_parser() -> argparse.ArgumentParser:
                    default="weights",
                    help="视图：weights=各赛道仓位建议 / industry|stock=底层穿透 / perf=分区间表现 / all")
     p.set_defaults(fn=analyze.cmd_run)
+    p = g.add_parser("bundle", parents=[common],
+                     help="组装单/多只基金的历史穿透分析数据包（喂 AI 定性分析）")
+    p.add_argument("--code", required=True, help="基金代码（逗号可多只）")
+    p.set_defaults(fn=bundle.cmd_bundle)
+
+    # ai-analyze（AI 定性分析）
+    g = groups.add_parser("ai-analyze", help="AI 定性分析")
+    g = g.add_subparsers(dest="cmd", required=True)
+    p = g.add_parser("batch", parents=[common], help="批量 AI 定性分析（写入 fund_ai_analysis）")
+    p.add_argument("--codes", help="基金代码(逗号分隔)")
+    p.add_argument("--preset", type=int, help="预设 id（分析该预设镜像全部基金）")
+    p.set_defaults(fn=ai_analyze.cmd_ai_batch)
 
     # holdings（实盘：查询 + 交易 + 调仓建议）
     g = groups.add_parser("holdings", help="实盘：持仓查询/交易/调仓建议")

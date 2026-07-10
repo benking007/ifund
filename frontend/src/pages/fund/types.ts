@@ -8,12 +8,17 @@ export interface HoldingItem {
   hold_ratio: number | null
   quarter: string
   holding_type: string
+  sw_l1?: string
+  sw_l2?: string
+  sw_l3?: string
+  em_industry?: string
 }
 
 export interface FundItem {
   id: number
   code: string
   name: string
+  fund_manager?: string | null
   type: string
   fund_type: string
   scale: number | null

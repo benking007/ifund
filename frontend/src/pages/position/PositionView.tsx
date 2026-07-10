@@ -7,6 +7,7 @@ import PositionRow from './PositionRow'
 import PortfolioCharts from './PortfolioCharts'
 import LookthroughCard from './LookthroughCard'
 import BacktestCard from './BacktestCard'
+import FundDetailModal from '../fund/components/FundDetailModal'
 import type { BacktestResponse, BacktestResult, PositionResult } from './types'
 
 // ③ 簇级仓位建议视图：对共享预设镜像聚类后，按每簇代表基金动量强度+乖离给出目标权重。
@@ -28,6 +29,8 @@ const PositionView = forwardRef<
   // 回测验证：动量调权 vs 等权（按需触发，较重）
   const [backtest, setBacktest] = useState<BacktestResult | null>(null)
   const [btLoading, setBtLoading] = useState(false)
+  // 点击代表基金名称弹出的基金详情模态框
+  const [detailCode, setDetailCode] = useState<string | null>(null)
 
   const clearSel = useCallback(() => {
     setSelStocks([])
@@ -248,7 +251,13 @@ const PositionView = forwardRef<
               dataSource={shownItems}
               pagination={false}
               columns={[
-                { title: '基金名称', dataIndex: ['fund', 'name'] },
+                {
+                  title: '基金名称',
+                  dataIndex: ['fund', 'name'],
+                  render: (v: string, it) => (
+                    <a onClick={() => setDetailCode(it.fund.code)}>{v}</a>
+                  ),
+                },
                 {
                   title: '基金编码',
                   dataIndex: ['fund', 'code'],
@@ -298,6 +307,7 @@ const PositionView = forwardRef<
                 maxWeight={maxWeight}
                 highlightStocks={stockSet}
                 highlightInds={indSet}
+                onFundClick={setDetailCode}
               />
             ))
           )}
@@ -305,6 +315,8 @@ const PositionView = forwardRef<
       )}
 
       {!loading && !result && <Empty description="点「生成仓位建议」分析该预设镜像" />}
+
+      <FundDetailModal code={detailCode} open={detailCode !== null} onClose={() => setDetailCode(null)} />
     </div>
   )
 })

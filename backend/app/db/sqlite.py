@@ -38,7 +38,7 @@ SORTABLE_AI = {"skill_score", "rating", "tenure_years"}
 # 联合查询返回列（两后端结构必须一致）
 _RESULT_COLS = [
     'f."id" AS id', 'f."code" AS code', 'f."name" AS name', 'f."type" AS type',
-    'f."fund_type" AS fund_type', 'd."scale" AS scale',
+    'f."fund_type" AS fund_type', 'd."fund_manager" AS fund_manager', 'd."scale" AS scale',
     'd."sharpe_3y" AS sharpe_3y', 'd."sharpe_1y" AS sharpe_1y',
     'd."max_drawdown_3y" AS max_drawdown_3y', 'd."max_drawdown_1y" AS max_drawdown_1y',
     'd."position_stock" AS position_stock', 'd."position_bond" AS position_bond',

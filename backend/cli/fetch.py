@@ -77,3 +77,8 @@ def cmd_holdings(args) -> None:
 def cmd_nav(args) -> None:
     from app.fund_nav.fetch.worker import _process_one
     _run_per_fund(args, _process_one)
+
+
+def cmd_manager(args) -> None:
+    from app.fund_manager.fetch.worker import _process_one
+    _run_per_fund(args, _process_one)

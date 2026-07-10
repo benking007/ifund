@@ -74,7 +74,13 @@ export default function HoldingsPenetration({
           rowKey="industry"
           loading={loading}
           dataSource={data!.industries}
-          pagination={false}
+          pagination={data!.industries.length > 10 ? {
+            defaultPageSize: 10,
+            size: 'small',
+            showSizeChanger: true,
+            pageSizeOptions: [10, 20, 50, 100],
+            showTotal: (t) => `共 ${t} 个行业`,
+          } : false}
           columns={[
             { title: '申万三级行业', dataIndex: 'industry' },
             {
@@ -90,7 +96,13 @@ export default function HoldingsPenetration({
           rowKey="code"
           loading={loading}
           dataSource={data!.stocks}
-          pagination={{ pageSize: 20, size: 'small' }}
+          pagination={{
+            defaultPageSize: 20,
+            size: 'small',
+            showSizeChanger: true,
+            pageSizeOptions: [10, 20, 50, 100],
+            showTotal: (t) => `共 ${t} 只`,
+          }}
           expandable={{
             expandedRowRender: (row) => (
               <Table

@@ -62,8 +62,10 @@ def create_app() -> Flask:
     from app.cluster.api.router import bp as cluster_bp
     from app.position.api.router import bp as position_bp
     from app.reconcile.api.router import bp as reconcile_bp
+    from app.ai_analyze.router import bp as ai_analyze_bp
     for blueprint in (auth_bp, fund_bp, fund_detail_bp, holdings_bp, nav_bp,
-                      calendar_bp, industry_bp, cluster_bp, position_bp, reconcile_bp):
+                      calendar_bp, industry_bp, cluster_bp, position_bp, reconcile_bp,
+                      ai_analyze_bp):
         app.register_blueprint(blueprint)
 
     @app.get("/api/health")

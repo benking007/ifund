@@ -97,11 +97,14 @@ function aiColumns(sorter: (field: string) => true | undefined): ColumnsType<Fun
   ]
 }
 
-/** 基金详情结果列：基金筛选页与基金管理页共用，保证列与渲染一致。 */
+/** 基金详情结果列：基金筛选页与基金管理页共用，保证列与渲染一致。
+ * 列序：代码 → 名称 → 基金经理 →（AI 定性列）→ 其余业绩/持仓 →（净值走势）。
+ * 经理作为身份信息紧随名称；AI 分析列紧跟其后，便于据此就地判断是否移入过滤。 */
 export function buildFundColumns(opts: ColumnOptions = {}): ColumnsType<FundItem> {
   const { sortable, onOpenDetail, onOpenTrend, showNav = true, showAi = false } = opts
   const sorter = (field: string) => (sortable ? sortable(field) : undefined)
-  const columns: ColumnsType<FundItem> = [
+  // 头部：代码 → 名称 → 基金经理
+  const head: ColumnsType<FundItem> = [
     { title: '代码', dataIndex: 'code', width: 90 },
     {
       title: '名称',
@@ -110,6 +113,20 @@ export function buildFundColumns(opts: ColumnOptions = {}): ColumnsType<FundItem
       render: (v: string, row) =>
         onOpenDetail ? <a onClick={() => onOpenDetail(row.code)}>{v}</a> : v,
     },
+    {
+      title: '基金经理',
+      key: 'manager',
+      width: 110,
+      ellipsis: true,
+      // 优先原生 fund_manager（最新筛选/过滤名单实时带回）；镜像存档无此列时回退 AI 分析里的经理
+      render: (_: unknown, row) => {
+        const m = row.fund_manager ?? row.ai?.manager
+        return m ? <span className="cursor-default">{m}</span> : <span className="text-gray-500">-</span>
+      },
+    },
+  ]
+  // 其余业绩 / 持仓列
+  const rest: ColumnsType<FundItem> = [
     { title: '类型', dataIndex: 'type', width: 120 },
     { title: '规模', dataIndex: 'scale', width: 100, sorter: sorter('scale'), render: num },
     { title: '今年收益', dataIndex: 'return_ytd', width: 100, sorter: sorter('return_ytd'), render: num },
@@ -137,9 +154,12 @@ export function buildFundColumns(opts: ColumnOptions = {}): ColumnsType<FundItem
       render: (holdings: HoldingItem[] | undefined) => renderHoldings(holdings, 'bond'),
     },
   ]
-  if (showAi) {
-    columns.push(...aiColumns(sorter))
-  }
+  // 组装：AI 定性列插在「名称/经理」之后、业绩列之前
+  const columns: ColumnsType<FundItem> = [
+    ...head,
+    ...(showAi ? aiColumns(sorter) : []),
+    ...rest,
+  ]
   if (showNav) {
     columns.push({
       title: '净值走势',

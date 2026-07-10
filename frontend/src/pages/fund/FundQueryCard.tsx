@@ -213,7 +213,7 @@ export default function FundQueryCard({
           dataSource={funds}
           columns={columns}
           onChange={handleTableChange}
-          scroll={{ x: 2240 }}
+          scroll={{ x: 2360 }}
           pagination={{
             current: page,
             pageSize,

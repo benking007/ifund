@@ -126,6 +126,25 @@ def _attach_holdings(items: list) -> None:
                             + holdings_crud.top_holdings(item["code"], "bond"))
 
 
+def _attach_industry(holdings: list) -> None:
+    """给股票持仓补申万一/二/三级行业（按 asset_code 一次批量 join stock_industry）。
+    A 股走申万；港股无申万，另带 em_industry（东财行业）供前端兜底标注。"""
+    codes = sorted({h.get("asset_code") for h in holdings if h.get("asset_code")})
+    if not codes:
+        return
+    rows = database.select("stock_industry", [
+        ("stock_code", f"in.({','.join(codes)})"),
+    ])
+    ind = {r["stock_code"]: r for r in rows}
+    for h in holdings:
+        r = ind.get(h.get("asset_code"))
+        h["sw_l1"] = (r or {}).get("sw_l1") or ""
+        h["sw_l2"] = (r or {}).get("sw_l2") or ""
+        h["sw_l3"] = (r or {}).get("sw_l3") or ""
+        # 港股无申万映射，带上东财口径行业（如 半导体/软件服务）供前端兜底标注
+        h["em_industry"] = (r or {}).get("em_industry") or ""
+
+
 def _attach_nav(items: list) -> None:
     for item in items:
         item["nav_series"] = nav_crud.recent_series(item["code"])
@@ -375,4 +394,6 @@ def get_holdings(code):
     q = quarter if quarter in quarters else (quarters[0] if quarters else None)
     holdings = (holdings_crud.top_holdings(code, holding_type, limit=limit, quarter=q)
                 if q else [])
+    if holding_type == "stock":
+        _attach_industry(holdings)
     return jsonify({"quarters": quarters, "quarter": q, "holdings": holdings})

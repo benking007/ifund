@@ -9,3 +9,4 @@ akshare
 pandas
 waitress>=3.0           # 生产级 WSGI（常驻后端用，替代 flask 调试服务器）
 mcp[cli]>=1.27          # MCP 服务器（mcp_server/，与后端共用本 venv；连带 httpx）
+qoder-agent-sdk>=1.0    # AI 定性分析（镜像页一键分析基金）

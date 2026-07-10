@@ -59,11 +59,13 @@ export default function PositionRow({
   maxWeight,
   highlightStocks,
   highlightInds,
+  onFundClick,
 }: {
   item: PositionItem
   maxWeight: number
   highlightStocks?: Set<string>
   highlightInds?: Set<string>
+  onFundClick?: (code: string) => void
 }) {
   const { fund, prosperity: pros, deviation: dev, recommendation: rec } = item
   const pct = (item.weight * 100).toFixed(1)
@@ -132,7 +134,13 @@ export default function PositionRow({
           </span>
         </div>
         <div style={{ fontWeight: 600, marginTop: 6 }}>
-          {fund.name}
+          {onFundClick ? (
+            <a onClick={() => onFundClick(fund.code)} style={{ color: 'inherit' }}>
+              {fund.name}
+            </a>
+          ) : (
+            fund.name
+          )}
           <span style={{ fontSize: 12, color: '#8c8c8c', fontWeight: 400, marginLeft: 8 }}>
             {fund.code} · 簇内综合分第 {fund.cluster_rank} · 共 {item.fund_count} 只
           </span>

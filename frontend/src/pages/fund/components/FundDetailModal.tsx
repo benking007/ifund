@@ -1,11 +1,38 @@
-import { useCallback, useEffect, useState } from 'react'
-import { Descriptions, Empty, Modal, Select, Space, Spin, Table, Tabs, Tag, Typography } from 'antd'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Descriptions, Empty, Modal, Segmented, Select, Space, Spin, Statistic, Table, Tabs, Tag, Typography, theme } from 'antd'
+import dayjs from 'dayjs'
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
 import request from '../../../api/request'
 import type { HoldingItem } from '../types'
 import {
   CONC_META, CONFIDENCE_META, LUCK_META, SCALE_RISK_META, STYLE_META, metaOf, parseTags,
 } from '../aiMeta'
 import type { FundAi } from '../aiMeta'
+
+interface NavPoint {
+  date: string
+  nav: number
+}
+
+const NAV_RANGES = [
+  { label: '近3月', value: 3 },
+  { label: '近6月', value: 6 },
+  { label: '近1年', value: 12 },
+  { label: '近3年', value: 36 },
+  { label: '全部', value: 0 },
+]
+
+const UP = '#f5222d'
+const DOWN = '#52c41a'
 
 interface Props {
   code: string | null
@@ -111,6 +138,116 @@ function renderAiPanel(ai: FundAi | null | undefined) {
   )
 }
 
+function NavChart({ code }: { code: string }) {
+  const { token } = theme.useToken()
+  const [data, setData] = useState<NavPoint[]>([])
+  const [loading, setLoading] = useState(false)
+  const [range, setRange] = useState(12)
+  const [active, setActive] = useState<NavPoint | null>(null)
+
+  useEffect(() => {
+    setLoading(true)
+    setActive(null)
+    request
+      .get<{ items: NavPoint[] }>(`/fund/${code}/nav`, { params: { limit: 800 } })
+      .then(({ data: d }) => setData(d.items ?? []))
+      .catch(() => setData([]))
+      .finally(() => setLoading(false))
+  }, [code])
+
+  const sliced = useMemo(() => {
+    const series = data.filter((p) => Number.isFinite(p.nav))
+    if (!range || series.length === 0) return series
+    const cutoff = dayjs(series[series.length - 1].date).subtract(range, 'month')
+    const win = series.filter((p) => !dayjs(p.date).isBefore(cutoff))
+    return win.length >= 2 ? win : series
+  }, [data, range])
+
+  const first = sliced[0]?.nav ?? 0
+  const last = sliced[sliced.length - 1]?.nav ?? 0
+  const lineColor = last >= first ? UP : DOWN
+  const shown = active ?? sliced[sliced.length - 1] ?? null
+  const shownPct = shown && first ? ((shown.nav - first) / first) * 100 : 0
+  const fmtTick = (d: string) => `${d.slice(2, 4)}/${d.slice(5, 7)}`
+  const tickGap = Math.max(1, Math.floor(sliced.length / 6))
+  const axisTick = { fontSize: 11, fill: token.colorTextTertiary }
+  const gradId = `navFill-${code}`
+
+  if (loading) return <div style={{ textAlign: 'center', padding: 40 }}><Spin tip="加载净值中…" /></div>
+  if (sliced.length < 2) return <Empty description="暂无净值数据" style={{ padding: 24 }} />
+
+  return (
+    <div style={{ marginBottom: 16 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12, marginBottom: 4 }}>
+        <div style={{ display: 'flex', gap: 20 }}>
+          <Statistic
+            title={shown ? `净值 · ${shown.date}` : '净值'}
+            value={shown ? shown.nav : 0}
+            precision={4}
+            valueStyle={{ fontSize: 18 }}
+          />
+          <Statistic
+            title="较区间首日"
+            value={shownPct}
+            precision={2}
+            suffix="%"
+            prefix={shownPct >= 0 ? '+' : ''}
+            valueStyle={{ fontSize: 18, color: shownPct >= 0 ? UP : DOWN }}
+          />
+        </div>
+        <Segmented size="small" options={NAV_RANGES} value={range} onChange={(v) => setRange(v as number)} />
+      </div>
+      <ResponsiveContainer width="100%" height={200}>
+        <AreaChart
+          data={sliced}
+          margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
+          onMouseMove={(s: any) => {
+            const p = s?.activePayload?.[0]?.payload as NavPoint | undefined
+            if (p) setActive(p)
+          }}
+          onMouseLeave={() => setActive(null)}
+        >
+          <defs>
+            <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={lineColor} stopOpacity={0.22} />
+              <stop offset="100%" stopColor={lineColor} stopOpacity={0.02} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="3 3" stroke={token.colorBorderSecondary} />
+          <XAxis dataKey="date" tickFormatter={fmtTick} interval={tickGap} tick={axisTick} minTickGap={16} />
+          <YAxis domain={['auto', 'auto']} tickFormatter={(v) => v.toFixed(2)} width={48} tick={axisTick} />
+          <Tooltip
+            cursor={{ stroke: token.colorTextTertiary, strokeDasharray: '3 3' }}
+            content={({ active: a, payload }) => {
+              if (!a || !payload?.length) return null
+              const p = payload[0].payload as NavPoint
+              const pp = first ? ((p.nav - first) / first) * 100 : 0
+              return (
+                <div style={{
+                  background: token.colorBgElevated,
+                  border: `1px solid ${token.colorBorderSecondary}`,
+                  borderRadius: token.borderRadius,
+                  padding: '6px 10px', fontSize: 12,
+                }}>
+                  <div style={{ color: token.colorTextSecondary }}>{p.date}</div>
+                  <div style={{ color: token.colorText }}>净值 {p.nav.toFixed(4)}</div>
+                  <div style={{ color: pp >= 0 ? UP : DOWN }}>
+                    较首日 {pp >= 0 ? '+' : ''}{pp.toFixed(2)}%
+                  </div>
+                </div>
+              )
+            }}
+          />
+          {active && (
+            <ReferenceLine y={active.nav} stroke={token.colorTextTertiary} strokeDasharray="3 3" ifOverflow="extendDomain" />
+          )}
+          <Area type="monotone" dataKey="nav" stroke={lineColor} strokeWidth={1.6} fill={`url(#${gradId})`} isAnimationActive={false} />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
+  )
+}
+
 export default function FundDetailModal({ code, open, onClose }: Props) {
   const [data, setData] = useState<DetailData | null>(null)
   const [loading, setLoading] = useState(false)
@@ -150,6 +287,12 @@ export default function FundDetailModal({ code, open, onClose }: Props) {
   }, [open, code, loadHoldings])
 
   const totalRatio = holdings.reduce((s, h) => s + (h.hold_ratio || 0), 0)
+  // 申万一级分组键：A股用申万一级；港股无申万→归到「港股」一组。便于人工看行业分散度。
+  const l1Group = (h: HoldingItem) => h.sw_l1 || (h.em_industry ? '港股' : '')
+  const swL1Filters = Array.from(new Set(holdings.map(l1Group)))
+    .filter((v) => v)
+    .sort()
+    .map((v) => ({ text: v, value: v }))
 
   return (
     <Modal open={open} onCancel={onClose} footer={null} width={760} title={`基金详情 · ${code ?? ''}`}>
@@ -160,13 +303,16 @@ export default function FundDetailModal({ code, open, onClose }: Props) {
               key: 'basic',
               label: '基础信息',
               children: (
-                <Descriptions size="small" column={2} bordered>
-                  {BASIC_FIELDS.map(([k, label]) => (
-                    <Descriptions.Item key={k} label={label}>
-                      {fmt(data?.[k])}
-                    </Descriptions.Item>
-                  ))}
-                </Descriptions>
+                <>
+                  {code && <NavChart code={code} />}
+                  <Descriptions size="small" column={2} bordered>
+                    {BASIC_FIELDS.map(([k, label]) => (
+                      <Descriptions.Item key={k} label={label}>
+                        {fmt(data?.[k])}
+                      </Descriptions.Item>
+                    ))}
+                  </Descriptions>
+                </>
               ),
             },
             {
@@ -218,10 +364,30 @@ export default function FundDetailModal({ code, open, onClose }: Props) {
                       dataSource={holdings}
                       pagination={false}
                       columns={[
-                        { title: '排名', width: 56, align: 'center', render: (_, __, i) => i + 1 },
-                        { title: '代码', dataIndex: 'asset_code', width: 100 },
+                        { title: '排名', width: 48, align: 'center', render: (_, __, i) => i + 1 },
+                        { title: '代码', dataIndex: 'asset_code', width: 84 },
                         { title: '名称', dataIndex: 'asset_name' },
-                        { title: '占净值%', dataIndex: 'hold_ratio', width: 100, align: 'right', render: fmt },
+                        {
+                          title: '申万一级', dataIndex: 'sw_l1', width: 96,
+                          filters: swL1Filters,
+                          onFilter: (val, r) => l1Group(r) === val,
+                          render: (v: string, r) => (v
+                            ? <Tag>{v}</Tag>
+                            : r.em_industry
+                              ? <Tag color="gold">港股</Tag>
+                              : <span style={{ color: '#bfbfbf' }}>-</span>),
+                        },
+                        {
+                          title: '申万三级 / 东财行业', dataIndex: 'sw_l3', width: 168,
+                          render: (v: string, r) => (v
+                            ? <Typography.Text style={{ fontSize: 12 }}>
+                                {r.sw_l2 ? <span style={{ color: '#8c8c8c' }}>{r.sw_l2} / </span> : null}{v}
+                              </Typography.Text>
+                            : r.em_industry
+                              ? <Typography.Text style={{ fontSize: 12, color: '#d48806' }}>{r.em_industry}</Typography.Text>
+                              : <span style={{ color: '#bfbfbf' }}>未映射</span>),
+                        },
+                        { title: '占净值%', dataIndex: 'hold_ratio', width: 84, align: 'right', render: fmt },
                       ]}
                     />
                   )}

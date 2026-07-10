@@ -199,7 +199,13 @@ export default function LookthroughCard({ data, selStocks, selInds, onSelStocks,
             onChange: (keys) => onSelStocks(keys as string[]),
             columnWidth: 40,
           }}
-          pagination={{ pageSize: 10, size: 'small', showSizeChanger: false }}
+          pagination={{
+            defaultPageSize: 10,
+            size: 'small',
+            showSizeChanger: true,
+            pageSizeOptions: [10, 20, 50, 100],
+            showTotal: (t) => `共 ${t} 只`,
+          }}
         />
       ) : (
         <Table<LookthroughIndustry>
@@ -212,7 +218,13 @@ export default function LookthroughCard({ data, selStocks, selInds, onSelStocks,
             onChange: (keys) => onSelInds(keys as string[]),
             columnWidth: 40,
           }}
-          pagination={data.industries.length > 10 ? { pageSize: 10, size: 'small', showSizeChanger: false } : false}
+          pagination={data.industries.length > 10 ? {
+            defaultPageSize: 10,
+            size: 'small',
+            showSizeChanger: true,
+            pageSizeOptions: [10, 20, 50, 100],
+            showTotal: (t) => `共 ${t} 个`,
+          } : false}
         />
       )}
     </Card>

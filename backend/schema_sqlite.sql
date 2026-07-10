@@ -173,6 +173,25 @@ CREATE TABLE IF NOT EXISTS fund_cum_return (
 CREATE INDEX IF NOT EXISTS ix_fund_cum_return_fund_code ON fund_cum_return (fund_code);
 CREATE INDEX IF NOT EXISTS ix_fund_cum_return_trade_date ON fund_cum_return (trade_date);
 
+-- 基金经理任职史（东财 F10 jjjl 页解析）：AI 定性分析做「业绩归因」的硬依据。
+-- 每段一行（seq=0 为最新一段/含「至今」，越大越早）；共管期同段多经理，managers 空格分隔。
+-- 用途：判断「3y/5y 夏普是不是当前经理做出来的」「中途是否换过人」。
+CREATE TABLE IF NOT EXISTS fund_manager_tenure (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    fund_code TEXT NOT NULL,
+    seq INTEGER NOT NULL,            -- 0=最新一段（至今），越大越早
+    start_date TEXT,                 -- 起始期 YYYY-MM-DD
+    end_date TEXT,                   -- 截止期 YYYY-MM-DD；NULL=至今
+    is_current INTEGER DEFAULT 0,    -- 是否为「至今」在任段
+    managers TEXT NOT NULL,          -- 该段经理，空格分隔（共管）
+    tenure_text TEXT,                -- 原始任职期间文本，如「4年又148天」
+    tenure_days INTEGER,             -- 由文本解析出的任职天数
+    tenure_return REAL,              -- 任职回报（%）
+    fetch_time TEXT,
+    UNIQUE (fund_code, seq)
+);
+CREATE INDEX IF NOT EXISTS ix_fund_manager_tenure_code ON fund_manager_tenure (fund_code);
+
 -- 股票→行业映射（静态元数据，聚类的标签基础）。
 -- 申万三级为主（legulegu），东财行业兜底（港股/未覆盖）；manual=1 表示人工修正过，采集不再覆盖。
 CREATE TABLE IF NOT EXISTS stock_industry (
@@ -268,3 +287,10 @@ CREATE TABLE IF NOT EXISTS fund_ai_analysis (
     updated_at TEXT DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS ix_fund_ai_analysis_code ON fund_ai_analysis (fund_code);
+
+-- 应用配置（key-value 存储，用于可维护的提示词等）
+CREATE TABLE IF NOT EXISTS app_settings (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL,
+    updated_at TEXT DEFAULT (datetime('now'))
+);
