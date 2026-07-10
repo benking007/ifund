@@ -136,6 +136,17 @@ export default function MirrorView({
     }
   }
 
+  const handleResetPrompt = async () => {
+    try {
+      const { data } = await request.delete('/fund/ai-prompt')
+      setPromptSystem(data.system ?? '')
+      setPromptUser(data.user ?? '')
+      message.success('已恢复为仓库默认提示词')
+    } catch {
+      message.error('恢复失败')
+    }
+  }
+
   const handleAnalyze = async (code: string) => {
     setAnalyzingCode(code)
     setStreamText('')
@@ -684,9 +695,20 @@ export default function MirrorView({
         onClose={() => setPromptDrawerOpen(false)}
         width={640}
         extra={
-          <Button type="primary" onClick={handleSavePrompt}>
-            保存
-          </Button>
+          <Space>
+            <Popconfirm
+              title="恢复为仓库默认提示词？"
+              description="将删除数据库里的覆盖，回落到 prompts/*.md 文件默认值。"
+              onConfirm={handleResetPrompt}
+              okText="恢复"
+              cancelText="取消"
+            >
+              <Button>恢复默认</Button>
+            </Popconfirm>
+            <Button type="primary" onClick={handleSavePrompt}>
+              保存
+            </Button>
+          </Space>
         }
       >
         <Space direction="vertical" style={{ width: '100%' }} size="middle">

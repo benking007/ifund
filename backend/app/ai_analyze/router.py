@@ -13,6 +13,7 @@ from .service import (
     analyze_fund_streaming,
     get_prompt,
     set_prompt,
+    reset_prompt,
     DEFAULT_SYSTEM_PROMPT,
     DEFAULT_USER_PROMPT_TEMPLATE,
 )
@@ -73,3 +74,15 @@ def update_ai_prompt():
     if "user" in data:
         set_prompt("ai_analyze_user", data["user"])
     return jsonify({"ok": True})
+
+
+@bp.delete("/ai-prompt")
+@jwt_required()
+def reset_ai_prompt():
+    """恢复默认：删除 app_settings 覆盖，回落到 prompts/*.md 文件默认值，并返回默认内容。"""
+    reset_prompt("ai_analyze_system")
+    reset_prompt("ai_analyze_user")
+    return jsonify({
+        "system": DEFAULT_SYSTEM_PROMPT,
+        "user": DEFAULT_USER_PROMPT_TEMPLATE,
+    })
