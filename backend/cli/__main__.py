@@ -19,7 +19,7 @@ if _env_file.exists():
         key, _, value = line.partition("=")
         os.environ.setdefault(key.strip(), value.strip())
 
-from . import ai_analyze, analyze, bundle, fetch, holdings, preset, trade
+from . import ai_analyze, analyze, bundle, fetch, historical, holdings, preset, trade
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -95,6 +95,14 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--codes", help="基金代码(逗号分隔)")
     p.add_argument("--preset", type=int, help="预设 id（分析该预设镜像全部基金）")
     p.set_defaults(fn=ai_analyze.cmd_ai_batch)
+
+    # historical（历史时点筛选 + Resonance 择时回测）
+    g = groups.add_parser("historical", help="历史时点筛选 + 择时回测")
+    g = g.add_subparsers(dest="cmd", required=True)
+    p = g.add_parser("run", parents=[common], help="按 Resonance 交易对执行历史筛选回测")
+    p.add_argument("--preset", type=int, help="预设 id（用其过滤条件筛选基金）")
+    p.add_argument("--top", type=int, help="每轮最多选 N 只（默认全选代表）")
+    p.set_defaults(fn=historical.cmd_run)
 
     # holdings（实盘：查询 + 交易 + 调仓建议）
     g = groups.add_parser("holdings", help="实盘：持仓查询/交易/调仓建议")
