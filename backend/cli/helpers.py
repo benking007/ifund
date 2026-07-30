@@ -22,3 +22,12 @@ def snapshot_count(uid: int, pid: int) -> int:
     """某预设镜像快照里的基金数（无快照→0）。"""
     row = database.select_one("fund_snapshots", {"user_id": f"eq.{uid}", "preset_id": f"eq.{pid}"})
     return int(row.get("fund_count") or 0) if row else 0
+
+
+def snapshot_items_raw(uid: int, pid: int) -> list[dict]:
+    """某预设镜像快照的 items 列表（无快照→空列表）。"""
+    import json
+    row = database.select_one("fund_snapshots", {"user_id": f"eq.{uid}", "preset_id": f"eq.{pid}"})
+    if not row:
+        return []
+    return json.loads(row.get("items_json") or "[]")

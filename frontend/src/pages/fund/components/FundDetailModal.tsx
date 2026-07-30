@@ -28,6 +28,8 @@ const NAV_RANGES = [
   { label: '近6月', value: 6 },
   { label: '近1年', value: 12 },
   { label: '近3年', value: 36 },
+  { label: '近5年', value: 60 },
+  { label: '今年以来', value: -1 },
   { label: '全部', value: 0 },
 ]
 
@@ -158,7 +160,10 @@ function NavChart({ code }: { code: string }) {
   const sliced = useMemo(() => {
     const series = data.filter((p) => Number.isFinite(p.nav))
     if (!range || series.length === 0) return series
-    const cutoff = dayjs(series[series.length - 1].date).subtract(range, 'month')
+    const end = series[series.length - 1].date
+    const cutoff = range === -1
+      ? dayjs(end).startOf('year')
+      : dayjs(end).subtract(range, 'month')
     const win = series.filter((p) => !dayjs(p.date).isBefore(cutoff))
     return win.length >= 2 ? win : series
   }, [data, range])

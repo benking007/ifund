@@ -88,3 +88,74 @@ def cmd_run(args) -> None:
     print(f"  基准总收益: {agg['benchmark_total_pct']:+.2f}%")
     print(f"  累计超额:   {agg['excess_total_pct']:+.2f}%")
     print(f"  胜率:       {agg['win_rate']}")
+
+
+def cmd_perpetual(args) -> None:
+    from app.historical.perpetual_backtest import run_perpetual_backtest
+    from app.historical.backtest import fetch_trade_pairs
+
+    codes = None
+    preset_id = getattr(args, "preset", None)
+    if preset_id:
+        user_id = getattr(args, "user", 1)
+        snap = None
+        conn = sqlite3.connect(DB_PATH, timeout=10)
+        conn.row_factory = sqlite3.Row
+        row = conn.execute(
+            "SELECT items_json FROM fund_snapshots WHERE preset_id = ? AND user_id = ?",
+            (preset_id, user_id),
+        ).fetchone()
+        conn.close()
+        if row and row["items_json"]:
+            items = json.loads(row["items_json"])
+            codes = [it["code"] for it in items if it.get("code")]
+        if not codes:
+            print(f"预设 id={preset_id} 无镜像快照", file=sys.stderr)
+            sys.exit(1)
+        print(f"  使用预设 id={preset_id} 镜像（{len(codes)} 只候选）", file=sys.stderr)
+
+    pairs = fetch_trade_pairs()
+
+    def progress(idx, total, msg):
+        print(f"  [{idx + 1}/{total}] {msg}", file=sys.stderr)
+
+    result = run_perpetual_backtest(pairs, codes=codes, on_progress=progress)
+
+    if args.json:
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        return
+
+    for t in result["trades"]:
+        buy_d = t["buy_date"]
+        sell_d = t.get("sell_date") or "持有中"
+        print(f"\n{'=' * 60}")
+        print(f"  {buy_d} 买入 → {sell_d} 卖出")
+        if t.get("error"):
+            print(f"  !! {t['error']}")
+            continue
+        print(f"  {'代码':<8} {'名称':<20} {'权重':>6} {'收益':>8}")
+        print(f"  {'-' * 50}")
+        for f in t.get("funds", []):
+            ret_s = f"{f['return_pct']:+.1f}%" if f.get("return_pct") is not None else "  --"
+            print(f"  {f['code']:<8} {f['name']:<20} "
+                  f"{f['weight'] * 100:>5.1f}% {ret_s:>8}")
+        pr = t.get("portfolio_return_pct")
+        br = t.get("benchmark_return_pct")
+        ex = t.get("excess_pct")
+        if pr is not None:
+            line = f"\n  组合收益: {pr:+.2f}%"
+            if br is not None:
+                line += f" | 基准(510300): {br:+.2f}%"
+            if ex is not None:
+                line += f" | 超额: {ex:+.2f}%"
+            print(line)
+
+    agg = result["aggregate"]
+    print(f"\n{'=' * 60}")
+    print(f"  汇总（{agg['rounds']} 轮完成）")
+    print(f"  初始资金:   {agg['capital']:,.0f} 元")
+    print(f"  组合总收益: {agg['total_return_pct']:+.2f}%")
+    print(f"  期末市值:   {agg['final_value']:,.0f} 元")
+    print(f"  基准总收益: {agg['benchmark_total_pct']:+.2f}%")
+    print(f"  累计超额:   {agg['excess_total_pct']:+.2f}%")
+    print(f"  胜率:       {agg['win_rate']}")

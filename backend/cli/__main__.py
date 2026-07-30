@@ -19,7 +19,7 @@ if _env_file.exists():
         key, _, value = line.partition("=")
         os.environ.setdefault(key.strip(), value.strip())
 
-from . import ai_analyze, analyze, bundle, fetch, historical, holdings, preset, trade
+from . import ai_analyze, analyze, bundle, fetch, historical, holdings, perpetual, preset, trade
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -103,6 +103,25 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--preset", type=int, help="预设 id（用其过滤条件筛选基金）")
     p.add_argument("--top", type=int, help="每轮最多选 N 只（默认全选代表）")
     p.set_defaults(fn=historical.cmd_run)
+    p = g.add_parser("perpetual", parents=[common], help="永续组合 + Resonance 择时联合回测")
+    p.add_argument("--preset", type=int, help="预设 id（取镜像代码作为候选池）")
+    p.set_defaults(fn=historical.cmd_perpetual)
+
+    # perpetual（永续组合）
+    g = groups.add_parser("perpetual", help="永续组合：生成/回放")
+    g = g.add_subparsers(dest="cmd", required=True)
+    p = g.add_parser("run", parents=[common], help="生成永续分散组合")
+    p.add_argument("--preset", type=int, help="预设 id（限定候选池）")
+    p.add_argument("--diagnose", help="落选诊断基金代码（逗号分隔）")
+    p.add_argument("--as-of", dest="as_of", help="决策日 T（YYYY-MM-DD），仅用 ≤T 数据")
+    p.set_defaults(fn=perpetual.cmd_run)
+    p = g.add_parser("replay", parents=[common], help="定期重筛回放")
+    p.add_argument("--start", required=True, help="首个决策日 YYYY-MM-DD")
+    p.add_argument("--preset", type=int, help="预设 id（限定候选池）")
+    p.add_argument("--step-months", dest="step_months", type=int, default=6, help="重筛间隔月数")
+    p.add_argument("--keep-rank", dest="keep_rank", type=int, default=20, help="持仓掉出前 N 名才换")
+    p.add_argument("--max-replace", dest="max_replace", type=int, default=3, help="每期最大替换只数")
+    p.set_defaults(fn=perpetual.cmd_replay)
 
     # holdings（实盘：查询 + 交易 + 调仓建议）
     g = groups.add_parser("holdings", help="实盘：持仓查询/交易/调仓建议")

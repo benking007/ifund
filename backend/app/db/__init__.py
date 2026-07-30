@@ -78,6 +78,14 @@ def list_industry_mapping(*, market="", label_kw="", status="", keyword="", skip
         market=market, label_kw=label_kw, status=status, keyword=keyword, skip=skip, limit=limit)
 
 
+def list_manager_summary(*, keyword="", coverage="all", preset_id=None,
+                         skip=0, limit=50, order_field="code", order_dir="asc"):
+    """委托单例：基金经理汇总分页查询，返回 (total, items)。"""
+    return get_db().list_manager_summary(
+        keyword=keyword, coverage=coverage, preset_id=preset_id,
+        skip=skip, limit=limit, order_field=order_field, order_dir=order_dir)
+
+
 def init_db(schema_sql: str) -> None:
     """委托单例：执行建表脚本（幂等）。"""
     get_db().init_db(schema_sql)

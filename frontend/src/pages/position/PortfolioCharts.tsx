@@ -51,6 +51,9 @@ const RANGES = [
   { label: '近3月', value: 3 },
   { label: '近6月', value: 6 },
   { label: '近1年', value: 12 },
+  { label: '近3年', value: 36 },
+  { label: '近5年', value: 60 },
+  { label: '今年以来', value: -1 },
   { label: '全部', value: 0 },
 ]
 
@@ -63,7 +66,10 @@ export default function PortfolioCharts({ portfolio }: { portfolio: Portfolio })
 
   const sliced = useMemo(() => {
     if (!range || full.length === 0) return full
-    const cutoff = dayjs(full[full.length - 1].date).subtract(range, 'month')
+    const end = full[full.length - 1].date
+    const cutoff = range === -1
+      ? dayjs(end).startOf('year')
+      : dayjs(end).subtract(range, 'month')
     const win = full.filter((p) => !dayjs(p.date).isBefore(cutoff))
     return win.length >= 2 ? win : full
   }, [full, range])

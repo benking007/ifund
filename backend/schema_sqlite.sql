@@ -294,3 +294,14 @@ CREATE TABLE IF NOT EXISTS app_settings (
     value TEXT NOT NULL,
     updated_at TEXT DEFAULT (datetime('now'))
 );
+
+-- 永续组合持久化
+CREATE TABLE IF NOT EXISTS perpetual_portfolio (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL DEFAULT 1,
+    preset_id INTEGER,
+    as_of TEXT,
+    result_json TEXT NOT NULL,
+    created_at TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS ix_perpetual_portfolio_user ON perpetual_portfolio (user_id, created_at DESC);

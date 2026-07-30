@@ -67,5 +67,10 @@ class Database(abc.ABC):
         """
 
     @abc.abstractmethod
+    def list_manager_summary(self, *, keyword="", coverage="all", preset_id=None,
+                            skip=0, limit=50, order_field="code", order_dir="asc"):
+        """funds ⋈ fund_details ⋈ fund_manager_tenure 三表联合查询，返回 ``(total, items)``。"""
+
+    @abc.abstractmethod
     def init_db(self, schema_sql: str) -> None:
         """执行建表脚本（SQLite 用 executescript）。"""

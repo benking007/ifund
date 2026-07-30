@@ -369,6 +369,52 @@ class SqliteDatabase(Database):
             r.pop("_total", None)
         return total, rows
 
+    _MGR_SORTABLE = {
+        "code": "f", "name": "f",
+        "fund_type": "d", "fund_company": "d", "scale": "d", "fund_manager": "d",
+        "return_1y": "d", "return_3y": "d",
+        "managers": "t", "tenure_days": "t", "tenure_return": "t", "start_date": "t",
+    }
+
+    def list_manager_summary(self, *, keyword="", coverage="all", preset_id=None,
+                             skip=0, limit=50, order_field="code", order_dir="asc"):
+        base = ('FROM "funds" f '
+                'LEFT JOIN "fund_details" d ON f."code" = d."fund_code" '
+                'LEFT JOIN "fund_manager_tenure" t '
+                'ON f."code" = t."fund_code" AND t."seq" = 0 AND t."is_current" = 1')
+        where, params = ["1 = 1"], []
+        if preset_id:
+            where.append(('f."code" IN (SELECT json_extract(value,\'$.code\') '
+                          'FROM "fund_snapshots", json_each("items_json") '
+                          'WHERE "preset_id" = ?)'))
+            params.append(preset_id)
+        if keyword:
+            where.append('(f."code" LIKE ? OR d."fund_name" LIKE ? '
+                         'OR d."fund_manager" LIKE ? OR t."managers" LIKE ?)')
+            kw = f"%{keyword}%"
+            params.extend([kw, kw, kw, kw])
+        if coverage == "covered":
+            where.append('t."fund_code" IS NOT NULL')
+        elif coverage == "uncovered":
+            where.append('t."fund_code" IS NULL')
+        where_sql = " WHERE " + " AND ".join(where)
+        conn = self._conn()
+        total = int(
+            conn.execute(f"SELECT COUNT(*) AS n {base}{where_sql}", params).fetchone()["n"]
+        )
+        alias = self._MGR_SORTABLE.get(order_field, "f")
+        col = order_field if order_field in self._MGR_SORTABLE else "code"
+        sql_dir = "DESC" if order_dir.lower() == "desc" else "ASC"
+        order_sql = f'ORDER BY {alias}."{col}" {sql_dir}'
+        select_cols = ('f."code" AS code, f."name" AS name, '
+                       'd."fund_type", d."fund_company", d."scale", d."fund_manager", '
+                       'd."return_1y", d."return_3y", '
+                       't."managers", t."start_date", t."end_date", t."tenure_text", '
+                       't."tenure_days", t."tenure_return", t."fetch_time"')
+        sql = f"SELECT {select_cols} {base}{where_sql} {order_sql} LIMIT ? OFFSET ?"
+        rows = conn.execute(sql, params + [limit, skip]).fetchall()
+        return total, [dict(row) for row in rows]
+
     def init_db(self, schema_sql: str) -> None:
         conn = self._conn()
         conn.executescript(schema_sql)
