@@ -7,9 +7,17 @@ BACKEND="$ROOT/backend"
 FRONTEND="$ROOT/frontend"
 PIP_MIRROR="https://mirrors.aliyun.com/pypi/simple/"
 
+# 0. 杀掉旧进程 + 清理 Python 缓存（确保每次启动都用最新代码）
+echo "[start] 释放端口 :8000 :9000 ..."
+lsof -ti :8000 | xargs kill -9 2>/dev/null || true
+lsof -ti :9000 | xargs kill -9 2>/dev/null || true
+find "$BACKEND" -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+sleep 1
+
 # 1. 后端 venv + 依赖
-if [ ! -d "$BACKEND/venv" ]; then
-  echo "[start] 创建 venv (Python 3.12) ..."
+if ! "$BACKEND/venv/bin/pip" --version >/dev/null 2>&1; then
+  echo "[start] (重新)创建 venv (Python 3.12) ..."
+  rm -rf "$BACKEND/venv"
   # 需 Python 3.12+（官方 MCP SDK 要求 3.10+）；优先 python3.12，回退到 python3
   PYBIN="$(command -v python3.12 || command -v python3)"
   "$PYBIN" -m venv "$BACKEND/venv"

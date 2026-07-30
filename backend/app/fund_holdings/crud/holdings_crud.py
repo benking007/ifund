@@ -30,10 +30,17 @@ def is_fresh(code: str) -> bool:
 
 
 def upsert(code: str, rows: list[dict]) -> None:
-    """按基金全量替换：delete by fund_code → batch_insert。"""
-    database.delete("fund_holdings", {"fund_code": code})
-    if rows:
-        database.batch_insert("fund_holdings", rows)
+    """按季度合并：只覆盖本次拉到的季度，保留其他季度已有数据。"""
+    if not rows:
+        return
+    # 只删除本次涉及的（季度, holding_type）组合，不影响未拉到的季度
+    for key in sorted({(r["quarter"], r["holding_type"]) for r in rows}):
+        database.delete("fund_holdings", {
+            "fund_code": code,
+            "quarter": f"eq.{key[0]}",
+            "holding_type": f"eq.{key[1]}",
+        })
+    database.batch_insert("fund_holdings", rows)
 
 
 def latest_quarter(code: str, holding_type: str = "stock") -> str | None:

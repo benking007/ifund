@@ -20,15 +20,27 @@ def get_running(task_type: str):
     })
 
 
-def resolve_targets(args):
+def resolve_targets(args, json_body=None):
     """解析筛选条件 → (codes, fund_types)。
 
-    codes 显式给出则优先；否则按筛选条件查 list_funds_with_details 得 codes 子集；
+    codes 显式给出则优先（支持 JSON body 数组、query string 逗号分隔、keyword 参数）；
+    否则按筛选条件查 list_funds_with_details 得 codes 子集；
     都没有则返回 ([], []) 表示全量。
     """
-    codes_raw = args.get("codes")
+    # 1) JSON body 里的 codes（前端 POST 时传的）
+    if json_body:
+        codes_raw = json_body.get("codes")
+        if codes_raw:
+            if isinstance(codes_raw, list):
+                return [c.strip() for c in codes_raw if c.strip()], []
+            return [c.strip() for c in str(codes_raw).split(",") if c.strip()], []
+
+    # 2) URL query string 里的 codes 或 keyword
+    codes_raw = args.get("codes") or args.get("keyword")
     if codes_raw:
         return [c.strip() for c in codes_raw.split(",") if c.strip()], []
+
+    # 3) 筛选条件（需要 request.args 对象以支持 getlist）
     # pylint: disable=import-outside-toplevel
     from app.fund.api.router import parse_fund_filter_args
     fund_params, detail_params = parse_fund_filter_args(args)
@@ -81,7 +93,7 @@ def make_task_blueprint(module_name: str, task_type: str, worker_script: str) ->
         # 快速路径：已有 running 任务则直接拒绝（友好提示）
         if get_running(task_type):
             return jsonify({"detail": "已有运行中的任务"}), 409
-        codes, fund_types = resolve_targets(request.args)
+        codes, fund_types = resolve_targets(request.args, request.get_json(silent=True))
         try:
             # 唯一索引兜底：并发竞态下第二个 insert 会触发 UniqueViolation
             task_id = sync_launcher.start_sync_task(

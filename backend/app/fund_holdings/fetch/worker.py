@@ -82,8 +82,6 @@ def _dedup(rows):
 
 
 def _process_one(code):
-    if holdings_crud.is_fresh(code):
-        return "skip"
     now = datetime.datetime.now().isoformat()
     year = datetime.date.today().year
     rows = []

@@ -7,7 +7,7 @@ import urllib.request
 from app.historical.nav_metrics import get_nav_on_or_before
 from app.historical.screen import screen_at_date
 
-RESONANCE_API = "http://localhost:8000/api/resonance/trades?code=510300"
+RESONANCE_API = "http://localhost:8001/api/resonance/trades?code=510300"
 
 FALLBACK_PAIRS = [
     {"buy": "2025-01-02", "sell": "2025-01-15"},
