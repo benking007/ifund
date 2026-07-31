@@ -4,8 +4,9 @@ import { Button, Layout, Menu } from 'antd'
 import {
   ApartmentOutlined,
   CalendarOutlined,
-  DeploymentUnitOutlined,
+  DatabaseOutlined,
   ExperimentOutlined,
+  FilterOutlined,
   FundOutlined,
   KeyOutlined,
   LogoutOutlined,
@@ -60,15 +61,29 @@ export default function Dashboard() {
             mode="inline"
             theme="dark"
             selectedKeys={[selected]}
+            defaultOpenKeys={['auxiliary']}
             onClick={(e) => go(e.key)}
             items={[
-              { key: 'fund', icon: <FundOutlined />, label: '基金管理' },
-              { key: 'workbench', icon: <DeploymentUnitOutlined />, label: '组合分析' },
-              { key: 'perpetual', icon: <ExperimentOutlined />, label: '永续组合' },
-              { key: 'manager', icon: <TeamOutlined />, label: '基金经理' },
+              {
+                type: 'group',
+                label: '基金筛选',
+                children: [
+                  { key: 'fund', icon: <FundOutlined />, label: '基金管理' },
+                  { key: 'workbench', icon: <FilterOutlined />, label: '镜像基金' },
+                  { key: 'perpetual', icon: <ExperimentOutlined />, label: '永续组合' },
+                ],
+              },
               { key: 'holdings', icon: <WalletOutlined />, label: '实盘' },
-              { key: 'trade_calendar', icon: <CalendarOutlined />, label: '交易日历' },
-              { key: 'industry', icon: <ApartmentOutlined />, label: '行业映射' },
+              {
+                key: 'auxiliary',
+                icon: <DatabaseOutlined />,
+                label: '辅助数据',
+                children: [
+                  { key: 'trade_calendar', icon: <CalendarOutlined />, label: '交易日历' },
+                  { key: 'industry', icon: <ApartmentOutlined />, label: '行业映射' },
+                  { key: 'manager', icon: <TeamOutlined />, label: '基金经理' },
+                ],
+              },
               { key: 'tokens', icon: <KeyOutlined />, label: '访问令牌' },
             ]}
           />

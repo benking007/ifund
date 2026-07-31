@@ -186,9 +186,8 @@ export interface ReconMeta {
   match_counts: ReconMatchCounts
   outside_count: number
   transfer_count?: number
-  cap?: number
-  nav_as_of?: string | null
-  holdings_quarter?: string | null
+  perpetual_as_of?: string | null
+  perpetual_saved_at?: string | null
 }
 
 export interface ReconResult {

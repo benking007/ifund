@@ -7,11 +7,11 @@ import ReconcileTable from './ReconcileTable'
 import TransfersTable from './TransfersTable'
 import type { ReconResult } from './types'
 
-// 操作指南：把所选实盘关联的②仓位建议目标比例落到实盘持仓上，按赛道对齐推导操作。
+// 操作指南：把永续组合的目标权重落到实盘持仓上，按标的对齐推导操作。
 // 两个正交开关覆盖四类意图；现金由系统反推（"加满还差多少"），无需预填。
 export default function ReconcileView({
-  portfolioId, hasPreset, onSavedTxns,
-}: { portfolioId: number | null; hasPreset: boolean; onSavedTxns?: () => void }) {
+  portfolioId, onSavedTxns,
+}: { portfolioId: number | null; onSavedTxns?: () => void }) {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<ReconResult | null>(null)
   // 缓冲带：偏离在盘子的此比例内则保持不动（抗短期噪音、保调仓连贯）。默认灵敏 1.5%。
@@ -31,10 +31,6 @@ export default function ReconcileView({
       message.warning('请先选择一个实盘')
       return
     }
-    if (!hasPreset) {
-      message.warning('请先为该实盘关联一个仓位建议（预设）')
-      return
-    }
     setLoading(true)
     setResult(null)
     try {
@@ -50,7 +46,7 @@ export default function ReconcileView({
     } finally {
       setLoading(false)
     }
-  }, [portfolioId, hasPreset, band, sellOutside, trimOverflow])
+  }, [portfolioId, band, sellOutside, trimOverflow])
 
   const rows = result?.rows
   const summary = result?.summary
@@ -108,21 +104,12 @@ export default function ReconcileView({
             生成操作指南
           </Button>
         </Space>
-        {meta && (meta.nav_as_of || meta.holdings_quarter) && (
+        {meta && (meta.perpetual_as_of || meta.perpetual_saved_at) && (
           <div style={{ marginTop: 10 }}>
-            <Tooltip title="目标比例基于库内已采集数据现场计算，非实时行情。要反映最新市况请先跑数据采集。">
-              <Tag icon={<ClockCircleOutlined />} color="default">
-                数据截止：净值 {meta.nav_as_of ?? '—'}
-                {meta.holdings_quarter ? ` · 持仓 ${meta.holdings_quarter}` : ''}
-              </Tag>
-            </Tooltip>
-            {meta.match_counts && (meta.match_counts.similar > 0 || meta.match_counts.no_data > 0) && (
-              <Tag color="gold">
-                {meta.match_counts.similar > 0 ? `${meta.match_counts.similar} 只按行业相似归类` : ''}
-                {meta.match_counts.similar > 0 && meta.match_counts.no_data > 0 ? ' · ' : ''}
-                {meta.match_counts.no_data > 0 ? `${meta.match_counts.no_data} 只无持仓数据无法归类` : ''}
-              </Tag>
-            )}
+            <Tag icon={<ClockCircleOutlined />} color="default">
+              永续组合决策日：{meta.perpetual_as_of ?? '—'}
+              {meta.perpetual_saved_at ? ` · 保存于 ${meta.perpetual_saved_at.slice(0, 16)}` : ''}
+            </Tag>
           </div>
         )}
       </Card>
@@ -148,7 +135,7 @@ export default function ReconcileView({
       {!loading && rows && rows.length > 0 && <ReconcileTable rows={rows} />}
 
       {!loading && !result && (
-        <Empty description="录入持仓、关联仓位建议后，选好调仓方式点「生成操作指南」" />
+        <Empty description="录入持仓后，选好调仓方式点「生成操作指南」（目标来自永续组合）" />
       )}
     </div>
   )

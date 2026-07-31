@@ -1,26 +1,22 @@
 """实盘对账蓝图：实盘 CRUD + 持仓 CRUD + 对账计算。全部按 user_id 隔离。
 
-一个用户可有多个实盘（自己的 + 代管他人的），每个实盘关联一套仓位建议（预设）。
-链路：选实盘 → 实盘的持仓 + 关联预设 → 复用 ③仓位的目标权重与聚类簇 →
-``reconcile`` 按赛道对齐算每笔加/减/建/清金额。持仓持久化；现金/缓冲带/cap 走请求体不落库。
+一个用户可有多个实盘（自己的 + 代管他人的）。
+链路：选实盘 → 实盘的持仓 + 永续组合（最近一次保存的持仓与权重）→
+``reconcile`` 按标的对齐算每笔加/减/建/清金额。持仓持久化；现金/缓冲带走请求体不落库。
 """
 from __future__ import annotations
 
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required
 
+from app import db as database
 from app import preset_access
 from app.fund_nav.crud import nav_crud
-from app.position.api.router import compute_position
-from app.position.algo import optimize
-from app.reconcile.algo import classify
 from app.reconcile.algo import reconcile as recon_algo
 from app.reconcile.crud import holdings_compute, holdings_store, portfolios_store, txn_store
-from app.stock_industry.crud import industry_crud
 
 bp = Blueprint("reconcile", __name__, url_prefix="/api/reconcile")
 
-CAP_MIN, CAP_MAX = 0.10, 0.30
 BAND_MIN, BAND_MAX = 0.0, 0.10
 
 
@@ -47,6 +43,47 @@ def _resolve_portfolio(uid: int):
     if not pf:
         return None, ({"detail": "portfolio not found"}, 404)
     return pf, None
+
+
+def _perpetual_targets(uid: int):
+    """从用户最近一次保存的永续组合构建对账目标。
+
+    返回 ``(target_items, clusters, meta)`` 或 ``(None, None, reason)``。
+    每只永续持仓基金视为一条独立赛道（单基金簇），权重即永续引擎输出。
+    """
+    import json as _json
+    row = database.select_one("perpetual_portfolio", {
+        "user_id": f"eq.{uid}", "order": "created_at.desc",
+    })
+    if not row:
+        return None, None, "尚未生成并保存永续组合，请先在「永续组合」页面生成并保存"
+    result = _json.loads(row.get("result_json") or "{}")
+    holdings = result.get("holdings") or []
+    if not holdings:
+        return None, None, "永续组合持仓为空，请重新生成"
+
+    target_items = []
+    clusters = []
+    for seq, h in enumerate(holdings, start=1):
+        code = h.get("code", "")
+        name = h.get("name", "")
+        weight = float(h.get("weight") or 0)
+        cid = seq
+        target_items.append({
+            "cluster_id": cid,
+            "cluster_name": name,
+            "weight": weight,
+            "fund": {"code": code, "name": name},
+        })
+        clusters.append({
+            "cluster_id": cid,
+            "name": name,
+            "funds": [{"code": code, "name": name}],
+            "top_industries": [],
+        })
+    meta = {"preset_id": row.get("preset_id"), "as_of": row.get("as_of"),
+            "saved_at": row.get("created_at")}
+    return target_items, clusters, meta
 
 
 # ── 实盘账户 CRUD ──────────────────────────────────────────────
@@ -131,59 +168,50 @@ def get_snapshot():
 @bp.get("/holdings/clusters")
 @jwt_required()
 def get_holdings_clusters():
-    """实际持仓基金 → 所属赛道（簇）映射（需实盘已关联预设）。query: ``?portfolio_id=``。
+    """实际持仓基金 → 所属赛道映射（基于永续组合）。query: ``?portfolio_id=``。
 
-    返回 ``{has_preset, map: {fund_code: cluster_id|null}, clusters: {cluster_id: {seq, label, industries}}}``。
-    ``seq`` 为簇序号（簇1、簇2…，按目标权重降序）；``industries`` 为带占比的申万三级行业 top3。
-    归类失败的基金 map 值为 null（赛道外）。复用对账同款聚类与归类逻辑，仅用于展示。
+    返回 ``{has_target, map: {fund_code: cluster_id|null}, clusters: {cluster_id: {seq, label, target_fund}}}``。
+    每只永续持仓基金即一条赛道；归类按代码/主体名匹配，失败的 map 值为 null（赛道外）。
     """
+    from app.cluster.algo.dedup import _base_name
+
     uid = preset_access.current_user_id()
     pf, error = _resolve_portfolio(uid)
     if error:
         payload, status = error
         return jsonify(payload), status
-    preset_id = pf.get("preset_id")
-    if not preset_id:
-        return jsonify({"has_preset": False, "map": {}, "clusters": {}})
-    items = preset_access.snapshot_items(preset_id, uid)
-    if items is None:
-        return jsonify({"has_preset": True, "map": {}, "clusters": {}})
-    pf_cap = pf.get("cap")
-    pf_cap = float(pf_cap) if pf_cap is not None else optimize.DEFAULT_CAP
-    result, clusters = compute_position(items, pf_cap)
-    if result is None or not clusters:
-        return jsonify({"has_preset": True, "map": {}, "clusters": {}})
-    code2cluster = classify.build_code_to_cluster(clusters)
-    name2cluster = classify.build_name_index(clusters)
-    cluster_vecs = classify.cluster_vectors(clusters)
-    # 以聚类簇为主体：输出全部原始簇（非仅优化选中的），避免 cap 过滤掉的簇的持仓被判赛道外
-    opt_by_cid = {}
-    for seq, it in enumerate(result.get("items") or [], start=1):
-        opt_by_cid[it["cluster_id"]] = (seq, it)
+
+    target_items, clusters, _meta = _perpetual_targets(uid)
+    if target_items is None:
+        return jsonify({"has_target": False, "map": {}, "clusters": {}})
+
+    code2cid: dict[str, int] = {}
+    name2cid: dict[str, int] = {}
     clusters_out: dict[str, dict] = {}
-    for c in clusters:
-        cid = c["cluster_id"]
-        industries = [{"label": i["label"], "ratio": i["ratio"]}
-                      for i in (c.get("top_industries") or [])[:3]]
-        opt = opt_by_cid.get(cid)
-        target_fund = None
-        if opt:
-            fund = opt[1].get("fund") or {}
-            target_fund = {"code": fund.get("code", ""), "name": fund.get("name", "")}
+    for seq, it in enumerate(target_items, start=1):
+        cid = it["cluster_id"]
+        fund = it["fund"]
+        code2cid[fund["code"]] = cid
+        base = _base_name(fund.get("name") or "")
+        if base and base not in name2cid:
+            name2cid[base] = cid
         clusters_out[str(cid)] = {
-            "seq": opt[0] if opt else None,
-            "label": c.get("name", ""),
-            "industries": industries,
-            "target_fund": target_fund,
+            "seq": seq,
+            "label": it["cluster_name"],
+            "industries": [],
+            "target_fund": {"code": fund["code"], "name": fund["name"]},
         }
-    ind_idx = industry_crud.industry_index()
+
     out: dict[str, int | None] = {}
     for h in holdings_compute.compute_holdings(pf["id"]):
-        cid, _match, _sim = classify.classify_fund(
-            h["fund_code"], h.get("fund_name", ""),
-            code2cluster, name2cluster, cluster_vecs, ind_idx)
-        out[h["fund_code"]] = cid if (cid is not None and str(cid) in clusters_out) else None
-    return jsonify({"has_preset": True, "map": out, "clusters": clusters_out})
+        code = h.get("fund_code", "")
+        name = h.get("fund_name", "")
+        if code in code2cid:
+            out[code] = code2cid[code]
+        else:
+            base = _base_name(name)
+            out[code] = name2cid.get(base) if base else None
+    return jsonify({"has_target": True, "map": out, "clusters": clusters_out})
 
 
 @bp.get("/holdings/penetration")
@@ -438,9 +466,9 @@ def txns_from_rebalance():
 @bp.post("/run")
 @jwt_required()
 def run():
-    """对账。body: ``{portfolio_id, cap?, band?, sell_outside?, trim_overflow?, preset_id?}``。
+    """对账。body: ``{portfolio_id, band?, sell_outside?, trim_overflow?}``。
 
-    预设默认取自实盘的关联（``preset_id`` 可临时覆盖）。两个正交开关覆盖四类操作意图；
+    目标权重取自用户最近保存的永续组合。两个正交开关覆盖四类操作意图；
     现金由系统反推（"加满还差多少"）。返回 ``{rows, summary, meta, transfers}``。
     """
     uid = preset_access.current_user_id()
@@ -450,35 +478,23 @@ def run():
         return jsonify(payload), status
 
     body = request.get_json(silent=True) or {}
-    preset_id = body.get("preset_id") or pf.get("preset_id")
-    if not preset_id:
-        return jsonify({"rows": None, "reason": "该实盘尚未关联仓位建议，请先在上方选择一个预设"})
-    if not preset_access.owned_preset(preset_id, uid):
-        return jsonify({"detail": "preset not found"}), 404
-    items = preset_access.snapshot_items(preset_id, uid)
-    if items is None:
-        return jsonify({"rows": None, "reason": "该预设尚无镜像快照，请先在筛选页保存镜像"})
+
+    target_items, clusters, target_meta = _perpetual_targets(uid)
+    if target_items is None:
+        return jsonify({"rows": None, "reason": target_meta})
 
     holdings = holdings_compute.compute_holdings(pf["id"])
     if not holdings:
         return jsonify({"rows": None, "reason": "该实盘尚未录入任何持仓，请先在上方录入"})
 
-    cap_default = float(pf.get("cap") or optimize.DEFAULT_CAP)
-    cap = _clamp(body.get("cap"), CAP_MIN, CAP_MAX, cap_default)
     band = _clamp(body.get("band"), BAND_MIN, BAND_MAX, recon_algo.DEFAULT_BAND)
     sell_outside = bool(body.get("sell_outside"))
     trim_overflow = body.get("trim_overflow")
     trim_overflow = True if trim_overflow is None else bool(trim_overflow)
 
-    result, clusters = compute_position(items, cap)
-    if result is None or not result.get("items"):
-        return jsonify({"rows": None, "reason": "有效基金不足（需 ≥3 只含股票持仓的基金），无法生成目标"})
-
-    ind_idx = industry_crud.industry_index()
-    recon = recon_algo.reconcile(result["items"], holdings, clusters, ind_idx,
+    ind_idx = {}
+    recon = recon_algo.reconcile(target_items, holdings, clusters, ind_idx,
                                  band=band, sell_outside=sell_outside, trim_overflow=trim_overflow)
-    recon["meta"]["cap"] = cap
-    recon["meta"]["preset_id"] = preset_id
-    recon["meta"]["nav_as_of"] = result["meta"].get("nav_as_of")
-    recon["meta"]["holdings_quarter"] = result["meta"].get("holdings_quarter")
+    recon["meta"]["perpetual_as_of"] = target_meta.get("as_of")
+    recon["meta"]["perpetual_saved_at"] = target_meta.get("saved_at")
     return jsonify(recon)

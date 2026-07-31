@@ -34,12 +34,12 @@ export default function HoldingsManager({
         request.get<{ items: ComputedHolding[] }>('/reconcile/holdings', {
           params: { portfolio_id: portfolioId },
         }),
-        request.get<{ has_preset: boolean; map: Record<string, number | null>; clusters: Record<string, ClusterMeta> }>(
+        request.get<{ has_target: boolean; map: Record<string, number | null>; clusters: Record<string, ClusterMeta> }>(
           '/reconcile/holdings/clusters', { params: { portfolio_id: portfolioId } },
-        ).catch(() => ({ data: { has_preset: false, map: {}, clusters: {} } })),
+        ).catch(() => ({ data: { has_target: false, map: {}, clusters: {} } })),
       ])
       setHoldings(hRes.data.items ?? [])
-      setHasPreset(!!cRes.data.has_preset)
+      setHasPreset(!!cRes.data.has_target)
       setClusterMap(cRes.data.map ?? {})
       setClusterMeta(cRes.data.clusters ?? {})
     } catch {
@@ -265,7 +265,7 @@ export default function HoldingsManager({
         <Typography.Paragraph type="secondary" style={{ fontSize: 12, marginTop: -4 }}>
           实际持仓 = 初始化快照 + 交易记录 综合算出（份额按交易当日单位净值折算，市值 = 份额 × 最新单位净值，
           成本按移动平均）。这里只读，改动请用下方「初始化快照」与「交易记录」。
-          {hasPreset && '「所属赛道」按关联预设的聚类簇归类，相同赛道已合并展示。'}
+          {hasPreset && '「所属赛道」按永续组合持仓归类，相同赛道已合并展示。'}
         </Typography.Paragraph>
         {displayList.length === 0 ? (
           <Empty description="暂无持仓。先在下方「初始化快照」录入首次建仓金额。" />
