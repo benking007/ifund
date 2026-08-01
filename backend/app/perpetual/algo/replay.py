@@ -138,12 +138,10 @@ def run_replay(codes: list[str] | None = None, start: str = "2024-01-01",
     if len(anchors) < 2:
         return {"error": "锚点不足（start 太近或 step_months 太大）"}
     universe = loader.load_universe(codes)
-    nav_by_code = {f["code"]: loader.load_nav_series(f["code"], anchors[0])
-                   for f in universe}
-    tenure_now = {f["code"]: loader.current_tenure_days(f["code"])
-                  for f in universe}
-    holdings_now = {f["code"]: loader.load_quarter_holdings(f["code"])
-                    for f in universe}
+    universe_codes = [fund["code"] for fund in universe]
+    nav_by_code = loader.load_nav_series_batch(universe_codes, anchors[0])
+    tenure_now = loader.current_tenure_days_batch(universe_codes)
+    holdings_now = loader.load_quarter_holdings_batch(universe_codes)
     stitched: list[tuple[str, float]] = []
     bh_curve: list[tuple[str, float]] = []
     turnover = []

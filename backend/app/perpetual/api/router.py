@@ -14,9 +14,10 @@ def build_result(codes: list[str] | None = None, diagnose: list[str] | None = No
                  include_cloud: bool = False, as_of: str | None = None) -> dict:
     """共享入口：加载数据 + 跑引擎（HTTP 与 CLI 复用）。"""
     universe = loader.load_universe(codes)
-    nav_by_code = {f["code"]: loader.load_nav_series(f["code"], as_of) for f in universe}
-    tenure_by_code = {f["code"]: loader.current_tenure_days(f["code"], as_of) for f in universe}
-    holdings_by_code = {f["code"]: loader.load_quarter_holdings(f["code"], as_of) for f in universe}
+    universe_codes = [fund["code"] for fund in universe]
+    nav_by_code = loader.load_nav_series_batch(universe_codes, as_of)
+    tenure_by_code = loader.current_tenure_days_batch(universe_codes, as_of)
+    holdings_by_code = loader.load_quarter_holdings_batch(universe_codes, as_of)
     return pipeline.run(universe, nav_by_code, tenure_by_code, holdings_by_code,
                         diagnose_codes=diagnose, include_cloud=include_cloud, as_of=as_of)
 

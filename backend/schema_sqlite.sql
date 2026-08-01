@@ -145,6 +145,8 @@ CREATE TABLE IF NOT EXISTS fund_holdings (
 );
 CREATE INDEX IF NOT EXISTS ix_fund_holdings_fund_code ON fund_holdings (fund_code);
 CREATE INDEX IF NOT EXISTS ix_fund_holdings_quarter ON fund_holdings (quarter);
+CREATE INDEX IF NOT EXISTS ix_fund_holdings_fund_type
+    ON fund_holdings (fund_code, holding_type, quarter, asset_code);
 -- 覆盖索引：行业映射页按 (holding_type, asset_code) 去重持仓股票，带上 asset_name 可全程走索引，
 -- 免去对 180 万行 fund_holdings 的全表扫 + 临时 B-tree 去重（held_codes / list_page 下沉 JOIN 用）。
 CREATE INDEX IF NOT EXISTS ix_fund_holdings_ht_ac ON fund_holdings (holding_type, asset_code, asset_name);
@@ -191,6 +193,8 @@ CREATE TABLE IF NOT EXISTS fund_manager_tenure (
     UNIQUE (fund_code, seq)
 );
 CREATE INDEX IF NOT EXISTS ix_fund_manager_tenure_code ON fund_manager_tenure (fund_code);
+CREATE INDEX IF NOT EXISTS ix_fund_manager_tenure_current
+    ON fund_manager_tenure (fund_code, is_current, tenure_days DESC);
 
 -- 股票→行业映射（静态元数据，聚类的标签基础）。
 -- 申万三级为主（legulegu），东财行业兜底（港股/未覆盖）；manual=1 表示人工修正过，采集不再覆盖。
