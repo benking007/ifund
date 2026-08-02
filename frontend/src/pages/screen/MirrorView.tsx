@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Alert, Button, Card, Descriptions, Divider, Drawer, Empty, Input, message, Modal, Popconfirm, Progress, Radio, Rate, Select, Space, Spin, Table, Tag, Typography } from 'antd'
+import { Alert, Button, Card, Descriptions, Divider, Drawer, Empty, Input, message, Modal, Popconfirm, Progress, Radio, Rate, Select, Space, Spin, Table, Tag, theme, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { EditOutlined, ReloadOutlined, SaveOutlined, StopOutlined, ThunderboltOutlined, UndoOutlined } from '@ant-design/icons'
 import request from '../../api/request'
+import { APP_BASE, AUTH_TOKEN_KEY } from '../../config'
 import { useScreenData } from './hooks/useScreenData'
 import { buildFundColumns } from '../fund/components/fundColumns'
 import FundDetailModal from '../fund/components/FundDetailModal'
@@ -22,6 +23,7 @@ export default function MirrorView({
   presets: QueryPreset[]
   onMirrorSaved?: () => void
 }) {
+  const { token } = theme.useToken()
   const {
     latest, snapshot, loading, saving, refresh, saveMirror,
     excluded, addExcluded, removeExcluded,
@@ -158,8 +160,8 @@ export default function MirrorView({
     abortRef.current = ctrl
 
     try {
-      const token = localStorage.getItem('token')
-      const resp = await fetch(`/api/fund/${code}/ai-analyze`, {
+      const token = localStorage.getItem(AUTH_TOKEN_KEY)
+      const resp = await fetch(`${APP_BASE}/api/fund/${code}/ai-analyze`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -425,7 +427,7 @@ export default function MirrorView({
       <Modal
         title={
           <Space>
-            <ThunderboltOutlined style={{ color: '#1890ff' }} />
+            <ThunderboltOutlined style={{ color: token.colorPrimary }} />
             <span>{streamDone ? `分析完成：${analyzingCode}` : `正在分析：${analyzingCode}`}</span>
           </Space>
         }

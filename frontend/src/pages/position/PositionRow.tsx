@@ -1,4 +1,4 @@
-import { Tag, Tooltip } from 'antd'
+import { Tag, Tooltip, theme } from 'antd'
 import MiniNavChart from './MiniNavChart'
 import ProsperityBars from './ProsperityBars'
 import { CONC_META, KIND_META, LUCK_META, metaOf } from '../fund/aiMeta'
@@ -10,8 +10,10 @@ const TAG_COLOR: Record<string, string> = { 加码: 'red', 标配: 'blue', 减�
 // 代表基金的 AI 定性分析一行：评级★ + 实力分 + 运气/集中标签 + 结论（hover 全文）。
 // 未分析时给淡灰提示，避免误以为「无评价=好」。
 function AiLine({ ai }: { ai?: FundAi | null }) {
+  const { token } = theme.useToken()
+
   if (!ai || (ai.rating == null && ai.skill_score == null && !ai.luck_verdict && !ai.verdict)) {
-    return <span style={{ fontSize: 12, color: '#bfbfbf' }}>AI 未分析</span>
+    return <span style={{ fontSize: 12, color: token.colorTextSecondary }}>AI 未分析</span>
   }
   const luck = metaOf(LUCK_META, ai.luck_verdict)
   const conc = metaOf(CONC_META, ai.concentration)
@@ -23,7 +25,7 @@ function AiLine({ ai }: { ai?: FundAi | null }) {
         <span style={{ color: '#fadb14', letterSpacing: 1, fontSize: 13 }}>{'★'.repeat(stars) || '·'}</span>
       )}
       {ai.skill_score != null && (
-        <span style={{ fontSize: 12, color: '#8c8c8c' }}>
+        <span style={{ fontSize: 12, color: token.colorTextSecondary }}>
           实力分 <b style={{ color: 'inherit' }}>{ai.skill_score}</b>
         </span>
       )}
@@ -35,7 +37,7 @@ function AiLine({ ai }: { ai?: FundAi | null }) {
         <Tooltip title={ai.verdict} placement="top">
           <span
             style={{
-              fontSize: 12, color: '#8c8c8c', maxWidth: 360,
+              fontSize: 12, color: token.colorTextSecondary, maxWidth: 360,
               overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', cursor: 'default',
             }}
           >
@@ -67,6 +69,7 @@ export default function PositionRow({
   highlightInds?: Set<string>
   onFundClick?: (code: string) => void
 }) {
+  const { token } = theme.useToken()
   const { fund, prosperity: pros, deviation: dev, recommendation: rec } = item
   const pct = (item.weight * 100).toFixed(1)
   const basePct = (item.base_weight * 100).toFixed(1)
@@ -75,7 +78,7 @@ export default function PositionRow({
   const holdings = item.holdings ?? []
 
   const metric = (label: string, value: string, color?: string) => (
-    <span style={{ fontSize: 12, color: '#8c8c8c' }}>
+    <span style={{ fontSize: 12, color: token.colorTextSecondary }}>
       {label} <b style={{ color: color ?? 'inherit', fontWeight: 600 }}>{value}</b>
     </span>
   )
@@ -103,13 +106,13 @@ export default function PositionRow({
           <div
             style={{
               width: `${maxWeight > 0 ? (item.weight / maxWeight) * 100 : 0}%`,
-              background: rel > 0.005 ? '#fa541c' : rel < -0.005 ? '#8c8c8c' : '#1677ff',
+              background: rel > 0.005 ? '#fa541c' : rel < -0.005 ? token.colorTextTertiary : token.colorPrimary,
               height: '100%',
               borderRadius: 3,
             }}
           />
         </div>
-        <div style={{ fontSize: 11, color: '#8c8c8c', marginTop: 4 }}>
+        <div style={{ fontSize: 11, color: token.colorTextSecondary, marginTop: 4 }}>
           基准 {basePct}% · {rel >= 0 ? '+' : ''}
           {(rel * 100).toFixed(1)}%
         </div>
@@ -123,9 +126,9 @@ export default function PositionRow({
             {item.top_industries.length
               ? item.top_industries.map((ind, i) => (
                   <span key={`${ind.label}-${i}`}>
-                    {i > 0 && <span style={{ color: '#8c8c8c', fontWeight: 400 }}> / </span>}
+                    {i > 0 && <span style={{ color: token.colorTextSecondary, fontWeight: 400 }}> / </span>}
                     {ind.label}
-                    <span style={{ color: '#8c8c8c', fontWeight: 400, fontSize: 12, marginLeft: 2 }}>
+                    <span style={{ color: token.colorTextSecondary, fontWeight: 400, fontSize: 12, marginLeft: 2 }}>
                       {ind.ratio.toFixed(1)}%
                     </span>
                   </span>
@@ -141,7 +144,7 @@ export default function PositionRow({
           ) : (
             fund.name
           )}
-          <span style={{ fontSize: 12, color: '#8c8c8c', fontWeight: 400, marginLeft: 8 }}>
+          <span style={{ fontSize: 12, color: token.colorTextSecondary, fontWeight: 400, marginLeft: 8 }}>
             {fund.code} · 簇内综合分第 {fund.cluster_rank} · 共 {item.fund_count} 只
           </span>
           {fund.cluster_rank > 1 && (
@@ -170,11 +173,11 @@ export default function PositionRow({
 
           {/* 右块：前十大重仓股（名称 · 行业 · 占净值比例） */}
           <div style={{ flex: 1, minWidth: 240 }}>
-            <div style={{ fontSize: 12, color: '#8c8c8c', marginBottom: 4 }}>
+            <div style={{ fontSize: 12, color: token.colorTextSecondary, marginBottom: 4 }}>
               前十大重仓股{holdings.length ? `（合计 ${holdings.reduce((a, h) => a + h.ratio, 0).toFixed(1)}%）` : ''}
             </div>
             {holdings.length === 0 ? (
-              <span style={{ fontSize: 12, color: '#8c8c8c' }}>暂无持仓数据</span>
+              <span style={{ fontSize: 12, color: token.colorTextSecondary }}>暂无持仓数据</span>
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))', columnGap: 20, rowGap: 1 }}>
                 {holdings.map((h, i) => {
@@ -194,7 +197,7 @@ export default function PositionRow({
                         borderRadius: hit ? 3 : 0,
                       }}
                     >
-                      <span style={{ color: '#8c8c8c', width: 14, textAlign: 'right', flexShrink: 0 }}>{i + 1}</span>
+                      <span style={{ color: token.colorTextSecondary, width: 14, textAlign: 'right', flexShrink: 0 }}>{i + 1}</span>
                       <span
                         style={{
                           flex: 1,
@@ -210,7 +213,7 @@ export default function PositionRow({
                       <Tooltip title={h.industry}>
                         <span
                           style={{
-                            color: hitInd ? '#fa8c16' : '#8c8c8c',
+                            color: hitInd ? '#fa8c16' : token.colorTextSecondary,
                             fontWeight: hitInd ? 600 : 400,
                             flexShrink: 0,
                             maxWidth: 84,
@@ -237,15 +240,15 @@ export default function PositionRow({
       {/* 右：动量强度（收缩为固定宽度）+ 乖离 + 理由 */}
       <div style={{ width: 280, flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-          <span style={{ fontSize: 12, color: '#8c8c8c' }}>动量强度</span>
+          <span style={{ fontSize: 12, color: token.colorTextSecondary }}>动量强度</span>
           <b style={{ fontSize: 16 }}>{pros.total.toFixed(0)}</b>
           <Tooltip title="当前净值相对 MA20/MA60 的乖离（0.6·d20+0.4·d60），择时参考">
-            <span style={{ fontSize: 12, color: '#8c8c8c' }}>· 乖离 {dev.combined.toFixed(1)}%</span>
+            <span style={{ fontSize: 12, color: token.colorTextSecondary }}>· 乖离 {dev.combined.toFixed(1)}%</span>
           </Tooltip>
           {noNav && <Tag color="warning">净值不足</Tag>}
         </div>
         <ProsperityBars pros={pros} />
-        <div style={{ fontSize: 12, marginTop: 6, color: 'rgba(140,140,140,0.95)' }}>{rec.reason}</div>
+        <div style={{ fontSize: 12, marginTop: 6, color: token.colorTextSecondary }}>{rec.reason}</div>
       </div>
     </div>
   )

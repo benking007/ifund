@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import { Button, Layout, Menu } from 'antd'
+import { Button, Layout, Menu, theme as antdTheme } from 'antd'
 import {
   ApartmentOutlined,
   CalendarOutlined,
@@ -21,6 +21,8 @@ import ManagerPage from './manager/ManagerPage'
 import IndustryPage from './IndustryPage'
 import TokensPage from './TokensPage'
 import TradeCalendar from './TradeCalendar'
+import { AUTH_TOKEN_KEY } from '../config'
+import { useDashboardTheme } from '../useDashboardTheme'
 
 const { Header, Sider, Content } = Layout
 
@@ -28,11 +30,13 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const location = useLocation()
   const [collapsed, setCollapsed] = useState(false)
+  const { isDark } = useDashboardTheme()
+  const { token } = antdTheme.useToken()
 
   const selected = location.pathname === '/' ? 'fund' : location.pathname.slice(1)
 
   const logout = () => {
-    localStorage.removeItem('token')
+    localStorage.removeItem(AUTH_TOKEN_KEY)
     navigate('/login')
   }
 
@@ -43,23 +47,33 @@ export default function Dashboard() {
   return (
     // 固定视口高度：仅内容区滚动，Header/侧边栏不随滚动移动
     <Layout style={{ height: '100vh' }}>
-      <Header className="flex items-center justify-between" style={{ paddingInline: 16, flexShrink: 0 }}>
-        <span style={{ color: '#fff', fontSize: 18, fontWeight: 600 }}>iFund</span>
-        <Button icon={<LogoutOutlined />} onClick={logout} ghost size="small">
+      <Header
+        className="flex items-center justify-between"
+        style={{ paddingInline: 16, flexShrink: 0, background: 'var(--ifund-bg-sidebar)' }}
+      >
+        <span style={{ color: token.colorText, fontSize: 18, fontWeight: 600 }}>iFund</span>
+        <Button
+          icon={<LogoutOutlined />}
+          onClick={logout}
+          type="text"
+          size="small"
+          style={{ color: token.colorText }}
+        >
           退出
         </Button>
       </Header>
       <Layout>
         <Sider
           width={160}
-          theme="dark"
+          theme={isDark ? 'dark' : 'light'}
           collapsible
           collapsed={collapsed}
           onCollapse={setCollapsed}
+          style={{ background: 'var(--ifund-bg-sidebar)' }}
         >
           <Menu
             mode="inline"
-            theme="dark"
+            theme={isDark ? 'dark' : 'light'}
             selectedKeys={[selected]}
             defaultOpenKeys={['auxiliary']}
             onClick={(e) => go(e.key)}

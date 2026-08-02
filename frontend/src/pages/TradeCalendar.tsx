@@ -36,7 +36,7 @@ function MiniMonth({ year, month, tradeSet, todayKey }: MiniMonthProps) {
   const tradeCount = cells.filter((d) => d !== null && tradeSet.has(toKey(year, month, d))).length
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02] p-3">
+    <div className="ifund-subtle-surface rounded-lg border p-3">
       <div className="mb-2 flex items-baseline justify-between">
         <span className="font-medium">{MONTH_LABELS[month]}</span>
         <span className="text-xs text-gray-500">{tradeCount} 天</span>

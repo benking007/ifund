@@ -1,4 +1,4 @@
-import { Tooltip } from 'antd'
+import { Tooltip, theme } from 'antd'
 import type { ProsperityBreakdown } from './types'
 
 const FACTORS: { key: keyof ProsperityBreakdown; label: string; hint: string }[] = [
@@ -9,20 +9,22 @@ const FACTORS: { key: keyof ProsperityBreakdown; label: string; hint: string }[]
 ]
 
 // 动量强度四因子迷你条（0–100），颜色随分值由灰转暖
-function barColor(v: number): string {
+function barColor(v: number, primary: string, muted: string): string {
   if (v >= 66) return '#fa541c'
-  if (v >= 40) return '#1677ff'
-  return '#8c8c8c'
+  if (v >= 40) return primary
+  return muted
 }
 
 export default function ProsperityBars({ pros }: { pros: ProsperityBreakdown }) {
+  const { token } = theme.useToken()
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 3, minWidth: 200 }}>
       {FACTORS.map((f) => {
         const v = pros[f.key]
         return (
           <div key={f.key} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ width: 52, fontSize: 11, color: '#8c8c8c', textAlign: 'right' }}>
+            <span style={{ width: 52, fontSize: 11, color: token.colorTextSecondary, textAlign: 'right' }}>
               {f.label}
             </span>
             <div style={{ flex: 1, background: 'rgba(140,140,140,0.18)', borderRadius: 3, height: 10 }}>
@@ -30,7 +32,7 @@ export default function ProsperityBars({ pros }: { pros: ProsperityBreakdown }) 
                 <div
                   style={{
                     width: `${Math.max(0, Math.min(100, v))}%`,
-                    background: barColor(v),
+                    background: barColor(v, token.colorPrimary, token.colorTextTertiary),
                     height: '100%',
                     borderRadius: 3,
                   }}

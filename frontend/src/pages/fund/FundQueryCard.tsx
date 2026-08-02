@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Alert, Button, Card, Checkbox, Input, Select, Space, Table, Tag } from 'antd'
+import { Alert, Button, Card, Checkbox, Input, Select, Space, Table, Tag, theme } from 'antd'
 import { SaveOutlined } from '@ant-design/icons'
 import type { SorterResult } from 'antd/es/table/interface'
 import MultiCompareFilter from './components/MultiCompareFilter'
@@ -80,6 +80,7 @@ export default function FundQueryCard({
   onSavePreset,
   onUpdatePreset,
 }: Props) {
+  const { token } = theme.useToken()
   const sortable = (field: string) => (SORTABLE.has(field) ? true : undefined)
   const [trend, setTrend] = useState<{ code: string; name: string } | null>(null)
   const [saveOpen, setSaveOpen] = useState(false)
@@ -136,7 +137,7 @@ export default function FundQueryCard({
           </Button>
           <Button onClick={onReset}>清空</Button>
 
-          <span style={{ width: 1, alignSelf: 'stretch', background: 'rgba(255,255,255,0.12)' }} />
+          <span style={{ width: 1, alignSelf: 'stretch', background: token.colorBorder }} />
 
           {activePreset ? (
             <>

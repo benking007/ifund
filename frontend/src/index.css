@@ -9,9 +9,38 @@ body,
   margin: 0;
 }
 
-body {
-  background: #141414;
-  color: rgba(255, 255, 255, 0.85);
+.ifund-app {
+  --ifund-bg-app: var(--bg-app, #f5f3ee);
+  --ifund-bg-card: var(--bg-card, #ffffff);
+  --ifund-bg-sidebar: var(--bg-sidebar, #f0eee6);
+  --ifund-text: var(--text, #2d2b26);
+  --ifund-text-soft: var(--text-soft, #5b584f);
+  --ifund-border: var(--border, #e5e1d8);
+
+  height: 100%;
+  min-height: 100%;
+  background: var(--ifund-bg-app);
+  color: var(--ifund-text);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC',
     'Microsoft YaHei', sans-serif;
+}
+
+.ifund-app[data-theme='dark'] {
+  --ifund-bg-app: var(--bg-app, #262624);
+  --ifund-bg-card: var(--bg-card, #2f2d2a);
+  --ifund-bg-sidebar: var(--bg-sidebar, #1f1e1c);
+  --ifund-text: var(--text, #ede9e0);
+  --ifund-text-soft: var(--text-soft, #b8b3a7);
+  --ifund-border: var(--border, #3d3a34);
+}
+
+.ifund-app .text-gray-400,
+.ifund-app .text-gray-500,
+.ifund-app .text-gray-600 {
+  color: var(--ifund-text-soft);
+}
+
+.ifund-subtle-surface {
+  border-color: var(--ifund-border);
+  background: var(--ifund-bg-card);
 }

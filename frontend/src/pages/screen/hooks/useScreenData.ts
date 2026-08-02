@@ -135,10 +135,11 @@ export function useScreenData(presetId: number | null, presets: QueryPreset[]) {
     if (presetId == null) return false
     setSaving(true)
     try {
-      // 镜像不存净值序列 / AI（AI 由读取时动态挂载），减小体积
+      // 镜像不存净值序列 / 持仓 / AI（AI 由读取时动态挂载），减小体积
       const items = latest.map((it) => {
         const copy = { ...it }
         delete copy.nav_series
+        delete copy.holdings
         delete copy.ai
         return copy
       })

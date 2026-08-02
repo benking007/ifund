@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Descriptions, Empty, Modal, Segmented, Select, Space, Spin, Statistic, Table, Tabs, Tag, Typography, theme } from 'antd'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Button, Descriptions, Empty, Modal, Segmented, Select, Space, Spin, Statistic, Table, Tabs, Tag, Typography, theme } from 'antd'
 import dayjs from 'dayjs'
 import {
   Area,
@@ -12,6 +12,7 @@ import {
   YAxis,
 } from 'recharts'
 import request from '../../../api/request'
+import { APP_BASE, AUTH_TOKEN_KEY } from '../../../config'
 import type { HoldingItem } from '../types'
 import {
   CONC_META, CONFIDENCE_META, LUCK_META, SCALE_RISK_META, STYLE_META, metaOf, parseTags,
@@ -85,10 +86,19 @@ function boolTag(v: number | null | undefined, yes: string, no: string) {
 }
 
 /** AI 定性分析面板：未分析时给出 CLI 填充提示。 */
-function renderAiPanel(ai: FundAi | null | undefined) {
+function renderAiPanel(ai: FundAi | null | undefined, onRunAi: () => void, aiLoading: boolean) {
   if (!ai) {
     return (
-      <Empty description="暂无 AI 定性分析（可经 CLI 填充：preset ai-set --code <代码> --data '{...}'）" />
+      <Empty description={
+          <div>
+            <div style={{ marginBottom: 12, color: 'var(--text-soft, #999)' }}>
+              {'暂无 AI 定性分析（也可通过 CLI 填充：preset ai-set --code 代码 --data ...）'}
+            </div>
+            <Button type="primary" size="small" loading={aiLoading} onClick={onRunAi}>
+              AI 定性分析
+            </Button>
+          </div>
+        } />
     )
   }
   const stars = ai.rating != null ? '★'.repeat(Math.max(0, Math.min(3, ai.rating))) || '·' : '-'
@@ -100,6 +110,7 @@ function renderAiPanel(ai: FundAi | null | undefined) {
         {ai.recommend ? <Tag color="green">推荐</Tag> : null}
         {enumTag(CONFIDENCE_META, ai.confidence) /* 把握度 */}
         <Typography.Text strong>{fmt(ai.verdict)}</Typography.Text>
+        <Button size="small" loading={aiLoading} onClick={onRunAi}>重新分析</Button>
       </Space>
 
       <Descriptions size="small" column={2} bordered title="核心维度">
@@ -146,6 +157,41 @@ function NavChart({ code }: { code: string }) {
   const [loading, setLoading] = useState(false)
   const [range, setRange] = useState(12)
   const [active, setActive] = useState<NavPoint | null>(null)
+  const [navLoading, setNavLoading] = useState(false)
+  const navSyncInFlight = useRef(false)
+
+  const triggerNavSync = useCallback(async () => {
+    if (!code || navSyncInFlight.current) return
+    navSyncInFlight.current = true
+    setNavLoading(true)
+    try {
+      const token = localStorage.getItem(AUTH_TOKEN_KEY)
+      const resp = await fetch(`${APP_BASE}/api/fund_nav/sync`, {
+        method: 'POST',
+        headers: { Authorization: token ? `Bearer ${token}` : '', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ codes: [code] }),
+      })
+      if (!resp.ok) {
+        const e = await resp.json().catch(() => ({}))
+        throw new Error(e.detail || e.error || `HTTP ${resp.status}`)
+      }
+      const { message: msg } = await import('antd')
+      msg.success('净值拉取任务已提交，正在后台执行')
+      await new Promise(r => setTimeout(r, 5000))
+      setLoading(true)
+      request
+        .get<{ items: NavPoint[] }>(`/fund/${code}/nav`, { params: { limit: 800 } })
+        .then(({ data: d }) => setData(d.items ?? []))
+        .catch(() => setData([]))
+        .finally(() => setLoading(false))
+    } catch (e: any) {
+      const { message: msg } = await import('antd')
+      msg.error(`拉取失败: ${e?.message || e}`)
+    } finally {
+      navSyncInFlight.current = false
+      setNavLoading(false)
+    }
+  }, [code])
 
   useEffect(() => {
     setLoading(true)
@@ -179,7 +225,18 @@ function NavChart({ code }: { code: string }) {
   const gradId = `navFill-${code}`
 
   if (loading) return <div style={{ textAlign: 'center', padding: 40 }}><Spin tip="加载净值中…" /></div>
-  if (sliced.length < 2) return <Empty description="暂无净值数据" style={{ padding: 24 }} />
+  if (sliced.length < 2)
+    return (
+      <Empty
+        description={
+          <div>
+            <div style={{ marginBottom: 8, color: 'var(--text-soft, #999)' }}>暂无净值数据</div>
+            <Button size="small" loading={navLoading} onClick={triggerNavSync}>拉取净值</Button>
+          </div>
+        }
+        style={{ padding: 24 }}
+      />
+    )
 
   return (
     <div style={{ marginBottom: 16 }}>
@@ -261,6 +318,8 @@ export default function FundDetailModal({ code, open, onClose }: Props) {
   const [quarter, setQuarter] = useState<string | undefined>()
   const [holdings, setHoldings] = useState<HoldingItem[]>([])
   const [hLoading, setHLoading] = useState(false)
+  const holdingsSyncInFlight = useRef(false)
+  const aiInFlight = useRef(false)
 
   const loadHoldings = useCallback((c: string, q?: string) => {
     setHLoading(true)
@@ -276,6 +335,35 @@ export default function FundDetailModal({ code, open, onClose }: Props) {
       .catch(() => { setQuarters([]); setQuarter(undefined); setHoldings([]) })
       .finally(() => setHLoading(false))
   }, [])
+  const triggerHoldingsSync = useCallback(async () => {
+    if (!code || holdingsSyncInFlight.current) return
+    holdingsSyncInFlight.current = true
+    setHLoading(true)
+    try {
+      const token = localStorage.getItem(AUTH_TOKEN_KEY)
+      const resp = await fetch(`${APP_BASE}/api/fund_holdings/sync`, {
+        method: 'POST',
+        headers: { Authorization: token ? `Bearer ${token}` : '', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ codes: [code] }),
+      })
+      if (!resp.ok) {
+        const e = await resp.json().catch(() => ({}))
+        throw new Error(e.detail || `HTTP ${resp.status}`)
+      }
+      const { message: msg } = await import('antd')
+      msg.success('持仓拉取任务已提交，正在后台执行')
+      // 等待 5s 让 worker 完成，再刷新
+      await new Promise(r => setTimeout(r, 5000))
+      loadHoldings(code, quarter)
+    } catch (e: any) {
+      const { message: msg } = await import('antd')
+      msg.error(`拉取失败: ${e?.message || e}`)
+      setHLoading(false)
+    } finally {
+      holdingsSyncInFlight.current = false
+    }
+  }, [code, loadHoldings, quarter])
+
 
   useEffect(() => {
     if (!open || !code) {
@@ -290,6 +378,46 @@ export default function FundDetailModal({ code, open, onClose }: Props) {
       .finally(() => setLoading(false))
     loadHoldings(code)
   }, [open, code, loadHoldings])
+  const [aiLoading, setAiLoading] = useState(false)
+
+  const runAiAnalysis = useCallback(async () => {
+    if (!code || aiInFlight.current) return
+    aiInFlight.current = true
+    setAiLoading(true)
+    try {
+      const token = localStorage.getItem(AUTH_TOKEN_KEY)
+      const resp = await fetch(`${APP_BASE}/api/fund/${code}/ai-analyze`, {
+        method: 'POST',
+        headers: { Authorization: token ? `Bearer ${token}` : '', 'Content-Type': 'application/json' },
+      })
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}))
+        throw new Error(err.error || `HTTP ${resp.status}`)
+      }
+      // 消费 SSE 流，等待 done 事件
+      const reader = resp.body?.getReader()
+      if (!reader) throw new Error('无法读取响应流')
+      const decoder = new TextDecoder()
+      let buffer = ''
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        buffer += decoder.decode(value, { stream: true })
+        // 检查是否收到了 done 事件（SSE 格式: data: {"type":"done",...}）
+        if (buffer.includes('"type":"done"')) break
+      }
+      reader.releaseLock()
+      // 重新拉取基金详情获取 ai 字段
+      const { data: newData } = await request.get(`/fund/${code}`)
+      setData(newData as DetailData)
+    } catch (e: any) {
+      import('antd').then(({ message: msg }) => msg.error(`AI 分析失败: ${e?.message || e}`))
+    } finally {
+      aiInFlight.current = false
+      setAiLoading(false)
+    }
+  }, [code])
+
 
   const totalRatio = holdings.reduce((s, h) => s + (h.hold_ratio || 0), 0)
   // 申万一级分组键：A股用申万一级；港股无申万→归到「港股」一组。便于人工看行业分散度。
@@ -336,7 +464,7 @@ export default function FundDetailModal({ code, open, onClose }: Props) {
             {
               key: 'ai',
               label: 'AI 定性分析',
-              children: renderAiPanel(data?.ai as FundAi | null | undefined),
+              children: renderAiPanel(data?.ai as FundAi | null | undefined, runAiAnalysis, aiLoading),
             },
             {
               key: 'holdings',
@@ -361,7 +489,7 @@ export default function FundDetailModal({ code, open, onClose }: Props) {
                     )}
                   </Space>
                   {holdings.length === 0 ? (
-                    <Empty description="该报告期暂无股票持仓数据" />
+                    <Empty description={<div><div style={{ marginBottom: 8, color: 'var(--text-soft, #999)' }}>该报告期暂无股票持仓数据</div><Button size="small" loading={hLoading} onClick={triggerHoldingsSync}>拉取持仓</Button></div>} />
                   ) : (
                     <Table<HoldingItem>
                       size="small"

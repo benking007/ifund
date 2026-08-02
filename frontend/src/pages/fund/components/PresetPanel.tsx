@@ -60,8 +60,8 @@ export default function PresetPanel({
                 onClick={() => onApply(p)}
                 className="group relative flex h-full min-w-0 cursor-pointer flex-col overflow-hidden rounded-lg border p-3 transition-colors"
                 style={{
-                  borderColor: active ? token.colorPrimary : 'rgba(255,255,255,0.10)',
-                  background: active ? token.colorPrimaryBg : 'rgba(255,255,255,0.02)',
+                  borderColor: active ? token.colorPrimary : token.colorBorder,
+                  background: active ? token.colorPrimaryBg : token.colorBgContainer,
                 }}
                 title="点击应用该预设"
               >

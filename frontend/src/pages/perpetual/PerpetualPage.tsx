@@ -42,7 +42,7 @@ export default function PerpetualPage() {
   const [presets, setPresets] = useState<Preset[]>([])
   const [presetId, setPresetId] = useState<number | undefined>(() => {
     const v = localStorage.getItem('perpetual_preset')
-    return v ? +v : 1
+    return v ? +v : undefined
   })
   const [asOf, setAsOf] = useState<string | undefined>()
   const [replayStart, setReplayStart] = useState<string>('2024-01-01')
@@ -98,7 +98,8 @@ export default function PerpetualPage() {
           .catch(() => undefined)
       }
     } catch (e: unknown) {
-      message.error(`请求失败: ${(e as Error).message}`)
+      const apiErr = (e as { response?: { data?: { error?: string } } }).response?.data?.error
+      message.error(apiErr ? `请求失败: ${apiErr}` : `请求失败: ${(e as Error).message}`)
     } finally {
       setLoading(false)
     }
@@ -117,7 +118,8 @@ export default function PerpetualPage() {
         setReplayResult(res.data)
       }
     } catch (e: unknown) {
-      message.error(`回放失败: ${(e as Error).message}`)
+      const apiErr = (e as { response?: { data?: { error?: string } } }).response?.data?.error
+      message.error(apiErr ? `回放失败: ${apiErr}` : `回放失败: ${(e as Error).message}`)
     } finally {
       setReplayLoading(false)
     }

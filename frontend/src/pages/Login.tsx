@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Card, Form, Input, Tabs, message } from 'antd'
 import request from '../api/request'
+import { AUTH_TOKEN_KEY } from '../config'
 
 interface FormValues {
   username: string
@@ -23,7 +24,7 @@ export default function Login() {
         return
       }
       const { data } = await request.post('/auth/login', values)
-      localStorage.setItem('token', data.access_token)
+      localStorage.setItem(AUTH_TOKEN_KEY, data.access_token)
       message.success('登录成功')
       navigate('/')
     } catch (e: unknown) {
