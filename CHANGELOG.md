@@ -19,6 +19,18 @@
 - **部署模板**：`deploy/ifund.service` systemd 单元模板（`{{IFUND_BACKEND_DIR}}` 等占位符，机器路径不硬编码）
 - **集成文档**：`INTEGRATION.md` 说明与外部 Dashboard 的集成部署方式
 
+### 工程加固（2026-08-02 严格 CR）
+
+- **后端事务原子化（P0）**：`db/sqlite.py` 新增 `transaction()` 上下文管理器（BEGIN IMMEDIATE + savepoint 嵌套）；`holdings_crud.upsert` / `industry_crud.upsert_industry` 多步写入原子化
+- **表名白名单**：`VALID_TABLES` + `_check_table()` 六入口校验，消除表名 f-string 拼接面
+- **认证加固**：`/login` `/register` 内存滑动窗口限速（5 次/60s/IP + Retry-After）；`UserCreate.password` 最小长度 8
+- **拉取健壮性**：退避 ±30% jitter、线程局部 Session 复用、空列名漂移防护、`ProcessPool.cancel()` 返回值检查、进度每 10 只批量、并发钳制 [1,64]
+- **前端类型门禁（P0）**：21 个 TS 错误清零（6 文件），`tsc --noEmit` 0 错误
+- **前端请求统一与竞态**：新增 `rawFetch.ts`（token 注入 + 401 清 token 跳登录）；搜索 debounce；requestId 序列校验；AbortController 全覆盖（5 页面）；MirrorView AI 流旧流终止
+- **前端工具链**：eslint 补全（0 error/0 warning）；路由懒加载（主 chunk 1.86MB → 1.15KB 入口 + 分包）
+- **依赖与基线**：requirements 固定（akshare==1.18.81 / pandas==3.0.5 / requests==2.34.2）；pytest 17 用例通过
+- **索引精简**：删除冗余 `ix_fund_holdings_fund_code`；`common_days_ratio` 回测诊断字段
+
 ### 修复
 
 - **行业映射统计口径**：`industry_crud.py` 新增 `_is_a_stock()` / `_is_hk_stock()`，`stats()` / `uncovered_held()` 只统计真实 A 股 + 港股股票，排除债券、可转债、场内基金、海外股（韩股等）；未覆盖口径从虚高的 4590 条修正为真实缺口

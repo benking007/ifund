@@ -4,7 +4,7 @@
 >
 > 文档覆盖：技术架构、数据模型、接口契约、子进程拉取机制、前端状态流、业务规则、运维约束、从零复原步骤。
 >
-> 编写时项目状态：分支 `main`，最近提交 `chore: 运维脚本与部署模板（绝对路径参数化）+ 集成文档`（2026-08-02）。
+> 编写时项目状态：分支 `main`，最近提交 `fix: 补交 CR 修复（lint 清零/懒加载/后端 P2 收尾）`（2026-08-02）。
 >
 > 近期演进（2026-07 下旬 ~ 08 初）：AI 定性分析接入 agim RPC、持仓拉取并发化、行业映射口径修正与北交所补采、前端主题同步/嵌入模式——详见 [13. 近期演进](#13-近期演进2026-07-28--08-02)。
 >
@@ -27,6 +27,7 @@
 11. [关键约束与 Gotchas](#11-关键约束与-gotchas)
 12. [从零复原步骤](#12-从零复原步骤)
 13. [近期演进（2026-07-28 ~ 08-02）](#13-近期演进2026-07-28--08-02)
+14. [CR 修复与工程加固（2026-08-02）](#14-cr-修复与工程加固2026-08-02)
 
 ---
 
@@ -846,3 +847,82 @@ SQLite 启动时 `init_db()` 自动执行 `schema_sqlite.sql`（`CREATE TABLE IF
 | 行业映射 | `backend/app/stock_industry/crud/industry_crud.py`、`fetch/em_worker.py` |
 | 前端 | `frontend/src/useDashboardTheme.ts`（新增）、`embed.tsx`（新增）、`config.ts`（新增）、`routes.tsx`、`App.tsx`、`main.tsx`、`api/request.ts`、`vite.config.ts`、`pages/fund/components/FundDetailModal.tsx` |
 | 运维 | `backend/scripts/holdings_batch*.sh`（新增）、`deploy/ifund.service`（新增）、`INTEGRATION.md`（新增）、`CHANGELOG.md`（新增） |
+
+---
+
+## 14. CR 修复与工程加固（2026-08-02）
+
+本节记录 2026-08-02 严格项目审查（代码审查 + 项目级审查）后实施的工程加固。涉及后端 19 项、前端 17 项、项目级 6 项，全部通过测试（pytest 17/17 + tsc 0 错误 + lint 0 + build）。
+
+### 14.1 后端：事务原子性（P0）
+
+**背景**：CR 发现 `db/sqlite.py` 抽象层无事务 API——insert/batch_insert/update/delete 各自独立 commit，业务层多步写入无法原子化；`holdings_crud.upsert()`（先 delete 再 batch_insert）与 `industry_crud.upsert_industry()`（check-then-act）存在崩溃/并发时数据丢失、重复、source 覆盖风险。
+
+**实现**：
+
+- `db/sqlite.py` 新增 `transaction()` 上下文管理器：`BEGIN IMMEDIATE` + savepoint 嵌套（内层事务可独立回滚而不破坏外层），退出时统一 COMMIT/ROLLBACK
+- `holdings_crud.upsert()`：delete + batch_insert 包裹于 transaction()
+- `industry_crud.upsert_industry()`：check + insert/update 包裹于 transaction()
+- 表名白名单：`VALID_TABLES` frozenset（20 张表）+ `_check_table()`，select/insert/batch_insert/update/delete/count 六入口校验，非法表名抛 ValueError（消除 f-string 拼接面）
+
+**用法**：
+
+```python
+from app.db import sqlite
+with sqlite.transaction() as t:
+    t.delete("fund_holdings", eq={"fund_code": code})
+    t.batch_insert("fund_holdings", rows)
+```
+
+### 14.2 后端：认证安全（P1）
+
+- 新增 `app/common/rate_limit.py`：进程内滑动窗口限速器——`RateLimiter(limit=5, window=60)` + `retry_after()`；`/login`、`/register` 每 IP 每 60 秒 5 次，超限返回 429 + `Retry-After` 头；`threading.Lock` 保证并发安全（多 worker 进程下为进程内生效，跨进程需外部限速层）
+- `schemas.py`：`UserCreate.password` 增加 `min_length=8`
+
+### 14.3 后端：拉取健壮性与性能（P1/P2）
+
+| 项 | 文件 | 说明 |
+|----|------|------|
+| 退避 jitter | `fund_holdings/fetch/worker.py` | 重试间隔 `base * uniform(0.7, 1.3)`，避免多 worker 同步重试惊群 |
+| Session 复用 | 同上 | `_RequestsProxy` 改为线程局部 `requests.Session`，连接池复用 |
+| 空列判断 | 同上 | 债券行判断不再依赖具体列名（akshare 版本漂移防护），统一按"无数据"处理 |
+| cancel 检查 | `common/worker_base.py` | `ProcessPool.cancel()` 检查返回值，成功取消才移除任务并记录状态 |
+| 进度批量 | `stock_industry/fetch/em_worker.py` | fetch_tasks 进度每 10 只批量 UPDATE |
+| 并发钳制 | `common/worker_base.py` | `IFUND_WORKER_CONCURRENCY` 钳制到 `[1, 64]` |
+| 连接清理 | `db/sqlite.py` | 线程局部连接注册表 + `atexit` 统一关闭 |
+| 索引精简 | `schema_sqlite.sql` | 删除冗余单列索引 `ix_fund_holdings_fund_code`（复合索引前缀已覆盖），保留 3 条有效索引 |
+| 诊断字段 | `perpetual/algo/pipeline.py` | 回测交集窗口缩减时 stats 增加 `common_days_ratio` |
+
+### 14.4 前端：类型门禁（P0）
+
+**背景**：`tsc --noEmit` 21 个错误（Vite build 不做类型检查而侥幸通过），`MirrorView` 存在 `Record<string, unknown>` 直接作为 ReactNode 渲染的运行时崩溃点。
+
+**修复**：6 文件（NavTrendModal/BacktestCard/MiniNavChart/PortfolioCharts/HoldingsEditor/MirrorView）类型收敛——unknown 值渲染改类型守卫/JSON 化、props 补默认值、未使用变量删除。`tsc --noEmit` 0 错误。
+
+### 14.5 前端：请求统一与竞态（P1）
+
+- 新增 `api/rawFetch.ts`：原生 fetch 统一封装——自动注入 token；401 清 `ifund_token` 并跳转 `${APP_BASE}/login`（登录页不重复跳转）
+- `useFundData`：搜索 300ms debounce + requestId 序列校验（旧分页响应不覆盖新结果）
+- `FundDetailModal` / `NavTrendModal`：基金切换/关闭 AbortController + cleanup（含 AI 流）
+- `useScreenData`：预设加载 requestId + 队列失败自动恢复
+- `MirrorView`：启动新 AI 流前终止旧流 + 流 ID + 卸载清理
+- `Position` / `Cluster` / `Reconcile`：长任务 signal + 卸载 abort
+
+### 14.6 前端：工具链与打包（P2）
+
+- eslint 工具链补全：`eslint@^9.12` + `typescript-eslint` + `eslint-plugin-react-hooks` + `eslint-plugin-react-refresh` + `eslint.config.js`（flat config）；`npm run lint` 0 error / 0 warning
+- 路由懒加载：`routes.tsx` 与 `Dashboard.tsx` 页面组件全部 `React.lazy + Suspense`（共享 `components/Loading.tsx`）；主 chunk 1.86MB → `main.js` 1.15KB + 页面分包（最大共享异步 chunk 460KB）
+- `ConfigProvider` 主题钩子 `useDashboardTheme` 同步宿主（见 13.4）
+
+### 14.7 项目级：依赖与工程基线
+
+- `backend/requirements.txt`：关键依赖固定版本——`akshare==1.18.81`、`pandas==3.0.5`、`requests==2.34.2`（akshare 接口行为已多次随版本变化踩坑）
+- `frontend/package.json`：eslint 相关 devDependencies 补全 + `lint` 脚本可用
+- 测试：`pytest` 17 用例通过（auth/db/worker 核心路径），`pytest-timeout` 防挂起
+
+### 14.8 变更文件索引
+
+| 层 | 文件 |
+|----|------|
+| 后端 | `app/db/sqlite.py`、`app/db/__init__.py`、`app/common/rate_limit.py`（新增）、`app/common/worker_base.py`、`app/fund_holdings/crud/holdings_crud.py`、`app/fund_holdings/fetch/worker.py`、`app/stock_industry/crud/industry_crud.py`、`app/stock_industry/fetch/em_worker.py`、`app/perpetual/algo/pipeline.py`、`app/schemas.py`、`app/routers/auth.py`、`schema_sqlite.sql` |
+| 前端 | `src/api/rawFetch.ts`（新增）、`src/useFundData.ts`、`src/useScreenData.ts`、`src/pages/fund/FundDetailModal.tsx`、`src/pages/fund/NavTrendModal.tsx`、`src/pages/screen/MirrorView.tsx`、`src/pages/position/PositionView.tsx`、`src/pages/cluster/ClusterView.tsx`、`src/pages/reconcile/ReconcileView.tsx`、`src/components/Loading.tsx`（新增）、`src/routes.tsx`、`src/App.tsx`、`eslint.config.js`（新增） |
