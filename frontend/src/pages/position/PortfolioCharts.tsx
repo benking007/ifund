@@ -160,7 +160,10 @@ export default function PortfolioCharts({ portfolio }: { portfolio: Portfolio })
           <YAxis domain={['auto', 'auto']} tickFormatter={(v) => `${v}%`} width={48} tick={axisTick} />
           <Tooltip
             labelFormatter={(d) => `日期 ${d}`}
-            formatter={(v: number) => [`${v.toFixed(2)}%`, '累计收益率']}
+            formatter={(v) => {
+              const value = typeof v === 'number' ? v : Number(v ?? 0)
+              return [`${value.toFixed(2)}%`, '累计收益率']
+            }}
             contentStyle={tooltipStyle}
             labelStyle={{ color: token.colorTextSecondary }}
             itemStyle={{ color: token.colorText }}
@@ -185,7 +188,10 @@ export default function PortfolioCharts({ portfolio }: { portfolio: Portfolio })
           <YAxis domain={['auto', 0]} tickFormatter={(v) => `${v}%`} width={48} tick={axisTick} />
           <Tooltip
             labelFormatter={(d) => `日期 ${d}`}
-            formatter={(v: number) => [`${v.toFixed(2)}%`, '回撤']}
+            formatter={(v) => {
+              const value = typeof v === 'number' ? v : Number(v ?? 0)
+              return [`${value.toFixed(2)}%`, '回撤']
+            }}
             contentStyle={tooltipStyle}
             labelStyle={{ color: token.colorTextSecondary }}
             itemStyle={{ color: token.colorText }}

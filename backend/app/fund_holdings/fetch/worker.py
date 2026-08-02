@@ -14,7 +14,9 @@ os.chdir(_BACKEND_DIR)
 # pylint: disable=wrong-import-position
 import datetime
 import logging
+import random
 import re
+import threading
 import time
 
 import akshare as ak  # pylint: disable=import-error
@@ -26,9 +28,10 @@ from app.fund_holdings.crud import holdings_crud
 
 _QUARTER_RE = re.compile(r"(\d{4}).*?([1-4])\s*季度")
 _REQUEST_TIMEOUT_SECONDS = 15
-# 初次请求 + 4 次重试 = 最多 5 次尝试，退避间隔为 2/4/8/16 秒。
+# 初次请求 + 4 次重试 = 最多 5 次尝试，退避基准为 2/4/8/16 秒并加入 ±30% jitter。
 _MAX_REQUEST_RETRIES = 4
 _BACKOFF_BASE_SECONDS = 2
+_RETRY_JITTER = 0.3
 logger = logging.getLogger(__name__)
 
 
@@ -37,10 +40,18 @@ class _RequestsProxy:
 
     def __init__(self, requests_module):
         self._requests_module = requests_module
+        self._local = threading.local()
+
+    def _session(self):
+        session = getattr(self._local, "session", None)
+        if session is None:
+            session = self._requests_module.Session()
+            self._local.session = session
+        return session
 
     def get(self, *args, **kwargs):
         kwargs.setdefault("timeout", _REQUEST_TIMEOUT_SECONDS)
-        return self._requests_module.get(*args, **kwargs)
+        return self._session().get(*args, **kwargs)
 
     def __getattr__(self, name):
         return getattr(self._requests_module, name)
@@ -65,15 +76,17 @@ def _call_with_retry(label, func):
             return func()
         except KeyError:
             # AkShare 对无债券持仓的空表会在内部访问缺失列时抛出 KeyError；
-            # 这属于合法的「无数据」，由债券行转换层显式处理，其他 KeyError 继续上抛。
+            # 这属于合法的「无数据」，由债券行转换层统一处理，其他 KeyError 继续上抛。
             raise
         except Exception as exc:  # pylint: disable=broad-exception-caught
             if attempt == _MAX_REQUEST_RETRIES:
                 logger.exception("%s 最终失败（已尝试 %d 次）", label, attempt + 1)
                 raise
-            delay = _BACKOFF_BASE_SECONDS ** (attempt + 1)
+            delay = (_BACKOFF_BASE_SECONDS ** (attempt + 1)) * random.uniform(
+                1 - _RETRY_JITTER, 1 + _RETRY_JITTER
+            )
             logger.warning(
-                "%s 第 %d 次失败，将在 %d 秒后重试：%s",
+                "%s 第 %d 次失败，将在 %.2f 秒后重试：%s",
                 label, attempt + 1, delay, exc,
             )
             time.sleep(delay)
@@ -102,6 +115,7 @@ def _stock_rows(code, year, now):
 
 
 def _bond_rows(code, year, now):
+    """拉取债券持仓。若 AkShare 内部因空表触发 KeyError，视为无债券持仓。"""
     label = f"基金 {code} 债券持仓 {year}"
     try:
         frame = _call_with_retry(
@@ -109,8 +123,8 @@ def _bond_rows(code, year, now):
             lambda: ak.fund_portfolio_bond_hold_em(symbol=code, date=str(year)),
         )
     except KeyError as exc:
-        if str(exc) != "'占净值比例'":
-            raise
+        # AkShare 债券接口对无数据的基金内部访问 DataFrame 缺失列时抛出 KeyError，
+        # 不按异常文本判断具体列名（列名可能随 AkShare 版本变化）。
         logger.warning("%s 返回空债券表，按无债券持仓处理：%s", label, exc)
         return []
     rows = []

@@ -13,9 +13,14 @@ from app import db as database
 
 TABLE = "stock_industry"
 
+# ── 股票代码形态常量（纯静态规则，不依赖网络） ──
 # 统计口径只认股票代码形态，不把 fund_holdings 中被误标为 stock 的债券、
-# 场内基金或海外证券混入持仓股票集合。这里使用静态规则，避免 stats() 每次
-# 请求都拉取 akshare 的 A 股全集。
+# 场内基金或海外证券混入持仓股票集合。
+# 维护方式：
+#   1. 新增交易所/代码段 → 补对应前缀元组
+#   2. 碰撞（6 位数字海外代码 vs A 股 000 段） → 补 _KNOWN_OVERSEAS_CODES
+#   3. 不要在此处引入 akshare/网络调用，保持 stats() 纯本地无 I/O
+
 _A_SHARE_PREFIXES = (
     "000", "001", "002", "003",       # 深市主板
     "300", "301", "302",               # 创业板
@@ -27,9 +32,8 @@ _BJ_STOCK_PREFIXES = (
     "838", "839", "870", "871", "872", "873", "874", "875", "876", "877",
     "878", "879", "880", "881", "882", "883", "889",
 )
-# 6 位纯数字的海外代码与深市 000 段发生碰撞；这些是当前持仓中已知的
-# KRX 代码，不能靠前缀单独排除。新增同类代码时应补到这个静态黑名单，
-# 而不是让 stats() 访问网络。
+# 6 位纯数字的海外代码与深市 000 段发生形态碰撞。此为当前持仓中已知的 KRX 代码；
+# 新增同类碰撞时补到此集合（frozenset 不可变，避免误改），不要靠前缀单独排除。
 _KNOWN_OVERSEAS_CODES = frozenset({
     "000660", "005930", "009150", "042700", "055550", "105560",
 })
@@ -152,24 +156,25 @@ def upsert_industry(code, name, *, market=None, sw=None, em=None, source=""):
 
     ``sw`` 为 ``(l1, l2, l3)`` 三元组（申万采集时给），``em`` 为东财行业名（兜底时给）。
     """
-    existing = database.select_one(TABLE, {"stock_code": f"eq.{code}"})
-    if existing and existing.get("manual"):
-        return  # 人工修正过，采集不覆盖
-    fields = {"updated_at": _now()}
-    if name:
-        fields["stock_name"] = name
-    if market:
-        fields["market"] = market
-    if sw is not None:
-        fields["sw_l1"], fields["sw_l2"], fields["sw_l3"] = sw
-    if em is not None:
-        fields["em_industry"] = em
-    if source:
-        fields["source"] = source
-    if existing:
-        database.update(TABLE, {"stock_code": code}, fields)
-    else:
-        database.insert(TABLE, {"stock_code": code, "manual": 0, **fields})
+    with database.get_db().transaction():
+        existing = database.select_one(TABLE, {"stock_code": f"eq.{code}"})
+        if existing and existing.get("manual"):
+            return  # 人工修正过，采集不覆盖
+        fields = {"updated_at": _now()}
+        if name:
+            fields["stock_name"] = name
+        if market:
+            fields["market"] = market
+        if sw is not None:
+            fields["sw_l1"], fields["sw_l2"], fields["sw_l3"] = sw
+        if em is not None:
+            fields["em_industry"] = em
+        if source:
+            fields["source"] = source
+        if existing:
+            database.update(TABLE, {"stock_code": code}, fields)
+        else:
+            database.insert(TABLE, {"stock_code": code, "manual": 0, **fields})
     _invalidate_cache()
 
 

@@ -1,14 +1,14 @@
 """Pydantic schema：账户与 Token 的输入/输出结构。"""
 from __future__ import annotations
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class UserCreate(BaseModel):
     """注册/登录入参。"""
 
     username: str
-    password: str
+    password: str = Field(..., min_length=8)
 
 
 class UserOut(BaseModel):

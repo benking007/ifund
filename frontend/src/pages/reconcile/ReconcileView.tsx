@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Alert, Button, Card, Empty, Segmented, Space, Spin, Tag, Tooltip, message } from 'antd'
 import { ClockCircleOutlined, ReconciliationOutlined } from '@ant-design/icons'
 import request from '../../api/request'
@@ -20,10 +20,15 @@ export default function ReconcileView({
   const [sellOutside, setSellOutside] = useState(true)
   // 开关二：赛道内超配是否可减（true=削峰填谷 / false=不减只往上加）。默认可减（最省）。
   const [trimOverflow, setTrimOverflow] = useState(true)
+  const abortRef = useRef<AbortController | null>(null)
 
   // 切换实盘后清空旧结果
   useEffect(() => {
     setResult(null)
+    return () => {
+      abortRef.current?.abort()
+      abortRef.current = null
+    }
   }, [portfolioId])
 
   const run = useCallback(async () => {
@@ -33,18 +38,24 @@ export default function ReconcileView({
     }
     setLoading(true)
     setResult(null)
+    abortRef.current?.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
     try {
       const { data } = await request.post<ReconResult>('/reconcile/run', {
         portfolio_id: portfolioId,
         band,
         sell_outside: sellOutside,
         trim_overflow: trimOverflow,
-      })
-      setResult(data)
+      }, { signal: controller.signal })
+      if (!controller.signal.aborted) setResult(data)
     } catch {
-      message.error('生成操作指南失败')
+      if (!controller.signal.aborted) message.error('生成操作指南失败')
     } finally {
-      setLoading(false)
+      if (abortRef.current === controller) {
+        abortRef.current = null
+        setLoading(false)
+      }
     }
   }, [portfolioId, band, sellOutside, trimOverflow])
 

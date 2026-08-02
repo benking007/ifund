@@ -12,6 +12,7 @@ import type {
 } from '../types'
 
 const POLL_INTERVAL = 3000
+const SEARCH_DEBOUNCE_MS = 300
 
 /** 规范化筛选条件（去空字段 + 排序），用于稳定比较「当前条件」与「预设条件」是否一致。 */
 function normalizeFilters(f: Filters): string {
@@ -79,10 +80,12 @@ export function useFundData() {
   const pollRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const holdingsPollRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const navPollRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const fetchRequestIdRef = useRef(0)
   // 各模块的「立即探测一次」函数，供发起/终止任务后重启轮询
   const tickRefs = useRef<Record<string, () => void>>({})
 
   const fetchFunds = useCallback(async () => {
+    const requestId = ++fetchRequestIdRef.current
     setLoading(true)
     try {
       const params: Record<string, string> = {
@@ -98,12 +101,14 @@ export function useFundData() {
         params.order_by = `${s.field}:${s.order}`
       }
       const { data } = await request.get('/fund/list', { params })
+      if (requestId !== fetchRequestIdRef.current) return
       setFunds(data.items ?? [])
       setTotal(data.total ?? 0)
     } catch {
+      if (requestId !== fetchRequestIdRef.current) return
       message.error('加载基金列表失败')
     } finally {
-      setLoading(false)
+      if (requestId === fetchRequestIdRef.current) setLoading(false)
     }
   }, [filters, page, pageSize, sorters])
 
@@ -176,7 +181,8 @@ export function useFundData() {
   }, [buildPoller])
 
   useEffect(() => {
-    fetchFunds()
+    const timer = setTimeout(() => { void fetchFunds() }, SEARCH_DEBOUNCE_MS)
+    return () => clearTimeout(timer)
   }, [fetchFunds])
 
   useEffect(() => {

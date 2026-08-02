@@ -12,7 +12,8 @@ import {
   YAxis,
 } from 'recharts'
 import request from '../../../api/request'
-import { APP_BASE, AUTH_TOKEN_KEY } from '../../../config'
+import rawFetch from '../../../api/rawFetch'
+import { APP_BASE } from '../../../config'
 import type { HoldingItem } from '../types'
 import {
   CONC_META, CONFIDENCE_META, LUCK_META, SCALE_RISK_META, STYLE_META, metaOf, parseTags,
@@ -73,6 +74,18 @@ const PERF_FIELDS: [string, string][] = [
 function fmt(v: unknown): string {
   if (v === null || v === undefined || v === '') return '-'
   return String(v)
+}
+
+function waitFor(ms: number, signal: AbortSignal): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(resolve, ms)
+    const onAbort = () => {
+      clearTimeout(timer)
+      reject(new DOMException('Aborted', 'AbortError'))
+    }
+    if (signal.aborted) onAbort()
+    else signal.addEventListener('abort', onAbort, { once: true })
+  })
 }
 
 function enumTag(map: Record<string, { label: string; color: string }>, v: string | null | undefined) {
@@ -151,7 +164,7 @@ function renderAiPanel(ai: FundAi | null | undefined, onRunAi: () => void, aiLoa
   )
 }
 
-function NavChart({ code }: { code: string }) {
+function NavChart({ code, enabled }: { code: string; enabled: boolean }) {
   const { token } = theme.useToken()
   const [data, setData] = useState<NavPoint[]>([])
   const [loading, setLoading] = useState(false)
@@ -159,17 +172,21 @@ function NavChart({ code }: { code: string }) {
   const [active, setActive] = useState<NavPoint | null>(null)
   const [navLoading, setNavLoading] = useState(false)
   const navSyncInFlight = useRef(false)
+  const navAbortRef = useRef<AbortController | null>(null)
 
   const triggerNavSync = useCallback(async () => {
     if (!code || navSyncInFlight.current) return
     navSyncInFlight.current = true
     setNavLoading(true)
+    navAbortRef.current?.abort()
+    const controller = new AbortController()
+    navAbortRef.current = controller
     try {
-      const token = localStorage.getItem(AUTH_TOKEN_KEY)
-      const resp = await fetch(`${APP_BASE}/api/fund_nav/sync`, {
+      const resp = await rawFetch(`${APP_BASE}/api/fund_nav/sync`, {
         method: 'POST',
-        headers: { Authorization: token ? `Bearer ${token}` : '', 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ codes: [code] }),
+        signal: controller.signal,
       })
       if (!resp.ok) {
         const e = await resp.json().catch(() => ({}))
@@ -177,31 +194,57 @@ function NavChart({ code }: { code: string }) {
       }
       const { message: msg } = await import('antd')
       msg.success('净值拉取任务已提交，正在后台执行')
-      await new Promise(r => setTimeout(r, 5000))
+      await waitFor(5000, controller.signal)
       setLoading(true)
-      request
-        .get<{ items: NavPoint[] }>(`/fund/${code}/nav`, { params: { limit: 800 } })
-        .then(({ data: d }) => setData(d.items ?? []))
-        .catch(() => setData([]))
-        .finally(() => setLoading(false))
+      const { data: d } = await request.get<{ items: NavPoint[] }>(`/fund/${code}/nav`, {
+        params: { limit: 800 },
+        signal: controller.signal,
+      })
+      if (!controller.signal.aborted) setData(d.items ?? [])
     } catch (e: any) {
       const { message: msg } = await import('antd')
-      msg.error(`拉取失败: ${e?.message || e}`)
+      if (!controller.signal.aborted) msg.error(`拉取失败: ${e?.message || e}`)
     } finally {
       navSyncInFlight.current = false
-      setNavLoading(false)
+      if (navAbortRef.current === controller) {
+        navAbortRef.current = null
+        setNavLoading(false)
+      }
     }
   }, [code])
 
   useEffect(() => {
+    const controller = new AbortController()
+    navAbortRef.current?.abort()
+    navAbortRef.current = controller
+    if (!enabled) {
+      setLoading(false)
+      return () => {
+        controller.abort()
+        if (navAbortRef.current === controller) navAbortRef.current = null
+      }
+    }
     setLoading(true)
     setActive(null)
     request
-      .get<{ items: NavPoint[] }>(`/fund/${code}/nav`, { params: { limit: 800 } })
-      .then(({ data: d }) => setData(d.items ?? []))
-      .catch(() => setData([]))
-      .finally(() => setLoading(false))
-  }, [code])
+      .get<{ items: NavPoint[] }>(`/fund/${code}/nav`, {
+        params: { limit: 800 },
+        signal: controller.signal,
+      })
+      .then(({ data: d }) => {
+        if (!controller.signal.aborted) setData(d.items ?? [])
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setData([])
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false)
+      })
+    return () => {
+      controller.abort()
+      if (navAbortRef.current === controller) navAbortRef.current = null
+    }
+  }, [code, enabled])
 
   const sliced = useMemo(() => {
     const series = data.filter((p) => Number.isFinite(p.nav))
@@ -320,31 +363,52 @@ export default function FundDetailModal({ code, open, onClose }: Props) {
   const [hLoading, setHLoading] = useState(false)
   const holdingsSyncInFlight = useRef(false)
   const aiInFlight = useRef(false)
+  const detailAbortRef = useRef<AbortController | null>(null)
+  const holdingsAbortRef = useRef<AbortController | null>(null)
+  const aiAbortRef = useRef<AbortController | null>(null)
 
   const loadHoldings = useCallback((c: string, q?: string) => {
+    holdingsAbortRef.current?.abort()
+    const controller = new AbortController()
+    holdingsAbortRef.current = controller
     setHLoading(true)
     request
       .get<{ quarters: string[]; quarter: string | null; holdings: HoldingItem[] }>(
-        `/fund/${c}/holdings`, { params: q ? { quarter: q } : {} },
+        `/fund/${c}/holdings`, { params: q ? { quarter: q } : {}, signal: controller.signal },
       )
       .then((resp) => {
+        if (controller.signal.aborted) return
         setQuarters(resp.data.quarters ?? [])
         setQuarter(resp.data.quarter ?? undefined)
         setHoldings(resp.data.holdings ?? [])
       })
-      .catch(() => { setQuarters([]); setQuarter(undefined); setHoldings([]) })
-      .finally(() => setHLoading(false))
+      .catch(() => {
+        if (!controller.signal.aborted) {
+          setQuarters([])
+          setQuarter(undefined)
+          setHoldings([])
+        }
+      })
+      .finally(() => {
+        if (holdingsAbortRef.current === controller) {
+          holdingsAbortRef.current = null
+          setHLoading(false)
+        }
+      })
   }, [])
   const triggerHoldingsSync = useCallback(async () => {
     if (!code || holdingsSyncInFlight.current) return
     holdingsSyncInFlight.current = true
     setHLoading(true)
+    holdingsAbortRef.current?.abort()
+    const controller = new AbortController()
+    holdingsAbortRef.current = controller
     try {
-      const token = localStorage.getItem(AUTH_TOKEN_KEY)
-      const resp = await fetch(`${APP_BASE}/api/fund_holdings/sync`, {
+      const resp = await rawFetch(`${APP_BASE}/api/fund_holdings/sync`, {
         method: 'POST',
-        headers: { Authorization: token ? `Bearer ${token}` : '', 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ codes: [code] }),
+        signal: controller.signal,
       })
       if (!resp.ok) {
         const e = await resp.json().catch(() => ({}))
@@ -353,30 +417,54 @@ export default function FundDetailModal({ code, open, onClose }: Props) {
       const { message: msg } = await import('antd')
       msg.success('持仓拉取任务已提交，正在后台执行')
       // 等待 5s 让 worker 完成，再刷新
-      await new Promise(r => setTimeout(r, 5000))
+      await waitFor(5000, controller.signal)
       loadHoldings(code, quarter)
     } catch (e: any) {
       const { message: msg } = await import('antd')
-      msg.error(`拉取失败: ${e?.message || e}`)
-      setHLoading(false)
+      if (!controller.signal.aborted) {
+        msg.error(`拉取失败: ${e?.message || e}`)
+        if (holdingsAbortRef.current === controller) setHLoading(false)
+      }
     } finally {
       holdingsSyncInFlight.current = false
+      if (holdingsAbortRef.current === controller) holdingsAbortRef.current = null
     }
   }, [code, loadHoldings, quarter])
 
 
   useEffect(() => {
+    const controller = new AbortController()
+    detailAbortRef.current?.abort()
+    detailAbortRef.current = controller
     if (!open || !code) {
       setData(null); setQuarters([]); setQuarter(undefined); setHoldings([])
-      return
+      setLoading(false)
+      return () => {
+        controller.abort()
+        if (detailAbortRef.current === controller) detailAbortRef.current = null
+        holdingsAbortRef.current?.abort()
+        aiAbortRef.current?.abort()
+      }
     }
     setLoading(true)
     request
-      .get(`/fund/${code}`)
-      .then((resp) => setData(resp.data))
-      .catch(() => setData(null))
-      .finally(() => setLoading(false))
+      .get(`/fund/${code}`, { signal: controller.signal })
+      .then((resp) => {
+        if (!controller.signal.aborted) setData(resp.data)
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setData(null)
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false)
+      })
     loadHoldings(code)
+    return () => {
+      controller.abort()
+      if (detailAbortRef.current === controller) detailAbortRef.current = null
+      holdingsAbortRef.current?.abort()
+      aiAbortRef.current?.abort()
+    }
   }, [open, code, loadHoldings])
   const [aiLoading, setAiLoading] = useState(false)
 
@@ -384,11 +472,14 @@ export default function FundDetailModal({ code, open, onClose }: Props) {
     if (!code || aiInFlight.current) return
     aiInFlight.current = true
     setAiLoading(true)
+    aiAbortRef.current?.abort()
+    const controller = new AbortController()
+    aiAbortRef.current = controller
     try {
-      const token = localStorage.getItem(AUTH_TOKEN_KEY)
-      const resp = await fetch(`${APP_BASE}/api/fund/${code}/ai-analyze`, {
+      const resp = await rawFetch(`${APP_BASE}/api/fund/${code}/ai-analyze`, {
         method: 'POST',
-        headers: { Authorization: token ? `Bearer ${token}` : '', 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
       })
       if (!resp.ok) {
         const err = await resp.json().catch(() => ({}))
@@ -402,19 +493,25 @@ export default function FundDetailModal({ code, open, onClose }: Props) {
       while (true) {
         const { done, value } = await reader.read()
         if (done) break
+        if (controller.signal.aborted) return
         buffer += decoder.decode(value, { stream: true })
         // 检查是否收到了 done 事件（SSE 格式: data: {"type":"done",...}）
         if (buffer.includes('"type":"done"')) break
       }
       reader.releaseLock()
       // 重新拉取基金详情获取 ai 字段
-      const { data: newData } = await request.get(`/fund/${code}`)
-      setData(newData as DetailData)
+      const { data: newData } = await request.get(`/fund/${code}`, { signal: controller.signal })
+      if (!controller.signal.aborted) setData(newData as DetailData)
     } catch (e: any) {
-      import('antd').then(({ message: msg }) => msg.error(`AI 分析失败: ${e?.message || e}`))
+      if (!controller.signal.aborted) {
+        import('antd').then(({ message: msg }) => msg.error(`AI 分析失败: ${e?.message || e}`))
+      }
     } finally {
       aiInFlight.current = false
-      setAiLoading(false)
+      if (aiAbortRef.current === controller) {
+        aiAbortRef.current = null
+        setAiLoading(false)
+      }
     }
   }, [code])
 
@@ -437,7 +534,7 @@ export default function FundDetailModal({ code, open, onClose }: Props) {
               label: '基础信息',
               children: (
                 <>
-                  {code && <NavChart code={code} />}
+                  {code && <NavChart code={code} enabled={open} />}
                   <Descriptions size="small" column={2} bordered>
                     {BASIC_FIELDS.map(([k, label]) => (
                       <Descriptions.Item key={k} label={label}>

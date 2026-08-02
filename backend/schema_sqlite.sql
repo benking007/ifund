@@ -143,12 +143,12 @@ CREATE TABLE IF NOT EXISTS fund_holdings (
     fetch_time TEXT,
     UNIQUE (fund_code, quarter, holding_type, asset_code)
 );
-CREATE INDEX IF NOT EXISTS ix_fund_holdings_fund_code ON fund_holdings (fund_code);
+-- fund_code 单列索引已移除：ix_fund_holdings_fund_type 前缀列覆盖所有 fund_code 等值查询。
 CREATE INDEX IF NOT EXISTS ix_fund_holdings_quarter ON fund_holdings (quarter);
 CREATE INDEX IF NOT EXISTS ix_fund_holdings_fund_type
     ON fund_holdings (fund_code, holding_type, quarter, asset_code);
 -- 覆盖索引：行业映射页按 (holding_type, asset_code) 去重持仓股票，带上 asset_name 可全程走索引，
--- 免去对 180 万行 fund_holdings 的全表扫 + 临时 B-tree 去重（held_codes / list_page 下沉 JOIN 用）。
+-- 免去对 fund_holdings 的全表扫 + 临时 B-tree 去重（held_codes / list_page 下沉 JOIN 用）。
 CREATE INDEX IF NOT EXISTS ix_fund_holdings_ht_ac ON fund_holdings (holding_type, asset_code, asset_name);
 
 CREATE TABLE IF NOT EXISTS fund_nav (

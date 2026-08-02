@@ -21,11 +21,45 @@
 """
 from __future__ import annotations
 
+import atexit
 import re
 import sqlite3
 import threading
+from collections.abc import Iterator
+from contextlib import contextmanager
 
 from .base import Database, UniqueViolation
+
+# ── 表名白名单：仅允许 schema_sqlite.sql 中已定义的表。新增表时同步更新本清单。 ──
+VALID_TABLES: frozenset[str] = frozenset({
+    "users",
+    "api_tokens",
+    "funds",
+    "fund_types",
+    "query_presets",
+    "fund_snapshots",
+    "fund_details",
+    "fetch_tasks",
+    "trade_dates",
+    "fund_holdings",
+    "fund_nav",
+    "fund_cum_return",
+    "fund_manager_tenure",
+    "stock_industry",
+    "portfolios",
+    "user_holdings",
+    "holding_txns",
+    "fund_ai_analysis",
+    "app_settings",
+    "perpetual_portfolio",
+})
+
+
+def _check_table(table: str) -> None:
+    """表名白名单校验：不在 VALID_TABLES 中则拒绝，防止 SQL 注入。"""
+    if table not in VALID_TABLES:
+        raise ValueError(f"非法表名: {table}")
+
 
 # 可按 fund_details 列排序的白名单（list_funds_with_details 用）
 SORTABLE_DETAIL = {
@@ -182,6 +216,9 @@ class SqliteDatabase(Database):
     def __init__(self, db_path: str):
         self._db_path = db_path
         self._local = threading.local()
+        self._connections: list[sqlite3.Connection] = []
+        self._connections_lock = threading.Lock()
+        atexit.register(self._close_connections)
 
     def _conn(self) -> sqlite3.Connection:
         conn = getattr(self._local, "conn", None)
@@ -190,10 +227,64 @@ class SqliteDatabase(Database):
             conn.row_factory = sqlite3.Row
             conn.execute("PRAGMA journal_mode=WAL")
             conn.execute("PRAGMA busy_timeout=30000")
+            with self._connections_lock:
+                self._connections.append(conn)
             self._local.conn = conn
         return conn
 
+    def _close_connections(self) -> None:
+        with self._connections_lock:
+            connections = self._connections
+            self._connections = []
+        for conn in connections:
+            try:
+                conn.close()
+            except sqlite3.Error:
+                pass
+
+    def _in_transaction(self) -> bool:
+        return getattr(self._local, "transaction_depth", 0) > 0
+
+    @contextmanager
+    def transaction(self) -> Iterator[sqlite3.Connection]:
+        """在当前线程的连接上执行原子事务。
+
+        使用 ``BEGIN IMMEDIATE`` 在读-改-写前取得 SQLite 写锁，配合连接上的
+        ``busy_timeout`` 串行化并发写事务；嵌套调用使用 savepoint。事务内的
+        CRUD 方法不会自行提交，异常时由这里统一回滚。
+        """
+        conn = self._conn()
+        depth = getattr(self._local, "transaction_depth", 0)
+        if depth:
+            savepoint = f"sqlite_nested_{depth}"
+            conn.execute(f"SAVEPOINT {savepoint}")
+            self._local.transaction_depth = depth + 1
+            try:
+                yield conn
+            except BaseException:
+                conn.execute(f"ROLLBACK TO SAVEPOINT {savepoint}")
+                conn.execute(f"RELEASE SAVEPOINT {savepoint}")
+                raise
+            else:
+                conn.execute(f"RELEASE SAVEPOINT {savepoint}")
+            finally:
+                self._local.transaction_depth = depth
+            return
+
+        conn.execute("BEGIN IMMEDIATE")
+        self._local.transaction_depth = 1
+        try:
+            yield conn
+        except BaseException:
+            conn.rollback()
+            raise
+        else:
+            conn.commit()
+        finally:
+            self._local.transaction_depth = 0
+
     def select(self, table: str, params=None) -> list[dict]:
+        _check_table(table)
         c = _build_clauses(params)
         sql = f'SELECT {c["select"]} FROM "{table}"'
         if c["where"]:
@@ -208,6 +299,7 @@ class SqliteDatabase(Database):
         return [dict(row) for row in cur.fetchall()]
 
     def insert(self, table: str, data: dict) -> dict:
+        _check_table(table)
         cols = list(data.keys())
         col_sql = ",".join(f'"{col}"' for col in cols)
         placeholders = ",".join("?" * len(cols))
@@ -217,9 +309,11 @@ class SqliteDatabase(Database):
                 f'INSERT INTO "{table}" ({col_sql}) VALUES ({placeholders})',
                 [data[col] for col in cols],
             )
-            conn.commit()
+            if not self._in_transaction():
+                conn.commit()
         except sqlite3.IntegrityError as exc:
-            conn.rollback()
+            if not self._in_transaction():
+                conn.rollback()
             raise UniqueViolation(str(exc)) from exc
         row = conn.execute(
             f'SELECT * FROM "{table}" WHERE rowid = ?', [cur.lastrowid]
@@ -227,6 +321,7 @@ class SqliteDatabase(Database):
         return dict(row) if row else {**data, "id": cur.lastrowid}
 
     def batch_insert(self, table: str, rows: list[dict], batch_size: int = 500) -> None:
+        _check_table(table)
         if not rows:
             return
         cols = list(rows[0].keys())
@@ -234,12 +329,19 @@ class SqliteDatabase(Database):
         placeholders = ",".join("?" * len(cols))
         sql = f'INSERT OR REPLACE INTO "{table}" ({col_sql}) VALUES ({placeholders})'
         conn = self._conn()
-        for i in range(0, len(rows), batch_size):
-            chunk = rows[i:i + batch_size]
-            conn.executemany(sql, [[row.get(col) for col in cols] for row in chunk])
-        conn.commit()
+        try:
+            for i in range(0, len(rows), batch_size):
+                chunk = rows[i:i + batch_size]
+                conn.executemany(sql, [[row.get(col) for col in cols] for row in chunk])
+        except BaseException:
+            if not self._in_transaction():
+                conn.rollback()
+            raise
+        if not self._in_transaction():
+            conn.commit()
 
     def update(self, table: str, filters: dict, data: dict) -> None:
+        _check_table(table)
         set_sql = ", ".join(f'"{col}" = ?' for col in data)
         sql = f'UPDATE "{table}" SET {set_sql}'
         params = list(data.values())
@@ -247,20 +349,34 @@ class SqliteDatabase(Database):
             sql += " WHERE " + " AND ".join(f'"{col}" = ?' for col in filters)
             params += list(filters.values())
         conn = self._conn()
-        conn.execute(sql, params)
-        conn.commit()
+        try:
+            conn.execute(sql, params)
+        except BaseException:
+            if not self._in_transaction():
+                conn.rollback()
+            raise
+        if not self._in_transaction():
+            conn.commit()
 
     def delete(self, table: str, filters: dict | None = None) -> None:
+        _check_table(table)
         sql = f'DELETE FROM "{table}"'
         params: list = []
         if filters:
             sql += " WHERE " + " AND ".join(f'"{col}" = ?' for col in filters)
             params = list(filters.values())
         conn = self._conn()
-        conn.execute(sql, params)
-        conn.commit()
+        try:
+            conn.execute(sql, params)
+        except BaseException:
+            if not self._in_transaction():
+                conn.rollback()
+            raise
+        if not self._in_transaction():
+            conn.commit()
 
     def count(self, table: str, params=None) -> int:
+        _check_table(table)
         c = _build_clauses(params)
         sql = f'SELECT COUNT(*) AS n FROM "{table}"'
         if c["where"]:
@@ -293,6 +409,8 @@ class SqliteDatabase(Database):
                 where_parts.append(clause["where"])
                 where_params.extend(clause["where_params"])
         where_sql = (" WHERE " + " AND ".join(where_parts)) if where_parts else ""
+        # base 是模块内硬编码的三表 JOIN，表名来自 schema 定义，非用户输入；
+        # 三表名均已在 VALID_TABLES 白名单中。
         base = ('FROM "funds" f '
                 'LEFT JOIN "fund_details" d ON f."code" = d."fund_code" '
                 'LEFT JOIN "fund_ai_analysis" a ON f."code" = a."fund_code"')
@@ -311,6 +429,7 @@ class SqliteDatabase(Database):
         # held：持仓股票去重（带簡称），走 (holding_type, asset_code, asset_name) 覆盖索引，免全表扫。
         # m：LEFT JOIN 行业映射后派生 market（缺映射按代码形态兜底）/ covered（有申万三级或东财）。
         # 末层再算 label（覆盖时取 申万三级→二级→东财），并把过滤/排序/分页全交给 SQL。
+        # base 是模块内硬编码的 CTE 查询，所有表名来自 schema 定义，非用户输入。
         base = """
             WITH held AS (
                 SELECT asset_code AS stock_code, MIN(asset_name) AS held_name
@@ -378,6 +497,7 @@ class SqliteDatabase(Database):
 
     def list_manager_summary(self, *, keyword="", coverage="all", preset_id=None,
                              skip=0, limit=50, order_field="code", order_dir="asc"):
+        # base 是模块内硬编码的三表 JOIN，表名来自 schema 定义，非用户输入。
         base = ('FROM "funds" f '
                 'LEFT JOIN "fund_details" d ON f."code" = d."fund_code" '
                 'LEFT JOIN "fund_manager_tenure" t '

@@ -30,11 +30,13 @@ export function useScreenData(presetId: number | null, presets: QueryPreset[]) {
   // 写预设的串行队列 + 在途计数：保证多次写按序落库互不覆盖，且全部完成后只刷新/联动一次
   const queueRef = useRef<Promise<void>>(Promise.resolve())
   const pendingRef = useRef(0)
+  const loadRequestIdRef = useRef(0)
+  const loadAbortRef = useRef<AbortController | null>(null)
 
   // 镜像基金 = 预设「全集」：实时筛选一律不套用人工过滤名单(exclude_codes)。
   // 过滤名单只是事后标记——由 MirrorView 据此把全集拆「有效镜像/已过滤」两块，
   // 并由 downstream 聚类/仓位用 snapshot_items(with_exclude) 排除。故重新拉取镜像不会清空/削减过滤名单。
-  const runScreen = useCallback(async (preset: QueryPreset) => {
+  const runScreen = useCallback(async (preset: QueryPreset, signal?: AbortSignal) => {
     const params: Record<string, string> = {
       ...buildFilterParams({ ...(preset.filters ?? {}), exclude_codes: [] }),
       skip: '0',
@@ -43,37 +45,52 @@ export function useScreenData(presetId: number | null, presets: QueryPreset[]) {
       attach_nav: '1',
       attach_ai: '1',
     }
-    const { data } = await request.get('/fund/list', { params })
+    const { data } = await request.get('/fund/list', { params, signal })
     return (data.items ?? []) as FundItem[]
   }, [])
 
-  const loadSnapshot = useCallback(async (id: number): Promise<Snapshot | null> => {
-    const { data } = await request.get(`/fund/presets/${id}/snapshot`)
+  const loadSnapshot = useCallback(async (id: number, signal?: AbortSignal, requestId?: number): Promise<Snapshot | null> => {
+    const { data } = await request.get(`/fund/presets/${id}/snapshot`, { signal })
     const snap = (data.snapshot ?? null) as Snapshot | null
-    setSnapshot(snap)
+    if (requestId == null || requestId === loadRequestIdRef.current) setSnapshot(snap)
     return snap
   }, [])
 
   const load = useCallback(async () => {
+    const requestId = ++loadRequestIdRef.current
+    loadAbortRef.current?.abort()
     if (presetId == null) {
       setLatest([])
       setSnapshot(null)
       setExcluded([])
+      setLoading(false)
       return
     }
     const preset = presets.find((p) => p.id === presetId)
-    if (!preset) return
+    if (!preset) {
+      setLoading(false)
+      return
+    }
+    const controller = new AbortController()
+    loadAbortRef.current = controller
     setLoading(true)
     try {
       // 先取快照（含权威过滤名单），再据此实时筛选 latest，保证两者排除口径一致
-      const snap = await loadSnapshot(presetId)
+      const snap = await loadSnapshot(presetId, controller.signal, requestId)
+      if (requestId !== loadRequestIdRef.current) return
       const exCodes = snap?.excluded_codes ?? preset.filters?.exclude_codes ?? []
       setExcluded(exCodes)
-      setLatest(await runScreen(preset))
+      const items = await runScreen(preset, controller.signal)
+      if (requestId !== loadRequestIdRef.current) return
+      setLatest(items)
     } catch {
+      if (requestId !== loadRequestIdRef.current || controller.signal.aborted) return
       message.error('筛选失败')
     } finally {
-      setLoading(false)
+      if (requestId === loadRequestIdRef.current) {
+        setLoading(false)
+        if (loadAbortRef.current === controller) loadAbortRef.current = null
+      }
     }
   }, [presetId, presets, runScreen, loadSnapshot])
 
@@ -92,29 +109,45 @@ export function useScreenData(presetId: number | null, presets: QueryPreset[]) {
       if (preset.filters) preset.filters.exclude_codes = nextCodes
       pendingRef.current += 1
       const nextFilters = { ...(preset.filters ?? {}), exclude_codes: nextCodes }
-      queueRef.current = queueRef.current
+      const persist = queueRef.current
+        .catch(() => undefined)
         .then(() => request.put(`/fund/presets/${presetId}`, { filters: nextFilters }))
         .then(() => undefined)
-      return queueRef.current
-        .then(async () => {
+      // Keep the tail usable after a rejected request; the current operation still
+      // observes its own rejection below and can reconcile the optimistic state.
+      queueRef.current = persist.catch(() => undefined)
+      const reconcile = async () => {
+        try {
+          const snap = await loadSnapshot(presetId)   // 失败后回拉后端真实名单纠正乐观 UI
+          const real = snap?.excluded_codes ?? []
+          setExcluded(real)
+          if (preset.filters) preset.filters.exclude_codes = real
+          setLatest(await runScreen(preset))
+        } catch {
+          // Keep the queue resolved even when the recovery request also fails.
+        }
+      }
+      return persist.then(
+        async () => {
           pendingRef.current -= 1
           if (pendingRef.current !== 0) return false  // 非队尾：等最后一次统一刷新/联动
-          await loadSnapshot(presetId)
-          setLatest(await runScreen(preset))
-          return true
-        })
-        .catch(async () => {
-          pendingRef.current -= 1
-          if (pendingRef.current === 0) {
-            const snap = await loadSnapshot(presetId)   // 失败后回拉后端真实名单纠正乐观 UI
-            const real = snap?.excluded_codes ?? []
-            setExcluded(real)
-            if (preset.filters) preset.filters.exclude_codes = real
+          try {
+            await loadSnapshot(presetId)
             setLatest(await runScreen(preset))
+            return true
+          } catch {
+            await reconcile()
+            message.error('更新过滤名单失败')
+            return false
           }
+        },
+        async () => {
+          pendingRef.current -= 1
+          if (pendingRef.current === 0) await reconcile()
           message.error('更新过滤名单失败')
           return false
-        })
+        },
+      )
     },
     [presetId, presets, runScreen, loadSnapshot],
   )
@@ -158,6 +191,11 @@ export function useScreenData(presetId: number | null, presets: QueryPreset[]) {
   useEffect(() => {
     load()
   }, [load])
+
+  useEffect(() => () => {
+    loadRequestIdRef.current += 1
+    loadAbortRef.current?.abort()
+  }, [])
 
   return {
     latest, snapshot, loading, saving, refresh: load, saveMirror,

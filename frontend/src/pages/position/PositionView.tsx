@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useImperativeHandle, useState, forwardRef } from 'react'
+import { useCallback, useEffect, useImperativeHandle, useRef, useState, forwardRef } from 'react'
 import { Alert, Button, Card, Empty, Segmented, Space, Spin, Table, Tag, Tooltip, message } from 'antd'
 import { ClockCircleOutlined, CopyOutlined, ExperimentOutlined, FundOutlined } from '@ant-design/icons'
 import request from '../../api/request'
@@ -31,6 +31,8 @@ const PositionView = forwardRef<
   const [btLoading, setBtLoading] = useState(false)
   // 点击代表基金名称弹出的基金详情模态框
   const [detailCode, setDetailCode] = useState<string | null>(null)
+  const runAbortRef = useRef<AbortController | null>(null)
+  const backtestAbortRef = useRef<AbortController | null>(null)
 
   const clearSel = useCallback(() => {
     setSelStocks([])
@@ -41,6 +43,12 @@ const PositionView = forwardRef<
     setResult(null)
     setBacktest(null)
     clearSel()
+    return () => {
+      runAbortRef.current?.abort()
+      backtestAbortRef.current?.abort()
+      runAbortRef.current = null
+      backtestAbortRef.current = null
+    }
   }, [presetId, clearSel])
 
   // capArg 用于切换均衡强度时立即用新值重算（避免 setCap 异步导致闭包读到旧值）
@@ -53,16 +61,22 @@ const PositionView = forwardRef<
     setResult(null)
     setBacktest(null)   // 重新生成建议后，旧回测失效
     clearSel()
+    runAbortRef.current?.abort()
+    const controller = new AbortController()
+    runAbortRef.current = controller
     try {
       const { data } = await request.post<PositionResult>('/position/run', {
         preset_id: presetId,
         cap: capArg ?? cap,
-      })
-      setResult(data)
+      }, { signal: controller.signal })
+      if (!controller.signal.aborted) setResult(data)
     } catch {
-      message.error('仓位计算失败')
+      if (!controller.signal.aborted) message.error('仓位计算失败')
     } finally {
-      setLoading(false)
+      if (runAbortRef.current === controller) {
+        runAbortRef.current = null
+        setLoading(false)
+      }
     }
   }, [presetId, clearSel, cap])
 
@@ -74,17 +88,24 @@ const PositionView = forwardRef<
     }
     setBtLoading(true)
     setBacktest(null)
+    backtestAbortRef.current?.abort()
+    const controller = new AbortController()
+    backtestAbortRef.current = controller
     try {
       const { data } = await request.post<BacktestResponse>('/position/backtest', {
         preset_id: presetId,
         cap,
-      })
+      }, { signal: controller.signal })
+      if (controller.signal.aborted) return
       if (data.result) setBacktest(data.result)
       else message.info(data.reason ?? '无法回测')
     } catch {
-      message.error('回测失败')
+      if (!controller.signal.aborted) message.error('回测失败')
     } finally {
-      setBtLoading(false)
+      if (backtestAbortRef.current === controller) {
+        backtestAbortRef.current = null
+        setBtLoading(false)
+      }
     }
   }, [presetId, cap])
 

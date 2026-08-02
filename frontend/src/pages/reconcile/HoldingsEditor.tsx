@@ -15,6 +15,13 @@ const groupInt = (x: string | number | undefined) => {
 }
 const round2 = (n: number) => Math.round(n * 100) / 100
 
+type ImportRow = {
+  fund_code?: string
+  fund_name?: string
+  market_value: number
+  cost?: number
+}
+
 // 初始化快照：首次批量建仓的金额 + 盈亏（不含交易明细），后续加/减/转走「交易记录」。
 // 快照行内改市值/删除 + 批量粘贴导入。按 portfolioId 隔离、持久化在 user_holdings 表；
 // 改动后回调 onChanged（让上层重算实际持仓）。
@@ -82,7 +89,7 @@ export default function HoldingsEditor({
       .split('\n')
       .map((line) => line.trim())
       .filter(Boolean)
-      .map((line) => {
+      .map<ImportRow>((line) => {
         const parts = line.split(/[\t,，\s]+/).filter(Boolean)
         const first = parts[0] || ''
         const nums = parts

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useImperativeHandle, useState, forwardRef } from 'react'
+import { useCallback, useEffect, useImperativeHandle, useRef, useState, forwardRef } from 'react'
 import { Alert, Button, Collapse, Empty, Space, Spin, Tag, message } from 'antd'
 import { ClusterOutlined } from '@ant-design/icons'
 import request from '../../api/request'
@@ -13,9 +13,14 @@ const ClusterView = forwardRef<
 >(function ClusterView({ presetId }, ref) {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<ClusterResult | null>(null)
+  const abortRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
     setResult(null)
+    return () => {
+      abortRef.current?.abort()
+      abortRef.current = null
+    }
   }, [presetId])
 
   const run = useCallback(async () => {
@@ -25,13 +30,21 @@ const ClusterView = forwardRef<
     }
     setLoading(true)
     setResult(null)
+    abortRef.current?.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
     try {
-      const { data } = await request.post<ClusterResult>('/cluster/run', { preset_id: presetId })
-      setResult(data)
+      const { data } = await request.post<ClusterResult>('/cluster/run', { preset_id: presetId }, {
+        signal: controller.signal,
+      })
+      if (!controller.signal.aborted) setResult(data)
     } catch {
-      message.error('聚类失败')
+      if (!controller.signal.aborted) message.error('聚类失败')
     } finally {
-      setLoading(false)
+      if (abortRef.current === controller) {
+        abortRef.current = null
+        setLoading(false)
+      }
     }
   }, [presetId])
 

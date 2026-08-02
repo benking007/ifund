@@ -79,9 +79,9 @@ def _safe_process(process_one, code: str) -> tuple[str, str]:
 
 
 def _worker_concurrency() -> int:
-    """读取进程池并发数；无效值回退到保守默认值。"""
+    """读取进程池并发数；无效值回退到保守默认值。上限 64 防止资源耗尽。"""
     try:
-        return max(1, int(os.getenv("IFUND_WORKER_CONCURRENCY", str(DEFAULT_CONCURRENCY))))
+        return min(64, max(1, int(os.getenv("IFUND_WORKER_CONCURRENCY", str(DEFAULT_CONCURRENCY)))))
     except ValueError:
         return DEFAULT_CONCURRENCY
 
@@ -111,33 +111,55 @@ def run_worker(task_id: int, codes: list[str], fund_types: list[str], process_on
     executor_cls = ProcessPoolExecutor if _is_pickleable(process_one) else ThreadPoolExecutor
     executor_kwargs = {"max_workers": concurrency}
     if executor_cls is ProcessPoolExecutor:
-        executor_kwargs["initializer"] = database.reset_after_fork
+        executor_kwargs["initializer"] = _pool_init
     with executor_cls(**executor_kwargs) as executor:
-        futures = {executor.submit(_safe_process, process_one, code): code for code in targets}
-        for future in as_completed(futures):
-            current += 1
-            try:
-                _, result = future.result()
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.exception("worker 子任务失败：%s", futures[future])
-                result = "fail"
-            if result == "fail":
-                fail += 1
-            else:
-                success += 1
-            database.update("fetch_tasks", {"id": task_id}, {
-                "current_count": current, "success_count": success, "fail_count": fail,
-            })
+        future_map = {}
+        for code in targets:
             if _is_terminated(task_id):
                 terminated = True
-                for pending in futures:
-                    pending.cancel()
                 break
-    database.update("fetch_tasks", {"id": task_id},
-                    {"status": "terminated" if terminated else "finished"})
+            future = executor.submit(_safe_process, process_one, code)
+            future_map[future] = code
+        if terminated:
+            for pending in list(future_map):
+                code = future_map[pending]
+                cancelled = pending.cancel()
+                if cancelled:
+                    del future_map[pending]
+                logger.info(
+                    "任务终止，基金 %s 的 future.cancel() 返回 %s（%s）",
+                    code,
+                    cancelled,
+                    "已取消" if cancelled else "已运行或已完成",
+                )
+        for future in as_completed(future_map):
+            code = future_map[future]
+            try:
+                _, status = future.result()
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                logger.exception("处理基金 %s 异常：%s", code, exc)
+                status = "fail"
+            if status == "success":
+                success += 1
+            elif status == "fail":
+                fail += 1
+            current += 1
+            if not _is_terminated(task_id):
+                database.update(
+                    "fetch_tasks",
+                    {"id": task_id},
+                    {"success": success, "fail": fail, "current": current},
+                )
+    final_status = "terminated" if terminated else "completed"
+    database.update(
+        "fetch_tasks",
+        {"id": task_id},
+        {"status": final_status, "success": success, "fail": fail, "current": current},
+    )
+    logger.info("任务 %d %s：成功 %d，失败 %d", task_id, final_status, success, fail)
 
 
-def main(process_one) -> None:
-    """worker 入口：解析 argv 并跑主循环。"""
-    task_id, codes, fund_types = parse_args(sys.argv[1:])
-    run_worker(task_id, codes, fund_types, process_one)
+def _pool_init():
+    """进程池初始化：加载环境变量和数据库连接。"""
+    load_dotenv()
+    database.init_app(None)

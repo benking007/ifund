@@ -3,7 +3,8 @@ import { Alert, Button, Card, Descriptions, Divider, Drawer, Empty, Input, messa
 import type { ColumnsType } from 'antd/es/table'
 import { EditOutlined, ReloadOutlined, SaveOutlined, StopOutlined, ThunderboltOutlined, UndoOutlined } from '@ant-design/icons'
 import request from '../../api/request'
-import { APP_BASE, AUTH_TOKEN_KEY } from '../../config'
+import rawFetch from '../../api/rawFetch'
+import { APP_BASE } from '../../config'
 import { useScreenData } from './hooks/useScreenData'
 import { buildFundColumns } from '../fund/components/fundColumns'
 import FundDetailModal from '../fund/components/FundDetailModal'
@@ -13,6 +14,23 @@ import { CONC_META, KIND_META, LUCK_META } from '../fund/aiMeta'
 
 const { TextArea } = Input
 const { Text } = Typography
+
+function displayValue(value: unknown): string {
+  if (value == null) return ''
+  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' || typeof value === 'bigint') {
+    return String(value)
+  }
+  try {
+    const json = JSON.stringify(value)
+    return json === undefined ? String(value) : json
+  } catch {
+    return String(value)
+  }
+}
+
+function hasDisplayValue(value: unknown): boolean {
+  return value !== null && value !== undefined && value !== ''
+}
 
 export default function MirrorView({
   presetId,
@@ -107,6 +125,7 @@ export default function MirrorView({
   const [promptUser, setPromptUser] = useState('')
   const abortRef = useRef<AbortController | null>(null)
   const streamTextRef = useRef('')
+  const streamIdRef = useRef(0)
 
   const loadPrompt = useCallback(async () => {
     try {
@@ -127,6 +146,12 @@ export default function MirrorView({
       return () => clearInterval(id)
     }
   }, [analyzingCode, streamDone])
+
+  useEffect(() => () => {
+    streamIdRef.current += 1
+    abortRef.current?.abort()
+    abortRef.current = null
+  }, [])
 
   const handleSavePrompt = async () => {
     try {
@@ -150,6 +175,10 @@ export default function MirrorView({
   }
 
   const handleAnalyze = async (code: string) => {
+    streamIdRef.current += 1
+    const streamId = streamIdRef.current
+    abortRef.current?.abort()
+    streamTextRef.current = ''
     setAnalyzingCode(code)
     setStreamText('')
     setStreamDone(false)
@@ -160,15 +189,18 @@ export default function MirrorView({
     abortRef.current = ctrl
 
     try {
-      const token = localStorage.getItem(AUTH_TOKEN_KEY)
-      const resp = await fetch(`${APP_BASE}/api/fund/${code}/ai-analyze`, {
+      const resp = await rawFetch(`${APP_BASE}/api/fund/${code}/ai-analyze`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${token}`,
           Accept: 'text/event-stream',
         },
         signal: ctrl.signal,
       })
+
+      if (!resp.ok) {
+        const detail = await resp.text().catch(() => '')
+        throw new Error(detail || `HTTP ${resp.status}`)
+      }
 
       const reader = resp.body?.getReader()
       const decoder = new TextDecoder()
@@ -179,6 +211,7 @@ export default function MirrorView({
       while (true) {
         const { done, value } = await reader.read()
         if (done) break
+        if (streamId !== streamIdRef.current) break
         buffer += decoder.decode(value, { stream: true })
 
         const lines = buffer.split('\n')
@@ -186,14 +219,17 @@ export default function MirrorView({
 
         for (const line of lines) {
           if (!line.startsWith('data: ')) continue
+          if (streamId !== streamIdRef.current) continue
           try {
             const evt = JSON.parse(line.slice(6))
             if (evt.type === 'chunk') {
               setStreamText((prev) => {
+                if (streamId !== streamIdRef.current) return prev
                 streamTextRef.current = prev + evt.text
                 return streamTextRef.current
               })
             } else if (evt.type === 'done') {
+              if (streamId !== streamIdRef.current) continue
               setStreamDone(true)
               // 从流式文本中提取 JSON 并解析
               const raw = streamTextRef.current
@@ -211,6 +247,7 @@ export default function MirrorView({
               refresh()
               onMirrorSaved?.()
             } else if (evt.type === 'error') {
+              if (streamId !== streamIdRef.current) continue
               setStreamDone(true)
               message.error(`分析失败: ${evt.detail}`)
             }
@@ -218,26 +255,29 @@ export default function MirrorView({
         }
       }
     } catch (err: unknown) {
+      if (streamId !== streamIdRef.current) return
       if (err instanceof Error && err.name === 'AbortError') {
         message.info('已取消分析')
       } else {
         message.error(`${code} AI 分析失败`)
       }
     } finally {
-      setStreamDone(true)
-      abortRef.current = null
+      if (streamId === streamIdRef.current) {
+        setStreamDone(true)
+        abortRef.current = null
+      }
     }
   }
 
   const handleCancelAnalyze = () => {
+    streamIdRef.current += 1
     abortRef.current?.abort()
     setAnalyzingCode(null)
   }
 
   const handleCloseStreamModal = () => {
-    if (!streamDone) {
-      abortRef.current?.abort()
-    }
+    streamIdRef.current += 1
+    abortRef.current?.abort()
     setAnalyzingCode(null)
   }
 
@@ -254,7 +294,7 @@ export default function MirrorView({
   const styleColor: Record<string, string> = { stable: 'green', volatile: 'orange', unproven: 'default' }
 
   const r = aiResult ?? {}
-  const tags = Array.isArray(r.tags) ? r.tags as string[] : []
+  const tags = Array.isArray(r.tags) ? r.tags.filter((tag): tag is string => typeof tag === 'string') : []
   const ratingVal = Number(r.rating ?? 0)
   const skillScore = Number(r.skill_score ?? 0)
   const recommend = Number(r.recommend ?? 0)
@@ -454,7 +494,7 @@ export default function MirrorView({
           <div style={{ maxHeight: 520, overflow: 'auto' }}>
             {/* 一句话总评 */}
             <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 12 }}>
-              {String(r.verdict ?? '无结论')}
+              {displayValue(r.verdict) || '无结论'}
             </div>
 
             {/* 评分行 */}
@@ -480,30 +520,30 @@ export default function MirrorView({
 
             {/* 核心标签 */}
             <Space wrap size={[8, 8]}>
-              {r.luck_verdict && (
-                <Tag color={luckColor[String(r.luck_verdict)] ?? 'default'}>
-                  运气判断：{luckLabel[String(r.luck_verdict)] ?? r.luck_verdict}
+              {hasDisplayValue(r.luck_verdict) && (
+                <Tag color={luckColor[displayValue(r.luck_verdict)] ?? 'default'}>
+                  运气判断：{luckLabel[displayValue(r.luck_verdict)] ?? displayValue(r.luck_verdict)}
                 </Tag>
               )}
-              {r.concentration && (
-                <Tag color={concColor[String(r.concentration)] ?? 'default'}>
-                  集中度：{concLabel[String(r.concentration)] ?? r.concentration}
+              {hasDisplayValue(r.concentration) && (
+                <Tag color={concColor[displayValue(r.concentration)] ?? 'default'}>
+                  集中度：{concLabel[displayValue(r.concentration)] ?? displayValue(r.concentration)}
                 </Tag>
               )}
-              {r.fund_kind && (
-                <Tag color={kindColor[String(r.fund_kind)] ?? 'default'}>
-                  基金属性：{kindLabel[String(r.fund_kind)] ?? r.fund_kind}
+              {hasDisplayValue(r.fund_kind) && (
+                <Tag color={kindColor[displayValue(r.fund_kind)] ?? 'default'}>
+                  基金属性：{kindLabel[displayValue(r.fund_kind)] ?? displayValue(r.fund_kind)}
                 </Tag>
               )}
-              {r.confidence && <Tag>置信度：{r.confidence}</Tag>}
-              {r.scale_risk && (
-                <Tag color={scaleColor[String(r.scale_risk)] ?? 'default'}>
-                  规模：{scaleLabel[String(r.scale_risk)] ?? r.scale_risk}
+              {hasDisplayValue(r.confidence) && <Tag>置信度：{displayValue(r.confidence)}</Tag>}
+              {hasDisplayValue(r.scale_risk) && (
+                <Tag color={scaleColor[displayValue(r.scale_risk)] ?? 'default'}>
+                  规模：{scaleLabel[displayValue(r.scale_risk)] ?? displayValue(r.scale_risk)}
                 </Tag>
               )}
-              {r.style_stability && (
-                <Tag color={styleColor[String(r.style_stability)] ?? 'default'}>
-                  风格：{styleLabel[String(r.style_stability)] ?? r.style_stability}
+              {hasDisplayValue(r.style_stability) && (
+                <Tag color={styleColor[displayValue(r.style_stability)] ?? 'default'}>
+                  风格：{styleLabel[displayValue(r.style_stability)] ?? displayValue(r.style_stability)}
                 </Tag>
               )}
             </Space>
@@ -520,7 +560,7 @@ export default function MirrorView({
 
             {/* 经理信息 */}
             <Descriptions column={2} size="small" style={{ fontSize: 13 }} labelStyle={{ opacity: 0.65 }}>
-              {r.manager && <Descriptions.Item label="经理">{String(r.manager)}</Descriptions.Item>}
+              {hasDisplayValue(r.manager) && <Descriptions.Item label="经理">{displayValue(r.manager)}</Descriptions.Item>}
               {r.tenure_years != null && <Descriptions.Item label="任职年限">{Number(r.tenure_years).toFixed(1)} 年</Descriptions.Item>}
               {r.is_original != null && <Descriptions.Item label="是否原装">{Number(r.is_original) ? '是' : '否'}</Descriptions.Item>}
               {r.is_comanaged != null && <Descriptions.Item label="是否共管">{Number(r.is_comanaged) ? '是' : '否'}</Descriptions.Item>}
@@ -530,38 +570,38 @@ export default function MirrorView({
 
             {/* 详细理由 */}
             <Space direction="vertical" style={{ width: '100%' }} size={10}>
-              {r.skill_reason && (
+              {hasDisplayValue(r.skill_reason) && (
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4, opacity: 0.85 }}>归因理由</div>
-                  <div style={{ fontSize: 13, lineHeight: 1.6, opacity: 0.8 }}>{String(r.skill_reason)}</div>
+                  <div style={{ fontSize: 13, lineHeight: 1.6, opacity: 0.8 }}>{displayValue(r.skill_reason)}</div>
                 </div>
               )}
-              {r.concentration_reason && (
+              {hasDisplayValue(r.concentration_reason) && (
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4, opacity: 0.85 }}>集中度分析</div>
-                  <div style={{ fontSize: 13, lineHeight: 1.6, opacity: 0.8 }}>{String(r.concentration_reason)}</div>
+                  <div style={{ fontSize: 13, lineHeight: 1.6, opacity: 0.8 }}>{displayValue(r.concentration_reason)}</div>
                 </div>
               )}
-              {r.hard_thesis && (
+              {hasDisplayValue(r.hard_thesis) && (
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4, opacity: 0.85 }}>硬实力逻辑</div>
-                  <div style={{ fontSize: 13, lineHeight: 1.6, opacity: 0.8 }}>{String(r.hard_thesis)}</div>
+                  <div style={{ fontSize: 13, lineHeight: 1.6, opacity: 0.8 }}>{displayValue(r.hard_thesis)}</div>
                 </div>
               )}
-              {r.turnover_note && (
+              {hasDisplayValue(r.turnover_note) && (
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4, opacity: 0.85 }}>换手备注</div>
-                  <div style={{ fontSize: 13, lineHeight: 1.6, opacity: 0.8 }}>{String(r.turnover_note)}</div>
+                  <div style={{ fontSize: 13, lineHeight: 1.6, opacity: 0.8 }}>{displayValue(r.turnover_note)}</div>
                 </div>
               )}
             </Space>
 
-            {r.data_basis && (
+            {hasDisplayValue(r.data_basis) && (
               <>
                 <Divider style={{ margin: '12px 0' }} />
                 <div style={{ fontSize: 11, opacity: 0.45 }}>
-                  数据依据：{String(r.data_basis)}
-                  {r.model ? ` | 模型：${r.model}` : ''}
+                  数据依据：{displayValue(r.data_basis)}
+                  {hasDisplayValue(r.model) ? ` | 模型：${displayValue(r.model)}` : ''}
                 </div>
               </>
             )}

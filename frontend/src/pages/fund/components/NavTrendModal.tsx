@@ -46,14 +46,28 @@ export default function NavTrendModal({ code, name, open, onClose }: Props) {
   const [active, setActive] = useState<NavPoint | null>(null)
 
   useEffect(() => {
-    if (!open || !code) return
+    const controller = new AbortController()
+    if (!open || !code) {
+      setLoading(false)
+      return () => controller.abort()
+    }
     setLoading(true)
     setActive(null)
     request
-      .get<{ items: NavPoint[] }>(`/fund/${code}/nav`, { params: { limit: 800 } })
-      .then(({ data: d }) => setData(d.items ?? []))
-      .catch(() => setData([]))
-      .finally(() => setLoading(false))
+      .get<{ items: NavPoint[] }>(`/fund/${code}/nav`, {
+        params: { limit: 800 },
+        signal: controller.signal,
+      })
+      .then(({ data: d }) => {
+        if (!controller.signal.aborted) setData(d.items ?? [])
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setData([])
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false)
+      })
+    return () => controller.abort()
   }, [open, code])
 
   // 按区间切片（不足两点则回退全量）
@@ -67,7 +81,6 @@ export default function NavTrendModal({ code, name, open, onClose }: Props) {
 
   const first = sliced[0]?.nav ?? 0
   const last = sliced[sliced.length - 1]?.nav ?? 0
-  const pct = first ? ((last - first) / first) * 100 : 0
   const lineColor = last >= first ? UP : DOWN
 
   // 顶部展示：默认末点，hover 时跟随准星
@@ -119,7 +132,8 @@ export default function NavTrendModal({ code, name, open, onClose }: Props) {
             data={sliced}
             margin={{ top: 8, right: 16, left: 0, bottom: 0 }}
             onMouseMove={(s) => {
-              const p = s?.activePayload?.[0]?.payload as NavPoint | undefined
+              const index = typeof s?.activeTooltipIndex === 'number' ? s.activeTooltipIndex : null
+              const p = index == null ? undefined : sliced[index]
               if (p) setActive(p)
             }}
             onMouseLeave={() => setActive(null)}

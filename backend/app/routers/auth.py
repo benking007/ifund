@@ -15,6 +15,7 @@ from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_requir
 from pydantic import ValidationError
 
 from app import db as database
+from app.common.rate_limit import rate_limit
 from app.schemas import Token, UserCreate
 
 bp = Blueprint("auth", __name__, url_prefix="/api/auth")
@@ -41,6 +42,7 @@ def _bearer_token() -> str:
 
 
 @bp.post("/register")
+@rate_limit(max_requests=5, window_seconds=60, key_prefix="register")
 def register():
     """创建用户（username 唯一）。"""
     try:
@@ -55,6 +57,7 @@ def register():
 
 
 @bp.post("/login")
+@rate_limit(max_requests=5, window_seconds=60, key_prefix="login")
 def login():
     """校验密码，返回 access_token。接受 JSON 或 form。"""
     data = request.get_json(silent=True) or request.form.to_dict()

@@ -34,6 +34,7 @@ from app.common import worker_base
 from app.stock_industry.crud import industry_crud
 
 SLEEP_SEC = 0.6
+_PROGRESS_BATCH_SIZE = 10
 INDIVIDUAL_TIMEOUT = 3.0
 CNINFO_TIMEOUT = 8.0
 CNINFO_START_DATE = "20000101"
@@ -199,9 +200,10 @@ def run(task_id: int) -> None:
             success += 1
         else:
             fail += 1
-        database.update("fetch_tasks", {"id": task_id}, {
-            "current_count": current, "success_count": success, "fail_count": fail,
-        })
+        if current % _PROGRESS_BATCH_SIZE == 0:
+            database.update("fetch_tasks", {"id": task_id}, {
+                "current_count": current, "success_count": success, "fail_count": fail,
+            })
         if _is_terminated(task_id):
             terminated = True
             break
@@ -216,13 +218,18 @@ def run(task_id: int) -> None:
                 success += 1
             else:
                 fail += 1
-            database.update("fetch_tasks", {"id": task_id}, {
-                "current_count": current, "success_count": success, "fail_count": fail,
-            })
+            if current % _PROGRESS_BATCH_SIZE == 0:
+                database.update("fetch_tasks", {"id": task_id}, {
+                    "current_count": current, "success_count": success, "fail_count": fail,
+                })
             if _is_terminated(task_id):
                 terminated = True
                 break
             time.sleep(SLEEP_SEC)
+    if current % _PROGRESS_BATCH_SIZE:
+        database.update("fetch_tasks", {"id": task_id}, {
+            "current_count": current, "success_count": success, "fail_count": fail,
+        })
     database.update("fetch_tasks", {"id": task_id},
                     {"status": "terminated" if terminated else "finished"})
 
