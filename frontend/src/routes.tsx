@@ -1,24 +1,27 @@
+import { lazy, Suspense } from 'react'
 import type { RouteObject } from 'react-router-dom'
-import { Navigate } from 'react-router-dom'
-import { AUTH_TOKEN_KEY } from './config'
-import Dashboard from './pages/Dashboard'
-import Login from './pages/Login'
+import Loading from './components/Loading'
+import RequireAuth from './RequireAuth'
 
-function RequireAuth({ children }: { children: JSX.Element }) {
-  const token = localStorage.getItem(AUTH_TOKEN_KEY)
-  return token ? children : <Navigate to="/login" replace />
-}
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+const Login = lazy(() => import('./pages/Login'))
 
 export const routes: RouteObject[] = [
   {
     path: '/login',
-    element: <Login />,
+    element: (
+      <Suspense fallback={<Loading />}>
+        <Login />
+      </Suspense>
+    ),
   },
   {
     path: '/*',
     element: (
       <RequireAuth>
-        <Dashboard />
+        <Suspense fallback={<Loading />}>
+          <Dashboard />
+        </Suspense>
       </RequireAuth>
     ),
   },

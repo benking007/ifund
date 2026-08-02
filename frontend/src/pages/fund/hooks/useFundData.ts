@@ -173,10 +173,13 @@ export function useFundData() {
     detailTick()
     holdTick()
     navTick()
+    const detailTimer = pollRef.current
+    const holdingsTimer = holdingsPollRef.current
+    const navTimer = navPollRef.current
     return () => {
-      if (pollRef.current) clearTimeout(pollRef.current)
-      if (holdingsPollRef.current) clearTimeout(holdingsPollRef.current)
-      if (navPollRef.current) clearTimeout(navPollRef.current)
+      if (detailTimer) clearTimeout(detailTimer)
+      if (holdingsTimer) clearTimeout(holdingsTimer)
+      if (navTimer) clearTimeout(navTimer)
     }
   }, [buildPoller])
 

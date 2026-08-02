@@ -51,7 +51,7 @@ export default function MirrorView({
   const [latestPag, setLatestPag] = useState({ current: 1, pageSize: 20 })
   const [mirrorPag, setMirrorPag] = useState({ current: 1, pageSize: 20 })
 
-  const mirrorItems = snapshot?.items ?? []
+  const mirrorItems = useMemo(() => snapshot?.items ?? [], [snapshot])
   const excludedSet = useMemo(() => new Set(excluded), [excluded])
   const latestCodes = useMemo(() => new Set(latest.map((f) => f.code)), [latest])
   const mirrorCodes = useMemo(() => new Set(mirrorItems.map((f) => f.code)), [mirrorItems])

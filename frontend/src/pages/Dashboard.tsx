@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { Button, Layout, Menu, theme as antdTheme } from 'antd'
 import {
@@ -13,16 +13,18 @@ import {
   TeamOutlined,
   WalletOutlined,
 } from '@ant-design/icons'
-import { FundPage } from './fund'
-import WorkbenchPage from './workbench/WorkbenchPage'
-import HoldingsPage from './reconcile/HoldingsPage'
-import PerpetualPage from './perpetual/PerpetualPage'
-import ManagerPage from './manager/ManagerPage'
-import IndustryPage from './IndustryPage'
-import TokensPage from './TokensPage'
-import TradeCalendar from './TradeCalendar'
 import { AUTH_TOKEN_KEY } from '../config'
 import { useDashboardTheme } from '../useDashboardTheme'
+import Loading from '../components/Loading'
+
+const FundPage = lazy(() => import('./fund/FundPage'))
+const WorkbenchPage = lazy(() => import('./workbench/WorkbenchPage'))
+const HoldingsPage = lazy(() => import('./reconcile/HoldingsPage'))
+const PerpetualPage = lazy(() => import('./perpetual/PerpetualPage'))
+const ManagerPage = lazy(() => import('./manager/ManagerPage'))
+const IndustryPage = lazy(() => import('./IndustryPage'))
+const TokensPage = lazy(() => import('./TokensPage'))
+const TradeCalendar = lazy(() => import('./TradeCalendar'))
 
 const { Header, Sider, Content } = Layout
 
@@ -103,17 +105,19 @@ export default function Dashboard() {
           />
         </Sider>
         <Content style={{ padding: 16, overflow: 'auto' }}>
-          <Routes>
-            <Route path="/" element={<FundPage />} />
-            <Route path="/workbench" element={<WorkbenchPage />} />
-            <Route path="/perpetual" element={<PerpetualPage />} />
-            <Route path="/manager" element={<ManagerPage />} />
-            <Route path="/holdings" element={<HoldingsPage />} />
-            <Route path="/trade_calendar" element={<TradeCalendar />} />
-            <Route path="/industry" element={<IndustryPage />} />
-            <Route path="/tokens" element={<TokensPage />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          <Suspense fallback={<Loading />}>
+            <Routes>
+              <Route path="/" element={<FundPage />} />
+              <Route path="/workbench" element={<WorkbenchPage />} />
+              <Route path="/perpetual" element={<PerpetualPage />} />
+              <Route path="/manager" element={<ManagerPage />} />
+              <Route path="/holdings" element={<HoldingsPage />} />
+              <Route path="/trade_calendar" element={<TradeCalendar />} />
+              <Route path="/industry" element={<IndustryPage />} />
+              <Route path="/tokens" element={<TokensPage />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Suspense>
         </Content>
       </Layout>
     </Layout>

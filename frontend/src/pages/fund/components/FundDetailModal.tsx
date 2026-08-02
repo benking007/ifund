@@ -11,6 +11,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import type { MouseHandlerDataParam } from 'recharts'
 import request from '../../../api/request'
 import rawFetch from '../../../api/rawFetch'
 import { APP_BASE } from '../../../config'
@@ -23,6 +24,10 @@ import type { FundAi } from '../aiMeta'
 interface NavPoint {
   date: string
   nav: number
+}
+
+interface NavChartMouseState extends MouseHandlerDataParam {
+  activePayload?: ReadonlyArray<{ payload?: NavPoint }>
 }
 
 const NAV_RANGES = [
@@ -74,6 +79,10 @@ const PERF_FIELDS: [string, string][] = [
 function fmt(v: unknown): string {
   if (v === null || v === undefined || v === '') return '-'
   return String(v)
+}
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error)
 }
 
 function waitFor(ms: number, signal: AbortSignal): Promise<void> {
@@ -201,9 +210,9 @@ function NavChart({ code, enabled }: { code: string; enabled: boolean }) {
         signal: controller.signal,
       })
       if (!controller.signal.aborted) setData(d.items ?? [])
-    } catch (e: any) {
+    } catch (error: unknown) {
       const { message: msg } = await import('antd')
-      if (!controller.signal.aborted) msg.error(`拉取失败: ${e?.message || e}`)
+      if (!controller.signal.aborted) msg.error(`拉取失败: ${errorMessage(error)}`)
     } finally {
       navSyncInFlight.current = false
       if (navAbortRef.current === controller) {
@@ -306,8 +315,8 @@ function NavChart({ code, enabled }: { code: string; enabled: boolean }) {
         <AreaChart
           data={sliced}
           margin={{ top: 8, right: 12, left: 0, bottom: 0 }}
-          onMouseMove={(s: any) => {
-            const p = s?.activePayload?.[0]?.payload as NavPoint | undefined
+          onMouseMove={(s: NavChartMouseState) => {
+            const p = s.activePayload?.[0]?.payload
             if (p) setActive(p)
           }}
           onMouseLeave={() => setActive(null)}
@@ -419,10 +428,10 @@ export default function FundDetailModal({ code, open, onClose }: Props) {
       // 等待 5s 让 worker 完成，再刷新
       await waitFor(5000, controller.signal)
       loadHoldings(code, quarter)
-    } catch (e: any) {
+    } catch (error: unknown) {
       const { message: msg } = await import('antd')
       if (!controller.signal.aborted) {
-        msg.error(`拉取失败: ${e?.message || e}`)
+        msg.error(`拉取失败: ${errorMessage(error)}`)
         if (holdingsAbortRef.current === controller) setHLoading(false)
       }
     } finally {
@@ -502,9 +511,9 @@ export default function FundDetailModal({ code, open, onClose }: Props) {
       // 重新拉取基金详情获取 ai 字段
       const { data: newData } = await request.get(`/fund/${code}`, { signal: controller.signal })
       if (!controller.signal.aborted) setData(newData as DetailData)
-    } catch (e: any) {
+    } catch (error: unknown) {
       if (!controller.signal.aborted) {
-        import('antd').then(({ message: msg }) => msg.error(`AI 分析失败: ${e?.message || e}`))
+        import('antd').then(({ message: msg }) => msg.error(`AI 分析失败: ${errorMessage(error)}`))
       }
     } finally {
       aiInFlight.current = false

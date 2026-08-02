@@ -1,31 +1,16 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { createMemoryRouter, RouterProvider } from 'react-router-dom'
-import { ConfigProvider } from 'antd'
-import zhCN from 'antd/locale/zh_CN'
-import 'dayjs/locale/zh-cn'
+import { createMemoryRouter } from 'react-router-dom'
 import { APP_BASE, configureAppBase } from './config'
 import { setUnauthorizedHandler } from './api/request'
 import { routes } from './routes'
-import { createDashboardTheme, useDashboardTheme } from './useDashboardTheme'
+import EmbeddedApp from './EmbeddedApp'
 import './index.css'
 
 export interface IfundEmbedOptions {
   basePath?: string
   initialPath?: string
   router?: 'memory'
-}
-
-function EmbeddedApp({ router }: { router: ReturnType<typeof createMemoryRouter> }) {
-  const { isDark, themeName } = useDashboardTheme()
-
-  return (
-    <div className="ifund-app" data-theme={themeName}>
-      <ConfigProvider locale={zhCN} theme={createDashboardTheme(isDark)}>
-        <RouterProvider router={router} />
-      </ConfigProvider>
-    </div>
-  )
 }
 
 export function mountIfundApp(

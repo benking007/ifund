@@ -75,7 +75,11 @@ def _dedup_shares(funds: list[dict]) -> tuple[list[dict], int]:
     return pool, len(funds) - len(pool)
 
 
-def _align_window(pool: list[dict], as_of: str | None) -> tuple[list[dict], list[str]]:
+def _align_window(pool: list[dict], as_of: str | None) -> tuple[list[dict], list[str], int]:
+    """对齐基金净值窗口，返回 (对齐后基金, 共同交易日, 总交易日数)。
+
+    total_days 用于诊断交集窗口缩减比例（common_days_ratio）。
+    """
     start = ALIGN_START
     all_dates: set[str] = set()
     for f in pool:
@@ -84,19 +88,19 @@ def _align_window(pool: list[dict], as_of: str | None) -> tuple[list[dict], list
         else:
             f["_win_dates"] = {d for d in f["dates"] if d >= start}
         all_dates |= f["_win_dates"]
+    total_days = len(all_dates)
     if not all_dates:
-        return [], []
-    total = len(all_dates)
-    aligned = [f for f in pool if len(f["_win_dates"]) >= total * 0.95]
+        return [], [], total_days
+    aligned = [f for f in pool if len(f["_win_dates"]) >= total_days * 0.95]
     if not aligned:
-        return [], []
+        return [], [], total_days
     common = sorted(set.intersection(*(f["_win_dates"] for f in aligned)))
     if len(common) < MIN_COMMON_DAYS:
-        return [], common
+        return [], common, total_days
     for f in aligned:
         navmap = dict(zip(f["dates"], f["navs"]))
         f["_win_navs"] = [navmap[d] for d in common]
-    return aligned, common
+    return aligned, common, total_days
 
 
 def _backtest_section(selected_funds: list[dict], weights: np.ndarray) -> dict:
@@ -207,7 +211,7 @@ def run(funds: list[dict], nav_by_code: dict, tenure_by_code: dict,
         return {"error": f"过门后不足 {TARGET_HOLDINGS} 只可打分基金（过门 {passed_n}）"}
     scored_n = len(scored)
     pool, dedup_removed = _dedup_shares(scored)
-    aligned, common = _align_window(pool, as_of)
+    aligned, common, total_days = _align_window(pool, as_of)
     if not aligned:
         return {"error": f"对齐后共同交易日不足 {MIN_COMMON_DAYS}（{len(common)} 天）"}
     navmap_list = []
@@ -246,7 +250,8 @@ def run(funds: list[dict], nav_by_code: dict, tenure_by_code: dict,
     result: dict = {
         "stats": {"universe": universe_n, "passed_gate": passed_n,
                   "scored": scored_n, "dedup_removed": dedup_removed,
-                  "aligned_pool": len(aligned), "common_days": len(common)},
+                  "aligned_pool": len(aligned), "common_days": len(common),
+                  "common_days_ratio": round(len(common) / total_days, 4) if total_days else 0.0},
         "meta": {"target_holdings": TARGET_HOLDINGS, "n_selected": len(sel),
                  "align_start": as_of or ALIGN_START, "nav_as_of": nav_as_of,
                  "pc1_var_ratio": round(pc1_var, 4),
