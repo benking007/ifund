@@ -13,6 +13,59 @@ from app import db as database
 
 TABLE = "stock_industry"
 
+# 统计口径只认股票代码形态，不把 fund_holdings 中被误标为 stock 的债券、
+# 场内基金或海外证券混入持仓股票集合。这里使用静态规则，避免 stats() 每次
+# 请求都拉取 akshare 的 A 股全集。
+_A_SHARE_PREFIXES = (
+    "000", "001", "002", "003",       # 深市主板
+    "300", "301", "302",               # 创业板
+    "600", "601", "603", "605",       # 沪市主板
+    "688", "689",                       # 科创板（689009 等特殊段）
+)
+_BJ_STOCK_PREFIXES = (
+    "920", "430", "830", "831", "832", "833", "834", "835", "836", "837",
+    "838", "839", "870", "871", "872", "873", "874", "875", "876", "877",
+    "878", "879", "880", "881", "882", "883", "889",
+)
+# 6 位纯数字的海外代码与深市 000 段发生碰撞；这些是当前持仓中已知的
+# KRX 代码，不能靠前缀单独排除。新增同类代码时应补到这个静态黑名单，
+# 而不是让 stats() 访问网络。
+_KNOWN_OVERSEAS_CODES = frozenset({
+    "000660", "005930", "009150", "042700", "055550", "105560",
+})
+
+
+def _normalise_code(code) -> str:
+    """统一持仓代码为去空白字符串；数据库中的代码通常已经保留前导零。"""
+    return str(code or "").strip()
+
+
+def _is_hk_stock(code) -> bool:
+    """港股：5 位纯数字代码。"""
+    code = _normalise_code(code)
+    return len(code) == 5 and code.isdigit()
+
+
+def _is_a_stock(code) -> bool:
+    """A 股：6 位数字且命中沪深主板/创业板、科创板或北交所代码段。"""
+    code = _normalise_code(code)
+    if len(code) != 6 or not code.isdigit():
+        return False
+    if code in _KNOWN_OVERSEAS_CODES:
+        return False
+    return (
+        code.startswith(_A_SHARE_PREFIXES + _BJ_STOCK_PREFIXES)
+        or code.startswith(("4", "8"))
+    )
+
+
+def is_bj_stock(code) -> bool:
+    """判断是否为北交所代码，供东财补采 worker 选择 ``market='BJ'``。"""
+    code = _normalise_code(code)
+    return len(code) == 6 and code.isdigit() and (
+        code.startswith(_BJ_STOCK_PREFIXES) or code.startswith(("4", "8"))
+    )
+
 # 派生集合（持仓全集 / 行业映射索引）的进程内 TTL 缓存。
 # 行业映射页一次开页会并发打 stats / breakdown / list 三个接口，各自要算同样的 held/idx；
 # 缓存把这一阵突发请求收敛成一次计算。持仓变动靠 TTL 自动失效，人工修正即时清缓存。
@@ -60,23 +113,34 @@ def held_names() -> dict[str, str]:
 
 
 def classify_market(code: str) -> str:
-    """按代码形态粗判市场：6 位数字=A 股，5 位数字=港股，其余=海外/其他。
+    """按代码形态判市场：命中 A 股代码段才算 A 股，5 位数字才算港股。
 
     注意：韩国 KRX 代码同为 6 位数字（如 005930 三星），仅凭形态会误判为 A 股；
     精确市场以 ``stock_industry.market`` 字段为准（采集时用 A 股全集校正后写入）。
     """
-    if code.isdigit() and len(code) == 6:
+    if _is_a_stock(code):
         return "A"
-    if code.isdigit() and len(code) == 5:
+    if _is_hk_stock(code):
         return "HK"
     return "OTHER"
 
 
 def market_of(code: str, idx: dict[str, dict] | None = None) -> str:
-    """精确市场：优先用已存的 market 字段（采集时校正过），否则回退代码形态粗判。"""
+    """精确市场：代码先过滤明显非股票，再尊重已存的 A/HK/BJ/OTHER 校正。"""
     idx = idx if idx is not None else _index_by_code()
     stored = (idx.get(code) or {}).get("market")
-    return stored or classify_market(code)
+    classified = classify_market(code)
+    # 先用代码规则排除明显的海外/非股票代码，防止历史上错误写入 market=A 的
+    # 005930 等被再次统计；合法代码保留已存的 BJ/HK 等精细市场值。
+    if classified == "OTHER":
+        return "OTHER"
+    if stored == "OTHER":
+        return "OTHER"
+    if classified == "A" and stored in ("A", "BJ"):
+        return stored
+    if classified == "HK" and stored == "HK":
+        return "HK"
+    return classified
 
 
 def _now() -> str:
@@ -121,12 +185,21 @@ def uncovered_held(held: list[str], markets: tuple[str, ...] = ("A", "HK")) -> l
     """持仓股票里尚无任何行业标签（申万 + 东财都为空）的代码（东财兜底的目标）。
 
     默认仅返回 A 股缺口 + 港股；海外（OTHER）东财查不到、按约定归「其他」，故排除。
-    市场以已存 market 字段为准（校正过的韩股已是 OTHER，不会再被当 A 股目标）。
+    市场以静态股票代码规则为准；即使历史映射行错误写入 market=A，也不会把
+    韩国股、债券或场内基金纳入补采目标。
     """
     idx = _index_by_code()
     have = {c for c, r in idx.items() if r.get("sw_l3") or r.get("em_industry")}
-    return [c for c in held
-            if c not in have and market_of(c, idx) in markets]
+    def in_markets(code: str) -> bool:
+        market = market_of(code, idx)
+        return (
+            ("A" in markets and market in ("A", "BJ"))
+            or ("BJ" in markets and market == "BJ")
+            or ("HK" in markets and market == "HK")
+            or ("OTHER" in markets and market == "OTHER")
+        )
+
+    return [c for c in held if c not in have and in_markets(c)]
 
 
 def set_manual(code: str, fields: dict) -> None:
@@ -167,23 +240,26 @@ def stats() -> dict:
     """覆盖率统计（针对持仓股票）：分市场统计已覆盖 / 未覆盖数量与比例。"""
     held = held_codes()
     idx = _index_by_code()
-    a_share = [c for c in held if market_of(c, idx) == "A"]
+    # held_codes() 只按 holding_type=stock 过滤；历史数据里仍可能有被误标为
+    # stock 的债券/基金/海外证券，所以这里必须再做一次代码级过滤。
+    a_share = [c for c in held if market_of(c, idx) in ("A", "BJ")]
     hk = [c for c in held if market_of(c, idx) == "HK"]
     other = [c for c in held if market_of(c, idx) == "OTHER"]
+    eligible = a_share + hk
     a_sw = [c for c in a_share if idx.get(c, {}).get("sw_l3")]
     a_only_em = [c for c in a_share
                  if not idx.get(c, {}).get("sw_l3") and idx.get(c, {}).get("em_industry")]
     hk_em = [c for c in hk if idx.get(c, {}).get("em_industry") or idx.get(c, {}).get("sw_l3")]
-    covered = [c for c in held
+    covered = [c for c in eligible
                if idx.get(c, {}).get("sw_l3") or idx.get(c, {}).get("em_industry")]
     return {
-        "held_total": len(held),
+        "held_total": len(eligible),
         "a_total": len(a_share), "hk_total": len(hk), "other_total": len(other),
         "a_sw_covered": len(a_sw), "a_em_covered": len(a_only_em),
         "a_uncovered": len(a_share) - len(a_sw) - len(a_only_em),
         "hk_covered": len(hk_em), "hk_uncovered": len(hk) - len(hk_em),
         "covered_total": len(covered),
-        "coverage_pct": round(len(covered) / len(held) * 100, 1) if held else 0.0,
+        "coverage_pct": round(len(covered) / len(eligible) * 100, 1) if eligible else 0.0,
         "a_sw_pct": round(len(a_sw) / len(a_share) * 100, 1) if a_share else 0.0,
         "sw_l3_count": len({r.get("sw_l3") for r in idx.values() if r.get("sw_l3")}),
         "table_rows": len(idx),
