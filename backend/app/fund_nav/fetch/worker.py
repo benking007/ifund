@@ -13,12 +13,16 @@ os.chdir(_BACKEND_DIR)
 
 # pylint: disable=wrong-import-position
 import datetime
+import logging
 
 import akshare as ak  # pylint: disable=import-error
 
 from app.common import worker_base
 from app.fund_nav.crud import nav_crud
+from app.fund_nav.fetch import akshare_js, eastmoney
 from app.trade_calendar.crud import calendar_crud
+
+logger = logging.getLogger(__name__)
 
 
 def _acc_nav_map(code):
@@ -63,12 +67,61 @@ def _cum_rows(code, stored, now):
         day = str(row["日期"])
         if stored and day <= stored:
             continue
+        cum_return = worker_base.safe_float(row.get("累计收益率"))
+        if cum_return is None:
+            continue
         rows.append({
             "fund_code": code, "trade_date": day,
-            "cum_return": worker_base.safe_float(row.get("累计收益率")),
+            "cum_return": cum_return,
             "fetch_time": now,
         })
     return rows
+
+
+def _js_nav_rows(code, stored, now):
+    """Convert direct JavaScript NAV rows to the local insert shape.
+
+    ``None`` distinguishes a fetch/parser failure from a valid full history
+    whose rows are all at or before the locally stored date.
+    """
+    source_rows = akshare_js.fetch_nav_js(code)
+    if not source_rows:
+        return None
+    rows = []
+    for row in source_rows:
+        day = str(row.get("trade_date") or "")
+        nav = worker_base.safe_float(row.get("nav"))
+        if not day or nav is None or (stored and day <= stored):
+            continue
+        rows.append({
+            "fund_code": code,
+            "trade_date": day,
+            "nav": nav,
+            "acc_nav": worker_base.safe_float(row.get("acc_nav")),
+            "daily_return": worker_base.safe_float(row.get("daily_return")),
+            "fetch_time": now,
+        })
+    return rows
+
+
+def _process_one_akshare_full(code):
+    """Fetch full history with akshare and bypass MiniRacer when it fails."""
+    now = datetime.datetime.now().isoformat()
+    nav_stored = nav_crud.stored_latest(code, "fund_nav")
+    try:
+        nav_rows = _nav_rows(code, nav_stored, now)
+        if not nav_rows:
+            raise ValueError("akshare 全量净值为空")
+    except Exception as exc:  # pylint: disable=broad-exception-caught
+        logger.warning("akshare 全量净值解析失败(%s)，回退 JS 正则：%s", code, exc)
+        nav_rows = _js_nav_rows(code, nav_stored, now)
+        if nav_rows is None:
+            logger.warning("JS 正则全量净值无数据(%s)", code)
+            return "fail"
+    nav_crud.insert_rows("fund_nav", nav_rows)
+    cum_stored = nav_crud.stored_latest(code, "fund_cum_return")
+    nav_crud.insert_rows("fund_cum_return", _cum_rows(code, cum_stored, now))
+    return "success"
 
 
 def _process_one(code):
@@ -76,11 +129,39 @@ def _process_one(code):
     nav_stored = nav_crud.stored_latest(code, "fund_nav")
     if base and nav_stored and nav_stored >= base:
         return "skip"
-    now = datetime.datetime.now().isoformat()
-    nav_crud.insert_rows("fund_nav", _nav_rows(code, nav_stored, now))
-    cum_stored = nav_crud.stored_latest(code, "fund_cum_return")
-    nav_crud.insert_rows("fund_cum_return", _cum_rows(code, cum_stored, now))
-    return "success"
+    if not nav_stored:
+        return _process_one_akshare_full(code)
+    try:
+        start = nav_stored
+        end = base or datetime.date.today().isoformat()
+        rows = eastmoney.fetch_nav_incremental(code, start, end)
+        now = datetime.datetime.now().isoformat()
+        nav_rows = []
+        cum_rows = []
+        for row in rows:
+            # F10 返回含 start_date 边界，依赖 INSERT OR REPLACE 保持幂等。
+            if row["nav"] is not None:
+                nav_rows.append({
+                    "fund_code": code,
+                    "trade_date": row["trade_date"],
+                    "nav": row["nav"],
+                    "acc_nav": row["acc_nav"],
+                    "daily_return": row["daily_return"],
+                    "fetch_time": now,
+                })
+            if row["cum_return"] is not None:
+                cum_rows.append({
+                    "fund_code": code,
+                    "trade_date": row["trade_date"],
+                    "cum_return": row["cum_return"],
+                    "fetch_time": now,
+                })
+        nav_crud.insert_rows("fund_nav", nav_rows)
+        nav_crud.insert_rows("fund_cum_return", cum_rows)
+        return "success"
+    except Exception as exc:  # pylint: disable=broad-exception-caught
+        logger.warning("F10 增量失败(%s)，回退 akshare 全量：%s", code, exc)
+        return _process_one_akshare_full(code)
 
 
 if __name__ == "__main__":

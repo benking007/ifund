@@ -1,11 +1,10 @@
-"""AI 定性分析服务：调用 Qoder Agent SDK 对单只基金做历史穿透分析（支持流式）。"""
+"""AI 定性分析服务：调用 agim RPC 对单只基金做历史穿透分析（支持流式）。"""
 from __future__ import annotations
 
 import asyncio
 import datetime
 import json
 import logging
-import os
 import re
 from collections.abc import AsyncIterator
 from pathlib import Path
@@ -131,35 +130,18 @@ def _save_result(code: str, payload: dict) -> dict:
 
 async def _stream_sdk(bundle: dict, system_prompt: str, user_template: str) -> AsyncIterator[str]:
     # pylint: disable=import-outside-toplevel
-    from qoder_agent_sdk import (
-        AssistantMessage,
-        QoderAgentOptions,
-        ResultMessage,
-        TextBlock,
-        access_token_from_env,
-        query,
-    )
+    from app.ai_analyze.rpc_client import llm_complete
 
-    # cli_path 从环境变量取（默认走 PATH 里的 qoder），避免写死某台机器的绝对路径。
-    opts = QoderAgentOptions(
-        auth=access_token_from_env(),
-        system_prompt=system_prompt,
-        permission_mode="bypassPermissions",
-        max_turns=1,
-        cli_path=os.getenv("QODER_CLI_PATH", "qoder"),
-    )
     bundle_json = json.dumps(bundle, ensure_ascii=False, separators=(",", ":"))
     user_prompt = user_template.replace("__BUNDLE_JSON__", bundle_json)
 
-    async for msg in query(prompt=user_prompt, options=opts):
-        if isinstance(msg, AssistantMessage):
-            for block in msg.content:
-                if isinstance(block, TextBlock):
-                    yield block.text
-        elif isinstance(msg, ResultMessage):
-            if msg.is_error:
-                errors = msg.errors or ["unknown error"]
-                raise RuntimeError(f"SDK error: {'; '.join(errors)}")
+    text = await llm_complete(
+        [{"role": "user", "content": user_prompt}],
+        system=system_prompt,
+        temperature=0.3,
+        max_tokens=4000,
+    )
+    yield text
 
 
 async def analyze_fund_streaming(code: str) -> AsyncIterator[dict]:
