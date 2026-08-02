@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import argparse
+import datetime
 import logging
 import math
 import os
@@ -34,6 +35,14 @@ def safe_float(value):
     return None if math.isnan(num) else num
 
 
+def _previous_quarter(today: datetime.date) -> str:
+    """返回上一个自然季度，形如 ``2026Q1``。"""
+    current_quarter = (today.month - 1) // 3 + 1
+    if current_quarter == 1:
+        return f"{today.year - 1}Q4"
+    return f"{today.year}Q{current_quarter - 1}"
+
+
 def parse_args(argv) -> tuple[int, list[str], list[str]]:
     """解析 ``worker.py <task_id> [--codes a,b] [--fund-types x,y]``。"""
     parser = argparse.ArgumentParser()
@@ -46,10 +55,34 @@ def parse_args(argv) -> tuple[int, list[str], list[str]]:
     return ns.task_id, codes, fund_types
 
 
-def resolve_codes(codes: list[str], fund_types: list[str]) -> list[str]:
-    """--codes 优先；否则按 --fund-types 查 funds；否则全量。"""
+def resolve_codes(
+    codes: list[str], fund_types: list[str], incremental: bool = False,
+) -> list[str]:
+    """解析目标基金；支持全量、类型过滤和缺上一季度持仓的增量集合。"""
     if codes:
         return list(codes)
+
+    if incremental:
+        previous_quarter = _previous_quarter(datetime.date.today())
+        covered_rows = database.select("fund_holdings", [
+            ("quarter", f"eq.{previous_quarter}"),
+            ("select", "fund_code"),
+        ])
+        covered_codes = {
+            row["fund_code"] for row in covered_rows if row.get("fund_code")
+        }
+        params: list[tuple[str, str]] = [
+            ("select", "code"),
+            ("type", "not.ilike.货币型*"),
+        ]
+        if fund_types:
+            params.append(("type", f"in.({','.join(fund_types)})"))
+        return [
+            row["code"]
+            for row in database.select("funds", params)
+            if row["code"] not in covered_codes
+        ]
+
     params = None
     if fund_types:
         params = {"type": f"in.({','.join(fund_types)})"}

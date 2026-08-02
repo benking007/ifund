@@ -30,7 +30,11 @@ def _run_per_fund(args, process_one) -> None:
     """并发处理 resolve 出的目标基金，打印进度汇总。"""
     from app.common.worker_base import resolve_codes
 
-    targets = resolve_codes(helpers.csv_list(args.codes), helpers.csv_list(args.types))
+    targets = resolve_codes(
+        helpers.csv_list(args.codes),
+        helpers.csv_list(args.types),
+        incremental=getattr(args, "incremental", False),
+    )
     n = len(targets)
     ok = skip = fail = 0
     fails: list[str] = []

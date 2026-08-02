@@ -70,6 +70,11 @@ def build_parser() -> argparse.ArgumentParser:
         p = g.add_parser(name, parents=[common], help=helptext)
         p.add_argument("--codes", help="基金代码(逗号)；省略则按 --types 或全量")
         p.add_argument("--types", help="基金类型(逗号)")
+        if name == "holdings":
+            p.add_argument(
+                "--incremental", action="store_true",
+                help="仅拉取缺上一季度持仓的非货币型基金",
+            )
         p.set_defaults(fn=fn)
 
     # analyze（组合分析）
