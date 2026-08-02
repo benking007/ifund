@@ -4,7 +4,9 @@
 >
 > 文档覆盖：技术架构、数据模型、接口契约、子进程拉取机制、前端状态流、业务规则、运维约束、从零复原步骤。
 >
-> 编写时项目状态：分支 `main`，最近提交 `feat: worker 并发拉取 + 前端轮询优化`。
+> 编写时项目状态：分支 `main`，最近提交 `chore: 运维脚本与部署模板（绝对路径参数化）+ 集成文档`（2026-08-02）。
+>
+> 近期演进（2026-07 下旬 ~ 08 初）：AI 定性分析接入 agim RPC、持仓拉取并发化、行业映射口径修正与北交所补采、前端主题同步/嵌入模式——详见 [13. 近期演进](#13-近期演进2026-07-28--08-02)。
 >
 > **数据源策略**：系统采用**多数据源（可插拔后端）设计**——业务代码与具体数据库解耦，通过统一接口访问。**当前阶段仅实现 SQLite 后端**；待 SQLite 全链路稳定后，再按相同接口契约接入 **MySQL** 后端。本文档中凡涉及"未来 MySQL"之处均明确标注，复原时**先把 SQLite 做完做对**即可。
 
@@ -24,6 +26,7 @@
 10. [业务规则汇总](#10-业务规则汇总)
 11. [关键约束与 Gotchas](#11-关键约束与-gotchas)
 12. [从零复原步骤](#12-从零复原步骤)
+13. [近期演进（2026-07-28 ~ 08-02）](#13-近期演进2026-07-28--08-02)
 
 ---
 
@@ -756,3 +759,90 @@ SQLite 启动时 `init_db()` 自动执行 `schema_sqlite.sql`（`CREATE TABLE IF
 ---
 
 *文档完。技术细节以 `backend/app/` 源码为准；本文档与源码不一致时，以源码为事实，并据此更新本文档。*
+
+---
+
+## 13. 近期演进（2026-07-28 ~ 08-02）
+
+本节记录 2026-07-28 至 08-02 期间的架构级变更，涉及 AI 分析、持仓拉取、行业映射与前端集成四条主线。
+
+### 13.1 AI 定性分析：agim RPC 接入
+
+**背景**：AI 定性分析原为本地提示词模板（`Prompt-基金AI定性分析填充.md`），需改为调用外部 agim 服务的大模型完成分析。
+
+**实现**：
+
+- 新增 `backend/app/ai_analyze/rpc_client.py`：通过 Unix socket（`AGIM_RPC_SOCKET`，默认 `~/.agim/rpc.sock`）调用 agim 的 `llm_complete` 工具（`/rpc/mcp__agim__llm_complete`）
+- 认证：`AGIM_RPC_TOKEN` 环境变量；超时默认 120s（`_DEFAULT_TIMEOUT_S`）
+- 模型：`IFUND_LLM_BACKEND` 环境变量，默认 **`deepseek-v4-flash`**（原 `deepseek-v4-pro`）
+- `service.py` 由本地模板填充改为 RPC 调用 + 结果解析
+
+**配置项**：
+
+| 环境变量 | 默认值 | 说明 |
+|---------|--------|------|
+| `AGIM_RPC_SOCKET` | `~/.agim/rpc.sock` | agim RPC socket 路径 |
+| `AGIM_RPC_TOKEN` | 空 | RPC 认证 token |
+| `IFUND_LLM_BACKEND` | `deepseek-v4-flash` | 大模型后端名 |
+
+### 13.2 持仓拉取：并发化 + 超时退避
+
+**背景**：`cli fetch holdings` 原为单线程逐只拉取，17 分钟仅完成 10 只基金；东财接口偶发 read timeout 无重试，直接中断整批。
+
+**实现**：
+
+- `backend/cli/fetch.py`：`ThreadPoolExecutor` 并发（`IFUND_CLI_CONCURRENCY`，默认 4），`as_completed` 聚合结果；实测 131 只/分钟（约 200 倍提升）
+- `backend/app/common/worker_base.py`：worker 子进程共享主循环——确定基金集合（`--types`/`--codes` 过滤）+ `ProcessPoolExecutor`/`ThreadPoolExecutor` 并发 + `pickle` 进度上报 + 协作式终止；各模块 worker 只需实现 `process_one(code) -> "success"|"skip"|"fail"`
+- `backend/app/fund_holdings/fetch/worker.py`：请求 timeout 15s + 指数退避重试（2/4/8/16s，最多 5 次，`MAX_RETRIES=4` + jitter）
+- `holdings_crud.py`：缓存写入守卫——API 空响应不写 2 字节 `[]` 缓存（避免污染后续读取）
+- 批处理脚本：`backend/scripts/holdings_batch{1,2,3}.sh`，按基金类型分批次串联执行，单批失败继续下一批，每批记录 BEFORE/AFTER 覆盖数；路径自动推导（`SCRIPT_DIR`），不硬编码机器路径
+
+**性能基准**（2026-08-02 实测）：
+
+| 阶段 | 速率 | 说明 |
+|------|------|------|
+| 单线程（改造前） | 0.6 只/分钟 | 17 分钟 +10 只 |
+| 并发 4（初版） | 131 只/分钟 | 后被东财限频 |
+| 并发 2 + 退避（稳定版） | 20-45 只/分钟 | 限频缓解，重试自愈 |
+
+### 13.3 行业映射：口径修正 + 北交所补采
+
+**背景**：`uncovered` 统计把债券/可转债/场内基金/海外股（韩股等）全部计入，虚高至 4590 条；北交所 920 段（约 138 只）在 legulegu 申万成分列表中完全缺失；港股 560 只（QDII/沪港深持仓扩充后新增）未采集。
+
+**实现**：
+
+- `industry_crud.py`：
+  - `_is_a_stock(code)`：6 位纯数字，排除 KRX 黑名单（000660/005930/009150/042700/055550/105560），命中 A 股前缀段（深主板 000-003、创业板 300-302、沪主板 600/601/603/605、科创板 688/689、北交所 920/430/83x/87x/88x/889、4/8 开头）
+  - `_is_hk_stock(code)`：5 位纯数字
+  - `stats()` / `uncovered_held()`：`eligible = A股 + 港股`，OTHER（债券/基金/海外股）明确排除；`market_of()` 精确市场判定
+- `em_worker.py`：补 A 股缺口（北交所 920 段 + 申万成分缺失）——优先 `stock_individual_info_em`，失败回退 `stock_industry_change_cninfo`（巨潮，唯一可用备用源：东财行业板块接口被远端关闭、同花顺当前 akshare 版本无成分接口）
+
+**采集结果**（2026-08-02）：覆盖 720 未覆盖 → 0；A股未覆盖 0、港股未覆盖 0；`coverage_pct=100.0%`（covered 4838 / held 4838）。920 段 137/137 全覆盖（market='BJ'）。
+
+### 13.4 前端：主题同步 + 嵌入模式
+
+**背景**：ifund 前端需嵌入外部 Dashboard（SPA 同源托管），并保持明暗主题与宿主同步。
+
+**实现**：
+
+- `useDashboardTheme.ts`：监听宿主 `data-theme` 属性 / `storage` 事件，同步 Ant Design `ConfigProvider` 主题；localStorage key 统一 `dashboard-theme`
+- `embed.tsx`：独立嵌入入口——`createMemoryRouter`（内存路由，不依赖 URL）+ `configureAppBase`（`APP_BASE` 基础路径）＋ `setUnauthorizedHandler`（401 → 宿主跳转）
+- `config.ts`：`APP_BASE` 运行时配置（`window.__IFUND_APP_BASE__`）
+- `FundDetailModal.tsx`：已有 AI 定性分析时显示「重新分析」按钮（SSE 流式重跑）
+
+### 13.5 部署与运维
+
+- `deploy/ifund.service`：systemd 单元模板，机器路径占位符化（`{{IFUND_BACKEND_DIR}}` / `{{IFUND_VENV_PYTHON}}` / `{{IFUND_LOG_DIR}}`），部署时替换
+- `INTEGRATION.md`：与外部 Dashboard 的集成部署说明（静态产物输出目录、nginx 反代、同源 SPA 托管）
+- 日志：`backend/logs/`（worker 日志按任务分文件），bgjob 目录 `~/.agim/bgjobs/`（长任务后台执行）
+
+### 13.6 变更文件索引
+
+| 模块 | 文件 |
+|------|------|
+| AI 分析 | `backend/app/ai_analyze/rpc_client.py`（新增）、`service.py` |
+| 并发框架 | `backend/app/common/worker_base.py`（新增）、`backend/cli/fetch.py`、`backend/app/db/__init__.py` |
+| 持仓拉取 | `backend/app/fund_holdings/fetch/worker.py`、`crud/holdings_crud.py` |
+| 行业映射 | `backend/app/stock_industry/crud/industry_crud.py`、`fetch/em_worker.py` |
+| 前端 | `frontend/src/useDashboardTheme.ts`（新增）、`embed.tsx`（新增）、`config.ts`（新增）、`routes.tsx`、`App.tsx`、`main.tsx`、`api/request.ts`、`vite.config.ts`、`pages/fund/components/FundDetailModal.tsx` |
+| 运维 | `backend/scripts/holdings_batch*.sh`（新增）、`deploy/ifund.service`（新增）、`INTEGRATION.md`（新增）、`CHANGELOG.md`（新增） |
