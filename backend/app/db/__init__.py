@@ -11,7 +11,7 @@ from pathlib import Path
 from .base import Database, UniqueViolation
 from .sqlite import SqliteDatabase
 
-__all__ = ["Database", "UniqueViolation", "SqliteDatabase", "get_db"]
+__all__ = ["Database", "UniqueViolation", "SqliteDatabase", "get_db", "reset_after_fork"]
 
 _STATE: dict[str, Database] = {}
 
@@ -30,6 +30,11 @@ def get_db() -> Database:
             raise ValueError(f"未知 DB_BACKEND: {backend}")
         _STATE["db"] = db
     return db
+
+
+def reset_after_fork() -> None:
+    """丢弃父进程继承的数据库单例，让 worker 子进程建立自己的连接。"""
+    _STATE.clear()
 
 
 def select(table: str, params=None) -> list[dict]:

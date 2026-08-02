@@ -13,14 +13,43 @@ os.chdir(_BACKEND_DIR)
 
 # pylint: disable=wrong-import-position
 import datetime
+import logging
 import re
+import time
 
 import akshare as ak  # pylint: disable=import-error
+import requests
+import akshare.fund.fund_portfolio_em as _fund_portfolio_em  # pylint: disable=import-error
 
 from app.common import worker_base
 from app.fund_holdings.crud import holdings_crud
 
 _QUARTER_RE = re.compile(r"(\d{4}).*?([1-4])\s*季度")
+_REQUEST_TIMEOUT_SECONDS = 15
+# 初次请求 + 4 次重试 = 最多 5 次尝试，退避间隔为 2/4/8/16 秒。
+_MAX_REQUEST_RETRIES = 4
+_BACKOFF_BASE_SECONDS = 2
+logger = logging.getLogger(__name__)
+
+
+class _RequestsProxy:
+    """只为 AkShare 持仓模块补默认 timeout，不改动全局 requests 模块。"""
+
+    def __init__(self, requests_module):
+        self._requests_module = requests_module
+
+    def get(self, *args, **kwargs):
+        kwargs.setdefault("timeout", _REQUEST_TIMEOUT_SECONDS)
+        return self._requests_module.get(*args, **kwargs)
+
+    def __getattr__(self, name):
+        return getattr(self._requests_module, name)
+
+
+# AkShare 1.18.81 的持仓接口没有 timeout 参数，且内部直接调用 requests.get。
+# 替换该模块自己的 requests 引用，避免并发时修改全局 requests.get。
+if not isinstance(_fund_portfolio_em.requests, _RequestsProxy):
+    _fund_portfolio_em.requests = _RequestsProxy(requests)
 
 
 def _normalize_quarter(text: str) -> str:
@@ -29,11 +58,32 @@ def _normalize_quarter(text: str) -> str:
     return f"{match.group(1)}Q{match.group(2)}" if match else (text or "").strip()
 
 
+def _call_with_retry(label, func):
+    """调用单次 AkShare 请求，失败时有限重试并指数退避。"""
+    for attempt in range(_MAX_REQUEST_RETRIES + 1):
+        try:
+            return func()
+        except KeyError:
+            # AkShare 对无债券持仓的空表会在内部访问缺失列时抛出 KeyError；
+            # 这属于合法的「无数据」，由债券行转换层显式处理，其他 KeyError 继续上抛。
+            raise
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            if attempt == _MAX_REQUEST_RETRIES:
+                logger.exception("%s 最终失败（已尝试 %d 次）", label, attempt + 1)
+                raise
+            delay = _BACKOFF_BASE_SECONDS ** (attempt + 1)
+            logger.warning(
+                "%s 第 %d 次失败，将在 %d 秒后重试：%s",
+                label, attempt + 1, delay, exc,
+            )
+            time.sleep(delay)
+
+
 def _stock_rows(code, year, now):
-    try:
-        frame = ak.fund_portfolio_hold_em(symbol=code, date=str(year))
-    except Exception:  # pylint: disable=broad-exception-caught
-        return []
+    frame = _call_with_retry(
+        f"基金 {code} 股票持仓 {year}",
+        lambda: ak.fund_portfolio_hold_em(symbol=code, date=str(year)),
+    )
     rows = []
     for _, row in frame.iterrows():
         rows.append({
@@ -52,9 +102,16 @@ def _stock_rows(code, year, now):
 
 
 def _bond_rows(code, year, now):
+    label = f"基金 {code} 债券持仓 {year}"
     try:
-        frame = ak.fund_portfolio_bond_hold_em(symbol=code, date=str(year))
-    except Exception:  # pylint: disable=broad-exception-caught
+        frame = _call_with_retry(
+            label,
+            lambda: ak.fund_portfolio_bond_hold_em(symbol=code, date=str(year)),
+        )
+    except KeyError as exc:
+        if str(exc) != "'占净值比例'":
+            raise
+        logger.warning("%s 返回空债券表，按无债券持仓处理：%s", label, exc)
         return []
     rows = []
     for _, row in frame.iterrows():
@@ -81,9 +138,21 @@ def _dedup(rows):
     return list(seen.values())
 
 
+def _previous_quarter(today: datetime.date) -> str:
+    """返回上一个自然季度，形如 ``2026Q1``。"""
+    current_quarter = (today.month - 1) // 3 + 1
+    if current_quarter == 1:
+        return f"{today.year - 1}Q4"
+    return f"{today.year}Q{current_quarter - 1}"
+
+
 def _process_one(code):
+    today = datetime.date.today()
+    stored = holdings_crud.stored_latest(code)
+    if stored and stored >= _previous_quarter(today):
+        return "skip"
     now = datetime.datetime.now().isoformat()
-    year = datetime.date.today().year
+    year = today.year
     rows = []
     for target_year in (year - 1, year):
         rows += _stock_rows(code, target_year, now)

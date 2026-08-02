@@ -52,6 +52,14 @@ def latest_quarter(code: str, holding_type: str = "stock") -> str | None:
     return row["quarter"] if row else None
 
 
+def stored_latest(code: str) -> str | None:
+    """该基金已存的最新持仓季度（股票/债券任一类，形如 2025Q1）。"""
+    row = database.select_one("fund_holdings", {
+        "fund_code": f"eq.{code}", "order": "quarter.desc",
+    })
+    return row["quarter"] if row else None
+
+
 def available_quarters(code: str, holding_type: str = "stock") -> list[str]:
     """该基金某类持仓的全部可用季度（降序，最新在前），供详情页切换历史报告期。"""
     rows = database.select("fund_holdings", [

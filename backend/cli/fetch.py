@@ -1,37 +1,57 @@
 """fetch 组：交易日历 / 行业映射 / 详情 / 持仓 / 净值 拉取。
 
 详情/持仓/净值复用各 worker 的 ``_process_one(code)``（自带「同基准交易日已拉则 skip」缓存），
-逐只同步跑（akshare 限流，CONCURRENCY=1）。akshare 相关 import 全部延迟到命令内部，
+逐只通过线程池并发跑（默认 CONCURRENCY=4，可用 IFUND_CLI_CONCURRENCY 覆盖）。
+akshare 相关 import 全部延迟到命令内部，
 保证 preset/position/holdings 命令不付 akshare 启动成本。
 """
 from __future__ import annotations
+
+import os
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from app import db as database
 
 from . import helpers, output
 
 
+DEFAULT_CLI_CONCURRENCY = 4
+
+
+def _cli_concurrency() -> int:
+    """读取 CLI 并发数；无效值回退到保守默认值。"""
+    try:
+        return max(1, int(os.getenv("IFUND_CLI_CONCURRENCY", str(DEFAULT_CLI_CONCURRENCY))))
+    except ValueError:
+        return DEFAULT_CLI_CONCURRENCY
+
+
 def _run_per_fund(args, process_one) -> None:
-    """对 resolve 出的目标基金逐只跑 process_one(code)，打印进度汇总。"""
+    """并发处理 resolve 出的目标基金，打印进度汇总。"""
     from app.common.worker_base import resolve_codes
+
     targets = resolve_codes(helpers.csv_list(args.codes), helpers.csv_list(args.types))
     n = len(targets)
     ok = skip = fail = 0
     fails: list[str] = []
-    for i, code in enumerate(targets, 1):
-        try:
-            r = process_one(code) or "success"
-        except Exception as exc:  # pylint: disable=broad-exception-caught
-            r = "fail"
-            fails.append(f"{code}:{exc}")
-        if r == "success":
-            ok += 1
-        elif r == "skip":
-            skip += 1
-        else:
-            fail += 1
-        if not args.json and (i % 20 == 0 or i == n):
-            print(f"\r进度 {i}/{n}  新增{ok} 跳过{skip} 失败{fail}", end="", flush=True)
+
+    with ThreadPoolExecutor(max_workers=_cli_concurrency()) as executor:
+        futures = {executor.submit(process_one, code): code for code in targets}
+        for i, future in enumerate(as_completed(futures), 1):
+            code = futures[future]
+            try:
+                r = future.result() or "success"
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                r = "fail"
+                fails.append(f"{code}:{exc}")
+            if r == "success":
+                ok += 1
+            elif r == "skip":
+                skip += 1
+            else:
+                fail += 1
+            if not args.json and (i % 20 == 0 or i == n):
+                print(f"\r进度 {i}/{n}  新增{ok} 跳过{skip} 失败{fail}", end="", flush=True)
     if not args.json:
         print()
     out = {"total": n, "success": ok, "skip": skip, "fail": fail, "fails": fails[:20]}
