@@ -1,0 +1,21 @@
+[Unit]
+Description=iFund Public Fund Research API and SPA
+After=network.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory={{IFUND_BACKEND_DIR}}
+ExecStart={{IFUND_VENV_PYTHON}} -m waitress-serve --listen=127.0.0.1:8003 app.main:app
+Restart=always
+RestartSec=5
+Environment=PYTHONPATH={{IFUND_BACKEND_DIR}}
+EnvironmentFile=-{{IFUND_BACKEND_DIR}}/.env
+
+StandardOutput=append:{{IFUND_LOG_DIR}}/waitress.log
+StandardError=append:{{IFUND_LOG_DIR}}/waitress.log
+
+[Install]
+WantedBy=multi-user.target
