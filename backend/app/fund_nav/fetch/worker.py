@@ -14,15 +14,72 @@ os.chdir(_BACKEND_DIR)
 # pylint: disable=wrong-import-position
 import datetime
 import logging
+import random
+import threading
+import time
 
 import akshare as ak  # pylint: disable=import-error
+import akshare.fund.fund_em as _fund_em  # pylint: disable=import-error
+import requests
 
 from app.common import worker_base
 from app.fund_nav.crud import nav_crud
 from app.fund_nav.fetch import akshare_js, eastmoney
 from app.trade_calendar.crud import calendar_crud
 
+_REQUEST_TIMEOUT_SECONDS = 15
+# 初次请求 + 4 次重试 = 最多 5 次尝试，退避基准为 2/4/8/16 秒并加入 ±30% jitter。
+_MAX_REQUEST_RETRIES = 4
+_BACKOFF_BASE_SECONDS = 2
+_RETRY_JITTER = 0.3
 logger = logging.getLogger(__name__)
+
+
+class _RequestsProxy:
+    """只为 AkShare 基金净值模块补默认 timeout，不改动全局 requests 模块。"""
+
+    def __init__(self, requests_module):
+        self._requests_module = requests_module
+        self._local = threading.local()
+
+    def _session(self):
+        session = getattr(self._local, "session", None)
+        if session is None:
+            session = self._requests_module.Session()
+            self._local.session = session
+        return session
+
+    def get(self, *args, **kwargs):
+        kwargs.setdefault("timeout", _REQUEST_TIMEOUT_SECONDS)
+        return self._session().get(*args, **kwargs)
+
+    def __getattr__(self, name):
+        return getattr(self._requests_module, name)
+
+
+# AkShare 的基金净值接口没有 timeout 参数，且内部直接调用 requests.get。
+# 替换该模块自己的 requests 引用，避免并发时修改全局 requests.get。
+if not isinstance(_fund_em.requests, _RequestsProxy):
+    _fund_em.requests = _RequestsProxy(requests)
+
+
+def _call_with_retry(label, func, *args, **kwargs):
+    """调用单次 AkShare 请求，失败时有限重试并指数退避。"""
+    for attempt in range(_MAX_REQUEST_RETRIES + 1):
+        try:
+            return func(*args, **kwargs)
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            if attempt == _MAX_REQUEST_RETRIES:
+                logger.exception("%s 最终失败（已尝试 %d 次）", label, attempt + 1)
+                raise
+            delay = (_BACKOFF_BASE_SECONDS ** (attempt + 1)) * random.uniform(
+                1 - _RETRY_JITTER, 1 + _RETRY_JITTER
+            )
+            logger.warning(
+                "%s 第 %d 次失败，将在 %.2f 秒后重试：%s",
+                label, attempt + 1, delay, exc,
+            )
+            time.sleep(delay)
 
 
 def _acc_nav_map(code):
@@ -33,7 +90,12 @@ def _acc_nav_map(code):
     接口异常时返回空表，降级为只存单位净值。
     """
     try:
-        frame = ak.fund_open_fund_info_em(symbol=code, indicator="累计净值走势")
+        frame = _call_with_retry(
+            f"基金 {code} 累计净值走势",
+            ak.fund_open_fund_info_em,
+            symbol=code,
+            indicator="累计净值走势",
+        )
     except Exception:  # pylint: disable=broad-exception-caught
         return {}
     return {
@@ -43,7 +105,12 @@ def _acc_nav_map(code):
 
 
 def _nav_rows(code, stored, now):
-    frame = ak.fund_open_fund_info_em(symbol=code, indicator="单位净值走势")
+    frame = _call_with_retry(
+        f"基金 {code} 单位净值走势",
+        ak.fund_open_fund_info_em,
+        symbol=code,
+        indicator="单位净值走势",
+    )
     acc_map = _acc_nav_map(code)
     rows = []
     for _, row in frame.iterrows():
@@ -61,7 +128,12 @@ def _nav_rows(code, stored, now):
 
 
 def _cum_rows(code, stored, now):
-    frame = ak.fund_open_fund_info_em(symbol=code, indicator="累计收益率走势")
+    frame = _call_with_retry(
+        f"基金 {code} 累计收益率走势",
+        ak.fund_open_fund_info_em,
+        symbol=code,
+        indicator="累计收益率走势",
+    )
     rows = []
     for _, row in frame.iterrows():
         day = str(row["日期"])
