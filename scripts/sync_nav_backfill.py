@@ -91,7 +91,7 @@ def main() -> None:
     if not args.full_only:
         run_phase("/tmp/nav_incr.txt", "incr", grand)
     if not args.incr_only:
-        run_phase("/tmp/nav_full.txt", "full", grand)
+        run_phase(os.environ.get("NAV_FULL_LIST", "/tmp/nav_full.txt"), "full", grand)
 
     elapsed = time.monotonic() - t_start
     log.info("=== 完成: %.1f min, success=%d fail=%d skip=%d ===",
