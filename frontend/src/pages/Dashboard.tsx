@@ -28,7 +28,11 @@ const TradeCalendar = lazy(() => import('./TradeCalendar'))
 
 const { Header, Sider, Content } = Layout
 
-export default function Dashboard() {
+interface DashboardProps {
+  embedded?: boolean
+}
+
+export default function Dashboard({ embedded = false }: DashboardProps) {
   const navigate = useNavigate()
   const location = useLocation()
   const [collapsed, setCollapsed] = useState(false)
@@ -46,24 +50,34 @@ export default function Dashboard() {
     navigate(key === 'fund' ? '/' : `/${key}`)
   }
 
+  const handleMenuClick = (key: string) => {
+    if (key === 'logout') {
+      logout()
+      return
+    }
+    go(key)
+  }
+
   return (
     // 固定视口高度：仅内容区滚动，Header/侧边栏不随滚动移动
     <Layout style={{ height: '100vh' }}>
-      <Header
-        className="flex items-center justify-between"
-        style={{ paddingInline: 16, flexShrink: 0, background: 'var(--ifund-bg-sidebar)' }}
-      >
-        <span style={{ color: token.colorText, fontSize: 18, fontWeight: 600 }}>iFund</span>
-        <Button
-          icon={<LogoutOutlined />}
-          onClick={logout}
-          type="text"
-          size="small"
-          style={{ color: token.colorText }}
+      {!embedded && (
+        <Header
+          className="flex items-center justify-between"
+          style={{ paddingInline: 16, flexShrink: 0, background: 'var(--ifund-bg-sidebar)' }}
         >
-          退出
-        </Button>
-      </Header>
+          <span style={{ color: token.colorText, fontSize: 18, fontWeight: 600 }}>iFund</span>
+          <Button
+            icon={<LogoutOutlined />}
+            onClick={logout}
+            type="text"
+            size="small"
+            style={{ color: token.colorText }}
+          >
+            退出
+          </Button>
+        </Header>
+      )}
       <Layout>
         <Sider
           width={160}
@@ -78,7 +92,7 @@ export default function Dashboard() {
             theme={isDark ? 'dark' : 'light'}
             selectedKeys={[selected]}
             defaultOpenKeys={['auxiliary']}
-            onClick={(e) => go(e.key)}
+            onClick={(e) => handleMenuClick(e.key)}
             items={[
               {
                 type: 'group',
@@ -101,6 +115,7 @@ export default function Dashboard() {
                 ],
               },
               { key: 'tokens', icon: <KeyOutlined />, label: '访问令牌' },
+              { key: 'logout', icon: <LogoutOutlined />, label: '退出' },
             ]}
           />
         </Sider>

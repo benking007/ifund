@@ -6,23 +6,31 @@ import RequireAuth from './RequireAuth'
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Login = lazy(() => import('./pages/Login'))
 
-export const routes: RouteObject[] = [
-  {
-    path: '/login',
-    element: (
-      <Suspense fallback={<Loading />}>
-        <Login />
-      </Suspense>
-    ),
-  },
-  {
-    path: '/*',
-    element: (
-      <RequireAuth>
+interface RouteOptions {
+  embedded?: boolean
+}
+
+export function createRoutes({ embedded = false }: RouteOptions = {}): RouteObject[] {
+  return [
+    {
+      path: '/login',
+      element: (
         <Suspense fallback={<Loading />}>
-          <Dashboard />
+          <Login />
         </Suspense>
-      </RequireAuth>
-    ),
-  },
-]
+      ),
+    },
+    {
+      path: '/*',
+      element: (
+        <RequireAuth>
+          <Suspense fallback={<Loading />}>
+            <Dashboard embedded={embedded} />
+          </Suspense>
+        </RequireAuth>
+      ),
+    },
+  ]
+}
+
+export const routes = createRoutes()
