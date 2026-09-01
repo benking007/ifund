@@ -7,7 +7,31 @@
 
 ## [Unreleased]
 
-### 新增
+### 新增（2026-08-30 ~ 09-01）
+
+- **净值数据治理 M1–M6 落地**（2026-08-30）：`fund_nav` 增加 `adj_nav`/`adj_src`（Tushare 复权 + 本地自算前复权，`adj_engine.py`）；`fund_div_split`（分红/拆分事件，`events_worker.py`）；`nav_repair_queue`（缺口修复队列，`repair_crud.py`/`backfill_worker.py`）；`/api/stats` 新增复权覆盖率等指标。详见 `docs/nav_governance_delivery.md`
+- **蛋卷不收录基金占位机制**：`fund_details` 对 1164 只蛋卷无数据基金（后端份额/定期开放债/部分 FOF 联接/货币B）写 `source_unavailable` 占位，7 天内跳过拉取、7 天后自动重探（`scripts/mark_source_unavailable.py` + `detail_crud._is_source_unavailable`），避免每日 cron 空拉
+- **detail 每日刷新 cron**：`10 20 * * *` `ifund_cli.py fetch detail`（is_expired 去重，与 20:00 净值任务错开）
+- **`fund_ai_analyze` MCP 工具**（myfund 侧 `scripts/ifund_mcp.mjs`）：CLI 子进程方式（`ifund_cli.py ai-analyze batch --json` 直连 data.db 免 JWT），同步触发基金 AI 定性分析
+- **MySQL 后端**（`app/db/mysql.py`）：PyMySQL 驱动，完整实现 Database 契约（方言转换/upsert/batch/三复杂查询），`DB_BACKEND=mysql` 切换；DDL 由 `_convert_schema_sql` 从 `schema_sqlite.sql` 实时转换，无需独立 schema_mysql.sql
+- **数据迁移脚本**：`scripts/migrate_sqlite_to_mysql.py`（分片游标 + checkpoint 断点续跑 + 每表对账）
+- **集成文档与部署**：`INTEGRATION.md`、`deploy/ifund.service` systemd 模板
+
+### 变更
+
+- **废弃 `fund_nav_return` 中间表**（2026-09-01，用户拍板）：myfund 自选/估算区间收益不再经中间表缓存，改为**并发直读 `fund_details.return_3m/6m/1y`**（`fetch_fund_returns_many`，asyncio.gather 调 ifund_detail）；`fund_nav.py` 删除 fund_return_worker，schema 移除表定义——`fund_details` 是区间收益唯一事实源
+- **scale 弹性处理**：`fund_details.scale` 允许为空（8637 只蛋卷不返回规模），不再因缺 scale 判 is_expired 每日重拉；消费端名称走其他源
+- **数据源迁移 SQLite → MySQL**（2026-09-01）：9.2GB data.db 全量 4161 万行迁至内网 MySQL（192.168.0.9/ifund，与 myfund 同服务器）；凭据 `/etc/ifund-prod.env`（chmod 600）+ systemd 双 EnvironmentFile + cron `set -a` 注入（与 myfund/fin-data 同方案）；服务端口 :8003，systemd 托管
+- **git remote 切换**：推送目标从 `OrangesHuang/ifund`（无写权限）切换为 fork `benking007/ifund`
+
+### 修复
+
+- **danjuanfunds 请求超时防卡死**：fetch detail 加 8s 超时
+- **worker_base.main() 缺失**：批量任务子进程崩溃修复 + fund_nav 重试退避
+- **MySQL UNIQUE 组合键超长**：fund_holdings 4 列 UNIQUE 超 3072 字节 → 转换器对约束列强制 VARCHAR(64)
+- **MySQL 保留字**：列名 `key`（app_settings）统一加反引号
+
+### 新增（2026-08-02）
 
 - **AI 定性分析接入 agim RPC**：新增 `backend/app/ai_analyze/rpc_client.py`，通过 Unix socket 调用 agim 的 `llm_complete` 工具；默认模型切换为 `deepseek-v4-flash`（可通过 `IFUND_LLM_BACKEND` 覆盖）
 - **持仓拉取并发化**：`backend/cli/fetch.py` 引入 `ThreadPoolExecutor`（`IFUND_CLI_CONCURRENCY`，默认 4），单线程逐只拉取改为并发；实测速率从 0.6 只/分钟提升至 131 只/分钟（约 200 倍）

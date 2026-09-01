@@ -1,6 +1,7 @@
-# iFund 数据库字典（data.db）
+# iFund 数据库字典（MySQL，2026-09-01 迁移后）
 
-> 生成：2026-09-01 · 路径：`/root/workspace/ifund/backend/data.db`（SQLite）
+> 生成：2026-09-01 · 生产库：`MySQL 192.168.0.9/ifund`（`DB_BACKEND=mysql`，凭据 `/etc/ifund-prod.env`）
+> 旧 SQLite：`backend/data.db`（保留作回滚，结构与本字典一致）
 > 目的：全量盘点 24 张表，明确每张表的**用途 / 数据源 / 关键字段 / 消费方**，
 > 作为「基金数据唯一事实源」的参照，避免后续重复建设同类数据。
 > 约定：新增任何基金/净值/持仓/收益类数据，先查本字典；已有表能覆盖的不得另起炉灶。
@@ -13,7 +14,7 @@
 |---|---|---|
 | 基础 | `funds`, `fund_types`, `trade_dates`, `stock_industry` | 基金主档、类型、交易日历、行业映射 |
 | 净值 | `fund_nav`（3394万行）, `fund_cum_return`（577万行）, `fund_div_split` | 单位/复权净值、累计收益、分红拆分 |
-| 详情 | `fund_details`（26038行） | 蛋卷快照：规模/经理/仓位/区间收益/年度收益（93列） |
+| 详情 | `fund_details`（27408行） | 蛋卷快照：规模/经理/仓位/区间收益/年度收益（93列） |
 | 持仓 | `fund_holdings`（167万行） | 季报股票/债券持仓 |
 | 派生分析 | `fund_ai_analysis`（5421行）, `fund_etf_linkage`（1000行）, `fund_manager_tenure`（86210行） | AI 解读、ETF 血缘、经理任职史 |
 | 任务/状态 | `fetch_tasks`, `event_scan_status`, `nav_repair_queue` | 拉取任务、分红扫描状态、净值修复队列 |
@@ -65,9 +66,9 @@
 
 ## 3. 详情域
 
-### fund_details（26038 行 / 93 列）— 基金详情快照（唯一详情/区间收益事实源）
+### fund_details（27408 行 / 93 列）— 基金详情快照（唯一详情/区间收益事实源）
 - **用途**：规模/经理/公司/托管行/类型/评级 + 仓位 + 风险指标(1y/3y/5y) + **区间收益(ytd/1m/3m/6m/1y/3y/5y/年度)** + 排名
-- **数据源**：**蛋卷基金 danjuanfunds**（akshare `fund_individual_*_xq` 实际请求 djapi）——fetch detail 任务
+- **数据源**：**蛋卷基金 danjuanfunds**（akshare `fund_individual_*_xq` 实际请求 djapi）——fetch detail 任务（cron 每日 20:10）
 - **关键字段**：`fund_code`, `trade_date`(快照日), `scale`, `fund_manager`, `fund_type`,
   `position_stock/bond/cash/other`, `sharpe_1y/3y/5y`, `max_drawdown_*`,
   `return_1m/3m/6m/1y/3y/5y/ytd`, `return_YYYY`(2015-2025), `rank_*`
@@ -75,7 +76,8 @@
   - `/fund/list` 排序/筛选（白名单：scale/return_ytd/sharpe_3y 等）
   - `/fund/{code}` 单只详情（myfund `ifund_detail`）
   - **myfund 自选/估算区间收益（2026-09-01 起直读 return_3m/6m/1y，唯一事实源）**
-- ⚠️ `detail_json` 列当前存 `{}`（未利用）；`scale` 缺失会被 is_expired 判为需补全
+- ⚠️ `detail_json` 列存 `{}` 或 `{"source_unavailable":true}`（1164 只蛋卷不收录占位，7 天跳过/7 天后自动重探）；
+  `scale` **允许为空**（8637 只蛋卷不返回，不触发重拉）
 
 ---
 
@@ -146,7 +148,7 @@
 
 ## 9. 已知注意点
 
-- `fund_details.detail_json` 未利用（存 `{}`）——如需原始响应可后续启用，勿另建表
+- `fund_details.detail_json` 未存原始响应（`{}` 或 source_unavailable 占位）——如需原始响应可后续启用，勿另建表
 - `fund_nav` 3394 万行 → 定期 `checkpoint_wal` + 增量维护，勿全量重建
 - `fund_ai_analysis` 仅 5421 行（约 20% 覆盖率）——AI 解读按需补充，非全量
 - 净值域与详情域 trade_date 含义不同：`fund_nav.trade_date` 是净值日；`fund_details.trade_date` 是蛋卷快照日（可能滞后，如 07-31）

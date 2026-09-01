@@ -41,7 +41,7 @@
 | 层 | 技术 |
 | --- | --- |
 | 后端 | Python 3.12 · Flask 3.1 · flask-jwt-extended · bcrypt · pydantic · akshare · waitress |
-| 数据 | SQLite（多后端抽象层，预留 MySQL）|
+| 数据 | **MySQL**（内网 192.168.0.9/ifund；可插拔后端抽象，SQLite 保留作回滚/离线） |
 | 前端 | React 18 · TypeScript · Ant Design 5 · Vite 5 · Tailwind |
 | 集成 | MCP（官方 Python SDK / FastMCP）· httpx |
 
@@ -51,18 +51,21 @@
 ifund/
 ├── backend/            后端 Flask 应用
 │   ├── app/            应用工厂 + 各业务模块（见下）
-│   ├── schema_sqlite.sql   SQLite 建表脚本
+│   ├── schema_sqlite.sql   SQLite 建表脚本（MySQL 由 app/db/mysql.py 实时方言转换）
 │   ├── requirements.txt    后端 + waitress + mcp 依赖
+│   ├── scripts/            调度脚本（daily_nav_sync / quarterly_holdings_sync / 迁移等）
 │   └── .env            本地配置（不入库）
 │       app/ 业务模块：fund(筛选/预设/镜像) · fund_detail/fund_holdings/fund_nav(拉取)
 │              · trade_calendar(交易日历) · stock_industry(行业映射)
 │              · cluster(聚类) · position(仓位建议) · reconcile(实盘对账)
-│              · routers/auth(登录 + PAT) · db(数据库抽象) · common(worker/任务)
+│              · routers/auth(登录 + PAT) · db(数据库抽象，sqlite + mysql 双后端) · common(worker/任务)
 ├── frontend/           前端 React + Vite（基金/筛选/聚类/仓位/行业/实盘/交易日历/令牌）
 ├── mcp_server/         MCP 服务器（把核心能力暴露给 OpenClaw 等 agent，共 33 工具）
+├── docs/               净值治理交付、永续策略等专题文档
+├── deploy/             systemd 部署模板（ifund.service）
 ├── ARCHITECTURE.md     高保真架构文档
-├── start.sh            一键启动（调试：热重载后端 :8000 + 前端 dev :9000）
-├── service.sh          常驻服务管理（生产：launchd + waitress，开机自启 + 崩溃自愈）
+├── start.sh            一键启动（调试：热重载后端 + 前端 dev）
+├── service.sh          常驻服务管理
 └── pyproject.toml      pylint 配置
 ```
 
@@ -81,6 +84,7 @@ ifund/
 
 脚本会自动：创建后端 venv 并装依赖 → 安装前端依赖并构建 → 启动后端（:8000，热重载）与前端开发服务（:9000，热更新）。
 后端已把 `npm run build` 的前端产物从 `backend/static` 单端口（:8000）直接提供，所以**只需后端就能访问完整网页**；:9000 仅开发热更新用。
+（:8000 是本地调试端口；**生产**用 systemd 托管 waitress 于 :8003，见下节。）
 
 ### 手动启动
 
@@ -93,36 +97,39 @@ python3.12 -m venv venv
 
 ## 🔁 长期常驻运行（生产）
 
-日常调试用 `start.sh`（热重载）；想让后端**关终端、合盖、重启都不掉线**（OpenClaw 随时可连），用 `service.sh` 装成 macOS launchd 常驻服务（waitress 生产 WSGI，开机自启 + 崩溃自动重启）：
+生产环境为 **Linux + systemd**（服务 `ifund.service`，waitress WSGI，端口 **:8003**，开机自启 + 崩溃自愈）：
 
 ```bash
-./service.sh install     # 一次性安装并启动常驻（开机自启）
-./service.sh status      # 查看状态 + 探测 :8000
-./service.sh logs        # 跟踪日志
-./service.sh restart     # 改了后端代码后让常驻生效
-./service.sh stop        # 停常驻（腾出 :8000）
-./service.sh uninstall   # 卸载常驻
+systemctl start ifund.service      # 启动
+systemctl status ifund.service     # 查看状态
+systemctl restart ifund.service    # 改了后端代码后让常驻生效
+journalctl -u ifund.service -f     # 跟踪日志
 ```
 
-> **常驻与调试只是占用同一个 `:8000` 端口，同一时刻只能开一个**。调试流程：
-> `./service.sh stop` → `./start.sh`（照常热重载）→ 调完 Ctrl-C → `./service.sh start`。
-> 两者跑的是**同一份代码、同一个 `backend/data.db`**，数据不会分叉；但别让两个后端同时写（SQLite 并发写会 `database is locked`）。
+> 生产数据源为 **MySQL**（内网 192.168.0.9/ifund），凭据在 `/etc/ifund-prod.env`（chmod 600），systemd 经
+> `EnvironmentFile` 注入；旧 SQLite `backend/data.db` 保留作回滚（迁移后 ≥7 天）。调试环境可用 `./start.sh`
+> 走 SQLite（`.env` 设 `DB_BACKEND=sqlite`），与生产互不干扰。
 
 ## ⚙️ 配置
 
-在 `backend/.env` 中配置（可参考 `backend/.env.example`）：
+在 `backend/.env` 中配置（开发/本地，可参考 `backend/.env.example`）；**生产**凭据在 `/etc/ifund-prod.env`
+（chmod 600，systemd EnvironmentFile 注入，cron 用 `set -a; . /etc/ifund-prod.env; set +a` 显式导出）。
 
 | 变量 | 说明 | 默认 |
 | --- | --- | --- |
 | `SECRET_KEY` | JWT 签名密钥，**启用 PAT / 对外集成前必须设强随机值** | `dev-secret`（仅开发） |
-| `DB_BACKEND` | 数据库后端 | `sqlite` |
-| `DB_PATH` | SQLite 数据库文件路径 | `backend/data.db` |
+| `DB_BACKEND` | 数据库后端：`mysql`（生产）/ `sqlite`（开发/离线） | `sqlite` |
+| `IFUND_DB_HOST` | MySQL 主机（仅 DB_BACKEND=mysql） | `127.0.0.1` |
+| `IFUND_DB_PORT` | MySQL 端口 | `3306` |
+| `IFUND_DB_USER` / `IFUND_DB_PASSWORD` | MySQL 账号（最小权限，仅 ifund 库） | — |
+| `IFUND_DB_NAME` | 库名 | `ifund` |
+| `DB_PATH` | SQLite 数据库文件路径（仅 DB_BACKEND=sqlite） | `backend/data.db` |
 
 > ⚠️ **安全**：`SECRET_KEY` 必须 ≥32 字节随机值，否则 JWT 可被伪造（启动时对弱密钥告警）。生成：
 > ```bash
 > python3 -c "import secrets; print('SECRET_KEY='+secrets.token_hex(32))" >> backend/.env
 > ```
-> 后端应保持绑定 `127.0.0.1`，不要直接暴露到公网。
+> 后端应保持绑定 `127.0.0.1`（生产经 system-dashboard 反代），不要直接暴露到公网。
 
 ## 🤖 MCP / OpenClaw 集成
 

@@ -4,11 +4,11 @@
 >
 > 文档覆盖：技术架构、数据模型、接口契约、子进程拉取机制、前端状态流、业务规则、运维约束、从零复原步骤。
 >
-> 编写时项目状态：分支 `main`，最近提交 `fix: 补交 CR 修复（lint 清零/懒加载/后端 P2 收尾）`（2026-08-02）。
+> 编写时项目状态：分支 `main`，最近提交 `feat(ifund): SQLite → MySQL 迁移（9.2GB 全量完成 + MySQL 后端）`（2026-09-01）。
 >
-> 近期演进（2026-07 下旬 ~ 08 初）：AI 定性分析接入 agim RPC、持仓拉取并发化、行业映射口径修正与北交所补采、前端主题同步/嵌入模式——详见 [13. 近期演进](#13-近期演进2026-07-28--08-02)。
+> 近期演进（2026-08-30 ~ 09-01）：净值数据治理 M1–M6、蛋卷不收录占位、scale 弹性、MySQL 后端落地与全量迁移、myfund 区间收益直读 fund_details、MCP `fund_ai_analyze`——详见 [15. 近期演进（2026-08-30 ~ 09-01）](#15-近期演进2026-08-30--09-01)。
 >
-> **数据源策略**：系统采用**多数据源（可插拔后端）设计**——业务代码与具体数据库解耦，通过统一接口访问。**当前阶段仅实现 SQLite 后端**；待 SQLite 全链路稳定后，再按相同接口契约接入 **MySQL** 后端。本文档中凡涉及"未来 MySQL"之处均明确标注，复原时**先把 SQLite 做完做对**即可。
+> **数据源策略**：系统采用**多数据源（可插拔后端）设计**——业务代码与具体数据库解耦，通过统一接口访问。**SQLite 与 MySQL 双后端均已实现**：生产用 MySQL（内网 192.168.0.9/ifund），SQLite 保留作开发/离线/回滚；`DB_BACKEND` 环境变量切换，业务代码零改动。MySQL 的 DDL 由 `app/db/mysql.py._convert_schema_sql` 从 `schema_sqlite.sql` 实时方言转换，**不维护第二份 schema 文件**（与本文档早期「新增 schema_mysql.sql」的设想不同，见 §3.2）。
 
 ---
 
@@ -28,6 +28,7 @@
 12. [从零复原步骤](#12-从零复原步骤)
 13. [近期演进（2026-07-28 ~ 08-02）](#13-近期演进2026-07-28--08-02)
 14. [CR 修复与工程加固（2026-08-02）](#14-cr-修复与工程加固2026-08-02)
+15. [近期演进（2026-08-30 ~ 09-01）](#15-近期演进2026-08-30--09-01)
 
 ---
 
@@ -48,7 +49,7 @@ iFund 是一个**公募基金筛选与数据管理系统**。核心能力：
 | 后端框架 | **Flask 3.1**（**非** FastAPI，README 过时） | 应用工厂模式 + Blueprint |
 | 后端语言 | Python ≥ 3.13 | |
 | ORM | **无 ORM 运行时**。装了 flask-sqlalchemy 但仅用于声明模型（文档化用途），实际数据访问全部走**原生 SQL** | |
-| 数据库 | **可插拔后端**：**SQLite**（当前唯一实现，默认）/ **MySQL**（规划中，未实现） | 由 `DB_BACKEND` 环境变量切换 |
+| 数据库 | **可插拔后端**：**SQLite**（开发/离线/回滚）与 **MySQL**（生产，内网 192.168.0.9/ifund）双实现 | 由 `DB_BACKEND` 环境变量切换 |
 | 数据源 | **akshare** | 必须在子进程调用（见 §5） |
 | 认证 | flask-jwt-extended + bcrypt | Bearer Token |
 | 前端框架 | React 18 + TypeScript | |
@@ -69,54 +70,64 @@ iFund 是一个**公募基金筛选与数据管理系统**。核心能力：
 ifund/
 ├── start.sh                      # 一键启动（venv + 依赖 + build + 双服务）
 ├── pyproject.toml                # Python 元数据 + pylint 配置（disable=[]）
-├── README.md                     # 部分过时（写的是 FastAPI，实为 Flask）
+├── README.md                     # 项目介绍（已同步 MySQL 现状）
+├── CHANGELOG.md                  # 变更日志
+├── INTEGRATION.md                # 集成部署（system-dashboard 反代 / MySQL / cron）
 ├── .gitignore
 ├── uv.lock
 ├── docs/
-│   └── ARCHITECTURE.md           # 本文档
+│   ├── nav_governance_delivery.md    # 净值治理 M1–M6 交付说明
+│   └── perpetual_timing_strategy.md  # 永续组合择时策略
+├── deploy/
+│   └── ifund.service             # systemd 单元模板（EnvironmentFile 注入）
 ├── backend/
-│   ├── schema_sqlite.sql         # SQLite 建表脚本（启动时自动执行）
+│   ├── schema_sqlite.sql         # SQLite 建表脚本（MySQL DDL 由此实时转换）
 │   ├── requirements.txt
-│   ├── .env / .env.example
-│   ├── data.db                   # SQLite 数据文件（gitignore）
+│   ├── .env / .env.example       # 本地配置（DB_BACKEND=sqlite 或覆盖生产）
+│   ├── data.db                   # SQLite 数据文件（迁移后保留作回滚，gitignore）
+│   ├── scripts/                  # 调度脚本（daily_nav_sync / quarterly_holdings_sync
+│   │                             #   / migrate_sqlite_to_mysql / nav_repair_pass 等）
 │   └── app/
 │       ├── __init__.py           # 空
-│       ├── main.py               # Flask 应用工厂 create_app()
+│       ├── main.py               # Flask 应用工厂 create_app()（DB_BACKEND=mysql 时 init_db 走 MySQL）
 │       ├── database.py           # SQLAlchemy 全局实例 db（仅声明模型用）
 │       ├── models.py             # User 模型
 │       ├── schemas.py            # Pydantic schema（User/Token）
 │       ├── db/                   # ★ 数据库抽象层（可插拔后端，见 §4）
 │       │   ├── __init__.py       # DB_BACKEND 分发 + get_db() 单例 + 模块级函数委托
 │       │   ├── base.py           # Database ABC（9 方法契约 + select_one 默认实现）
-│       │   └── sqlite.py         # SqliteDatabase（统一过滤语法→SQL 解析）
-│       │   # mysql.py            # （规划中，未实现）MysqlDatabase
+│       │   ├── sqlite.py         # SqliteDatabase（统一过滤语法→SQL 解析）
+│       │   └── mysql.py          # MysqlDatabase（PyMySQL；DDL 方言转换 + 三复杂查询）
 │       ├── routers/
 │       │   └── auth.py           # /api/auth 注册/登录/me
 │       ├── common/
-│       │   └── task_runner.py    # launch_worker/terminate_task/terminate_by_pid
+│       │   ├── task_runner.py    # launch_worker/terminate_task/terminate_by_pid
+│       │   └── worker_base.py    # 统一 worker 子进程主循环（并发/进度/终止）
 │       ├── fund/                 # 基金列表
 │       │   ├── models.py         # Fund / FundType / QueryPreset
 │       │   ├── api/router.py
 │       │   ├── crud/fund_crud.py
 │       │   └── fetch/fetcher.py  # 同步拉取（无 worker）
-│       ├── fund_detail/          # 基金详情
+│       ├── fund_detail/          # 基金详情（蛋卷 djapi）
 │       │   ├── models.py         # FundDetail / FetchTask
 │       │   ├── api/router.py
-│       │   ├── crud/detail_crud.py
+│       │   ├── crud/detail_crud.py   # is_expired + source_unavailable 占位
 │       │   └── fetch/{fetcher.py, worker.py}
-│       ├── fund_holdings/        # 持仓
+│       ├── fund_holdings/        # 持仓（东财季报）
 │       │   ├── api/router.py
 │       │   ├── crud/holdings_crud.py
 │       │   └── fetch/{fetcher.py, worker.py}
-│       ├── fund_nav/             # 净值 + 累计收益率
+│       ├── fund_nav/             # 净值 + 复权 + 累计收益率（Tushare/东财）
 │       │   ├── api/router.py
-│       │   ├── crud/nav_crud.py
-│       │   └── fetch/{fetcher.py, worker.py}
-│       └── trade_calendar/       # 交易日历
-│           ├── models.py         # TradeDate
-│           ├── api/router.py
-│           ├── crud/calendar_crud.py
-│           └── fetch/fetcher.py  # 同步拉取（无 worker）
+│       │   ├── crud/{nav_crud.py, repair_crud.py, div_split_crud.py}
+│       │   └── fetch/{fetcher.py, worker.py, adj_engine.py,
+│       │              backfill_worker.py, events_worker.py, tushare_client.py}
+│       ├── fund_etf_linkage/     # 场外↔ETF 血缘
+│       ├── ai_analyze/           # AI 定性分析（agim RPC）
+│       ├── trade_calendar/       # 交易日历（同步拉取）
+│       ├── stock_industry/       # 行业映射
+│       ├── cluster/ position/ reconcile/ perpetual/ historical/  # 组合分析域
+│       └── db/                   # 见上
 └── frontend/
     ├── package.json
     ├── vite.config.ts            # proxy /api→:8000, build→../backend/static
@@ -159,7 +170,7 @@ ifund/
 当前仅维护一份 SQLite schema。
 
 - SQLite：启动时 `init_db()` 执行 `schema_sqlite.sql`（`CREATE TABLE IF NOT EXISTS`，重启自动建表）。
-- **未来接入 MySQL** 时新增 `schema_mysql.sql`，字段语义须与 SQLite 版**逐字段对齐**，仅类型/语法不同（见 §3.2）；届时两份 schema 须同步维护。
+- MySQL：`init_db()` 用 `app/db/mysql.py._convert_schema_sql` 把同一份 `schema_sqlite.sql` 实时转换执行（幂等），**不维护 schema_mysql.sql**（见 §3.2）。
 
 ### 3.1 SQLite 版（`backend/schema_sqlite.sql`）完整 DDL
 
@@ -314,20 +325,24 @@ CREATE INDEX IF NOT EXISTS ix_fund_cum_return_fund_code ON fund_cum_return (fund
 CREATE INDEX IF NOT EXISTS ix_fund_cum_return_trade_date ON fund_cum_return (trade_date);
 ```
 
-### 3.2 未来 MySQL 版（`backend/schema_mysql.sql`）类型映射约定
+### 3.2 MySQL 版类型映射约定（已实现，实时转换）
 
-> 尚未实现，仅作接入指引。字段语义须与 SQLite 完全一致，仅类型/语法不同：
+> **已实现（2026-09-01）**：不再维护独立的 `schema_mysql.sql`——`app/db/mysql.py._convert_schema_sql`
+> 在启动 `init_db` 时把 `schema_sqlite.sql` 实时转换为 MySQL DDL（幂等 `CREATE TABLE IF NOT EXISTS`），
+> 字段语义与 SQLite 完全一致，仅类型/语法不同。转换规则：
 
 | SQLite | MySQL |
 |---|---|
-| `INTEGER PRIMARY KEY AUTOINCREMENT` | `INT AUTO_INCREMENT PRIMARY KEY` |
-| `TEXT`（短字段） | `VARCHAR(10/20/50/80/100/200)`（按语义定长） |
-| `TEXT`（长文本：detail_json/invest_strategy/raw_data 等） | `TEXT` / `LONGTEXT` |
+| `INTEGER PRIMARY KEY AUTOINCREMENT` | `BIGINT PRIMARY KEY AUTO_INCREMENT` |
+| `TEXT`（短字段） | `VARCHAR(255)`；**参与表级 UNIQUE 约束的列强制 `VARCHAR(64)`**（防 utf8mb4 组合键超 3072 字节） |
+| `TEXT`（长文本：detail_json/invest_strategy/raw_data 等，`_LONG_TEXT_COLUMNS` 白名单） | `LONGTEXT`（同时剥除 SQLite 风格 DEFAULT 字面量） |
 | `REAL` / `FLOAT` | `DOUBLE` |
 | `TEXT DEFAULT (datetime('now'))` | `DATETIME DEFAULT CURRENT_TIMESTAMP` |
-| `fetch_time TEXT` | `fetch_time DATETIME` |
+| `fetch_time TEXT` | `DATETIME` |
 
-接入 MySQL 时还须注意：建表统一 `ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`；`UNIQUE (...)` 约束需显式命名；模糊匹配的大小写行为由排序规则（collation）决定，须与 SQLite 的 `COLLATE NOCASE` 语义对齐（见 §4.3）。
+> 建表统一 `ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`；所有列名/表名统一加反引号（含保留字如 `app_settings.key`）；
+> 索引同样由转换器生成（`CREATE INDEX IF NOT EXISTS` 方言化）。实际建表验证：24 张表全部成功。
+> 另注意：模糊匹配的大小写行为由 MySQL collation（utf8mb4 `_ci`）决定，与 SQLite `COLLATE NOCASE` 语义对齐（见 §4.3）。
 
 ### 3.3 表用途速查
 
@@ -348,17 +363,19 @@ CREATE INDEX IF NOT EXISTS ix_fund_cum_return_trade_date ON fund_cum_return (tra
 
 ## 4. 数据库抽象层（核心）
 
-> 本层是**多数据源（可插拔后端）设计**的落点：业务代码与 worker 只依赖统一接口，不关心底层是 SQLite 还是（未来的）MySQL。新增后端 = 新增一个实现 `Database` 契约的类，业务代码零改动。
+> 本层是**多数据源（可插拔后端）设计**的落点：业务代码与 worker 只依赖统一接口，不关心底层是 SQLite 还是 MySQL。两个后端均已实现（`sqlite.py` / `mysql.py`），切换仅靠 `DB_BACKEND` 环境变量，业务代码零改动。
 
 ### 4.1 包结构与分层
 
 ```
 app/db/ 包
-├── __init__.py   读 DB_BACKEND（默认 sqlite）→ get_db() 进程级单例
+├── __init__.py   读 DB_BACKEND（默认 sqlite；生产 mysql）→ get_db() 进程级单例
 │                 → 模块级函数委托：select = _db.select, insert = _db.insert, ...
 ├── base.py       Database(ABC)：9 方法契约；select_one 在基类给默认实现（复用 select）
-└── sqlite.py     SqliteDatabase：统一过滤语法 → SQL 解析 + 执行
-#   mysql.py      （规划中）MysqlDatabase：相同契约，统一过滤语法 → MySQL 方言
+├── sqlite.py     SqliteDatabase：统一过滤语法 → SQL 解析 + 执行
+└── mysql.py      MysqlDatabase（PyMySQL）：相同契约，统一过滤语法 → MySQL 方言；
+                  init_db 用 _convert_schema_sql 把 schema_sqlite.sql 实时转 MySQL DDL；
+                  实现 list_funds_with_details / list_industry_mapping / list_manager_summary
 ```
 
 调用层关系：
@@ -370,7 +387,7 @@ app/db/ 包
 app/db/__init__.py   ──(模块级函数委托)──►  get_db() 单例
                                               │ DB_BACKEND 选择
                                               ▼
-                                       SqliteDatabase   （未来： MysqlDatabase）
+                                       SqliteDatabase / MysqlDatabase（DB_BACKEND 选择）
 ```
 
 - **调用风格**：业务代码统一 `from app.db import select, ...` 调用模块级函数；无需感知后端类型。
@@ -389,7 +406,7 @@ def select_one(table: str, params: dict | None = None) -> dict | None
 def insert(table: str, data: dict) -> dict
     # 插入一行，返回插入后的完整记录（含自增 id）
 def batch_insert(table: str, rows: list[dict], batch_size=...) -> None
-    # 批量插入；SQLite 用 INSERT OR REPLACE（未来 MySQL 用 INSERT ... ON DUPLICATE KEY UPDATE）
+    # 批量插入；SQLite 用 INSERT OR REPLACE，MySQL 用 INSERT ... ON DUPLICATE KEY UPDATE
 def update(table: str, filters: dict, data: dict) -> None
     # filters 为等值条件 {col: val}（内部转 eq.）
 def delete(table: str, filters: dict | None = None) -> None
@@ -398,7 +415,7 @@ def count(table: str, params=None) -> int
 def list_funds_with_details(fund_params, detail_params, skip, limit, order_parts) -> tuple[int, list[dict]]
     # 特化：funds ⋈ fund_details，返回 (total, items)
 def init_db(schema_sql: str) -> None
-    # SQLite: executescript(schema_sql)（未来 MySQL：按需执行/迁移）
+    # SQLite: executescript(schema_sql)；MySQL: 逐条执行 _convert_schema_sql 转换后的 DDL（幂等）
 ```
 
 ### 4.3 统一过滤语法（业务层统一查询语言）
@@ -422,7 +439,7 @@ def init_db(schema_sql: str) -> None
 
 SQLite 翻译关键实现（`sqlite.py`）：`_parse_filter(col, val)` 逐前缀匹配操作符；`_parse_or` 用正则 `,(?=[^()]*(?:\(|$))` 切分 OR 子句；`_build_where` 统一组装 select/order/limit/offset/where。所有值走参数化绑定（防注入）。`_quote_col` 处理 `table.field` 形式（JOIN 用）。
 
-> 未来 MySQL 后端须实现同一套 DSL 的完整解析（含 `neq/gt/lt/not.in/or`），并把 `ilike`/`COLLATE NOCASE` 映射到对应的大小写不敏感比较（如 utf8mb4 的 `_ci` 排序规则）。
+> MySQL 后端已实现同一套 DSL 的完整解析（含 `neq/gt/lt/not.in/or`），`ilike` 映射到 utf8mb4 `_ci` 排序规则的大小写不敏感比较（`mysql.py._parse_filter` 与 SQLite 版行为对齐）。
 
 ### 4.4 `list_funds_with_details` 实现（重点）
 
@@ -667,16 +684,19 @@ worker 内部每完成一只基金会查 `fetch_tasks.status`，发现 `terminat
 ### 9.1 环境变量（`backend/.env.example`）
 
 ```
-DB_BACKEND=sqlite                 # sqlite（当前唯一实现） | mysql（规划中）
-DB_PATH=                          # SQLite 文件路径（默认 backend/data.db）
-SECRET_KEY=dev-secret             # JWT 密钥
-# 以下为未来接入 MySQL 时使用（当前未实现，可忽略）
-# MYSQL_HOST=
-# MYSQL_PORT=3306
-# MYSQL_USER=
-# MYSQL_PASSWORD=
-# MYSQL_DB=ifund
+DB_BACKEND=mysql                   # mysql（生产） | sqlite（开发/离线/回滚）
+DB_PATH=                           # SQLite 文件路径（仅 DB_BACKEND=sqlite）
+SECRET_KEY=dev-secret              # JWT 密钥
+# MySQL 连接参数（仅 DB_BACKEND=mysql；生产由 /etc/ifund-prod.env 注入，不写 .env）
+IFUND_DB_HOST=192.168.0.9
+IFUND_DB_PORT=3306
+IFUND_DB_USER=ifund
+IFUND_DB_PASSWORD=
+IFUND_DB_NAME=ifund
 ```
+
+> 生产凭据一律放 `/etc/ifund-prod.env`（chmod 600）：systemd `EnvironmentFile` 注入服务进程，
+> cron 用 `set -a; . /etc/ifund-prod.env; set +a` 显式导出（子进程才读得到）。禁止在仓库/env 明文存生产密码。
 
 ### 9.2 `start.sh`
 
@@ -690,9 +710,8 @@ SECRET_KEY=dev-secret             # JWT 密钥
 
 ### 9.4 建表方式
 
-SQLite 启动时 `init_db()` 自动执行 `schema_sqlite.sql`（`CREATE TABLE IF NOT EXISTS`），重启幂等建表，无需手动操作。
-
-> 未来接入 MySQL 时，`init_db()` 对 MySQL 后端的行为（自动建表 / 迁移脚本）另行约定；新增/变更字段须同时改 `schema_sqlite.sql` 与 `schema_mysql.sql`。
+- **SQLite**：启动时 `init_db()` 自动执行 `schema_sqlite.sql`（`CREATE TABLE IF NOT EXISTS`），重启幂等建表，无需手动操作。
+- **MySQL**：`init_db()` 用 `app/db/mysql.py._convert_schema_sql` 把同一份 `schema_sqlite.sql` 实时转方言后逐条执行（幂等）；**只需维护 `schema_sqlite.sql` 一份**。新增/变更字段只改 SQLite 版，转换器自动同步到 MySQL（注意：参与 UNIQUE 的 TEXT 列会被转 VARCHAR(64)，超长语义变更需评估）。
 
 ### 9.5 依赖（`backend/requirements.txt`）
 
@@ -730,8 +749,8 @@ SQLite 启动时 `init_db()` 自动执行 `schema_sqlite.sql`（`CREATE TABLE IF
 4. **唯一 DB 实现源**：业务代码与所有 worker 一律 `from app.db import ...`；**禁止**任何模块内联第二套 DB 实现（历史上 `fund_detail` worker 曾内联简化版 filter 解析，缺操作符，是 bug 来源——勿重蹈）。
 5. **Flask reloader 排除 `*.db`**：否则 WAL/SHM 触发重载。
 6. **worker 自带 sys.path 注入**：独立进程需手动把 backend 根加进 sys.path 才能 `import app.*`；打包时用 `IFUND_BACKEND_DIR` / `_MEIPASS`。
-7. **未来 MySQL 接入清单**：新增 `app/db/mysql.py`（实现 `Database` 契约）+ `schema_mysql.sql`（字段与 SQLite 对齐）+ 驱动依赖 + `.env` 连接参数；`ilike`/大小写不敏感语义须对齐 SQLite 的 `COLLATE NOCASE`。
-8. **README 过时**：写的是 FastAPI，实为 Flask。
+7. **MySQL 已接入**（2026-09-01）：`app/db/mysql.py` 实现 `Database` 契约，DDL 由 `_convert_schema_sql` 实时转换（**不维护第二份 schema_mysql.sql**）；生产 `DB_BACKEND=mysql`，凭据在 `/etc/ifund-prod.env`（chmod 600，systemd EnvironmentFile / cron `set -a` 注入）；`ilike` 语义已对齐 SQLite `COLLATE NOCASE`（utf8mb4 `_ci`）。
+8. **文档同步**：README/ARCHITECTURE/INTEGRATION/CHANGELOG 已按 2026-09-01 现状（MySQL 迁移、占位机制、废弃 fund_nav_return）对齐；新增改动请同步更新。
 
 ---
 
@@ -926,3 +945,59 @@ with sqlite.transaction() as t:
 |----|------|
 | 后端 | `app/db/sqlite.py`、`app/db/__init__.py`、`app/common/rate_limit.py`（新增）、`app/common/worker_base.py`、`app/fund_holdings/crud/holdings_crud.py`、`app/fund_holdings/fetch/worker.py`、`app/stock_industry/crud/industry_crud.py`、`app/stock_industry/fetch/em_worker.py`、`app/perpetual/algo/pipeline.py`、`app/schemas.py`、`app/routers/auth.py`、`schema_sqlite.sql` |
 | 前端 | `src/api/rawFetch.ts`（新增）、`src/useFundData.ts`、`src/useScreenData.ts`、`src/pages/fund/FundDetailModal.tsx`、`src/pages/fund/NavTrendModal.tsx`、`src/pages/screen/MirrorView.tsx`、`src/pages/position/PositionView.tsx`、`src/pages/cluster/ClusterView.tsx`、`src/pages/reconcile/ReconcileView.tsx`、`src/components/Loading.tsx`（新增）、`src/routes.tsx`、`src/App.tsx`、`eslint.config.js`（新增） |
+
+---
+
+## 15. 近期演进（2026-08-30 ~ 09-01）
+
+### 15.1 净值数据治理 M1–M6（2026-08-30）
+
+`fund_nav` 增加复权净值体系（详见 `docs/nav_governance_delivery.md`）：
+
+- **schema**：`fund_nav` 增 `adj_nav` / `adj_src`；新增 `fund_div_split`（分红/拆分事件，`(fund_code, ex_date, event_type)` 唯一）、`nav_repair_queue`（缺口修复队列，`(status, next_retry_at)` 索引）；`main.py` 启动幂等迁移 + 统计端点 `/api/stats` 增 `adj_nav_coverage` 等
+- **回补**：`fund_nav/fetch/backfill_worker.py`（东财全史主通道，基金间 ≥300ms 槽位，指数退避重试，失败入队）
+- **复权**：`fund_nav/fetch/adj_engine.py`（Tushare `adj_nav` 直取 + 本地前复权自算 `nav(t)*f(t)/f(latest)`，`adj_src='tushare'|'calc'`；cross_check 抽样比对，误差 >0.5% 输出 WARNING 不伪报）
+- **事件**：`events_worker.py`（Tushare `fund_div`/`fund_split` → 本地统一事件行，幂等 upsert）
+- **增量**：`daily_nav_sync.py` 每只成功后维护事件/adj 缺口；`nav_repair_pass.py` 单次 ≤50 条处理到期 pending/failed
+- 实测：`nav backfill --codes 028460` 写入 23 行幂等；Tushare adj 路径 519981 写入 3,660 行；无事件基金交叉检查 max_relative_error=0.0
+
+### 15.2 蛋卷不收录占位 + scale 弹性（2026-09-01）
+
+- **source_unavailable 占位**：1164 只基金蛋卷 djapi 无数据（后端份额/定期开放债/部分 FOF 联接/货币B），重试必然失败。
+  `fund_details.detail_json` 写 `{"source_unavailable":true}` 占位——`is_expired` 识别占位后 **7 天内跳过、7 天后自动重探**（蛋卷补录则恢复）；`scripts/mark_source_unavailable.py` 幂等批量标记
+- **scale 允许为空**：8637 只蛋卷不返回规模且 fund_name 全缺（basic 接口整体无数据），放宽 `is_expired` 判据（不再因 scale=None 判过期每日重拉）；消费端名称走其他源
+- **detail 每日 cron**：`10 20 * * * ifund_cli.py fetch detail`（is_expired 去重，与 20:00 净值任务错开）
+
+### 15.3 废弃 fund_nav_return 中间表（2026-09-01，用户拍板）
+
+myfund 自选/估算区间收益的唯一事实源 = **`fund_details.return_3m/6m/1y`**（蛋卷口径）：
+
+- `fund_nav.py` 新增 `fetch_fund_returns_many`：`asyncio.gather` 并发调 ifund_detail 直读，17 只本地 HTTP 几十毫秒级
+- 删除 `fund_return_worker` 与 `app/fund_return.py`；schema 移除 `fund_nav_return` 表定义；生产库物理表残留走 DBA 通道清理
+- 收益链：`/watchlist/funds` → `fetch_fund_returns_many` → `fund_details.return_*`（无中间缓存、无第二份计算）
+
+### 15.4 MySQL 后端落地 + 全量迁移（2026-09-01）
+
+**后端**（codex 实现 + 父代理修 2 个真实环境问题）：
+
+- `app/db/mysql.py`（35KB）：PyMySQL 驱动；`_convert_schema_sql` 实时方言转换（TEXT→VARCHAR(255)/LONGTEXT 白名单、DATETIME 默认值、反引号、索引方言化）；upsert（`ON DUPLICATE KEY UPDATE`）/ batch / 三复杂查询（`list_funds_with_details` / `list_industry_mapping` / `list_manager_summary`）
+- 真实建表修复：fund_holdings 4 列 UNIQUE 超 3072 字节 → **约束列强制 VARCHAR(64)**；`app_settings.key` 保留字 → **列名统一反引号**
+- 测试：65 全绿（55 原有 + 10 MySQL 后端用例 + 7 详情过期用例）
+
+**迁移**（bgjob，39 分钟）：
+
+- `scripts/migrate_sqlite_to_mysql.py`：SQLite 读 + MySQL 写双连接，小表一次搬、大表按主键分片（batch 5000），checkpoint 断点续跑、每表 TRUNCATE 幂等、完成自动对账
+- **4161 万行 24 表全部一致**（fund_nav 3394 万 / fund_cum_return 577 万 / fund_holdings 167 万 / 其余 18.5 万）
+
+**切换**：
+
+- 凭据 `/etc/ifund-prod.env`（chmod 600）：`IFUND_DB_*` + `DB_BACKEND=mysql`；systemd 双 EnvironmentFile（`.env` 先、prod.env 后覆盖）；项目 `.env` 移除 DB_* 残留
+- cron 5 条全部注入：4 条 shell `set -a; . /etc/ifund-prod.env; set +a` 前缀，quarterly_holdings_sync.sh 脚本内加载
+- 验证：服务 active；fund 000001 API 返回 return_3m=1.7584/scale=39.38/trade_date=08-31 与 SQLite 源一致；nav/holdings/ai 全通；65 测试全绿
+- 回滚：改回 `DB_BACKEND=sqlite` 即用旧 data.db（保留 ≥7 天）
+
+### 15.5 MCP 与运维（2026-08-30 ~ 09-01）
+
+- **`fund_ai_analyze` MCP 工具**（myfund 侧 `scripts/ifund_mcp.mjs`）：CLI 子进程方式（`ifund_cli.py ai-analyze batch --codes X --json` 直连 data.db 免 JWT；HTTP 端点是 SSE+JWT 不适合 MCP 同步）
+- **danjuanfunds 8s 超时**：fetch detail 防单基金卡死整批
+- **git remote 切换**：`OrangesHuang/ifund`（无写权限）→ fork `benking007/ifund`
