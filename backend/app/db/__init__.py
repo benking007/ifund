@@ -9,9 +9,17 @@ import os
 from pathlib import Path
 
 from .base import Database, UniqueViolation
+from .mysql import MysqlDatabase
 from .sqlite import SqliteDatabase
 
-__all__ = ["Database", "UniqueViolation", "SqliteDatabase", "get_db", "reset_after_fork"]
+__all__ = [
+    "Database",
+    "MysqlDatabase",
+    "SqliteDatabase",
+    "UniqueViolation",
+    "get_db",
+    "reset_after_fork",
+]
 
 _STATE: dict[str, Database] = {}
 
@@ -25,7 +33,7 @@ def get_db() -> Database:
             default_path = str(Path(__file__).resolve().parents[2] / "data.db")
             db = SqliteDatabase(os.getenv("DB_PATH") or default_path)
         elif backend == "mysql":
-            raise NotImplementedError("MySQL 后端尚未实现（规划中）")
+            db = MysqlDatabase()
         else:
             raise ValueError(f"未知 DB_BACKEND: {backend}")
         _STATE["db"] = db

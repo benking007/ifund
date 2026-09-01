@@ -5,6 +5,11 @@
 # 可在这里复用 --types 分成三批串行执行。本次保持单次执行，减少调度复杂度。
 set -u
 
+# DB 凭据（MySQL 迁移后）：cron 直执行本脚本无 shell 注入前缀，脚本内自行加载。
+if [ -f /etc/ifund-prod.env ]; then
+  set -a; . /etc/ifund-prod.env; set +a
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BACKEND_DIR="$(dirname "$SCRIPT_DIR")"
 LOG_DIR="$BACKEND_DIR/logs"
