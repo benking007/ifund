@@ -21,9 +21,15 @@ from app.fund_nav.crud import nav_crud
 from app.trade_calendar.crud import calendar_crud
 
 
+# 网络兜底：danjuanfunds（47.75.232.147）偶发 SYN 丢包，akshare 默认 timeout=None
+# 永不超时会卡死整池（见 PROJECTS/ifund-detail-refresh-复盘-20260901.md）。单接口 8s 超时，
+# 网络故障时快速失败入 fail 队列，不阻塞其他基金。
+_HTTP_TIMEOUT_SECONDS = 8
+
+
 def _try(func, code):
     try:
-        return func(symbol=code)
+        return func(symbol=code, timeout=_HTTP_TIMEOUT_SECONDS)
     except Exception:  # pylint: disable=broad-exception-caught
         return None
 
