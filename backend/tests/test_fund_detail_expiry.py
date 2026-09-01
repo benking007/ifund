@@ -35,9 +35,10 @@ class DetailExpiryTests(TestCase):
         ):
             self.assertTrue(detail_crud.is_expired("000002", "2026-08-31"))
 
-    def test_scale_missing_expired(self) -> None:
+    def test_scale_missing_not_expired(self) -> None:
+        """scale 允许为空（蛋卷不返回规模）——不再触发重拉。"""
         with patch.object(detail_crud, "get_detail", return_value=_row(scale=None)):
-            self.assertTrue(detail_crud.is_expired("000002", "2026-08-31"))
+            self.assertFalse(detail_crud.is_expired("000002", "2026-08-31"))
 
     def test_source_unavailable_fresh_skipped(self) -> None:
         """占位记录 7 天内视为无需刷新（即使 trade_date 落后 / scale 缺失）。"""
@@ -67,4 +68,4 @@ class DetailExpiryTests(TestCase):
         """detail_json 损坏 → 按普通记录判据。"""
         row = _row(detail_json="not-json{{{", scale=None)
         with patch.object(detail_crud, "get_detail", return_value=row):
-            self.assertTrue(detail_crud.is_expired("000002", "2026-08-31"))
+            self.assertFalse(detail_crud.is_expired("000002", "2026-08-31"))

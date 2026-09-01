@@ -47,8 +47,9 @@ def is_expired(fund_code: str, latest_nav_date: str | None) -> bool:
     """详情是否需要刷新。
 
     任一条件成立即过期：无记录 / fetch_time 超 7 天或无法解析 /
-    存储 trade_date 与最新交易日 latest_nav_date 不一致 /
-    关键字段缺失（scale=None）。
+    存储 trade_date 与最新交易日 latest_nav_date 不一致。
+    scale 允许为空：蛋卷对部分基金不返回规模字段（basic 接口整体无数据），
+    重拉不会改善，2026-09-01 起不再因 scale 缺失触发重拉。
     源不可用占位记录（detail_json.source_unavailable）仅在 fetch_time 超 7 天后
     才重新视为过期（自动重探），期间跳过以避免每天空拉。
     """
@@ -61,8 +62,6 @@ def is_expired(fund_code: str, latest_nav_date: str | None) -> bool:
     if _fetch_time_expired(row):
         return True
     if latest_nav_date and str(row.get("trade_date") or "") != str(latest_nav_date):
-        return True
-    if row.get("scale") is None:  # 关键字段缺失（含旧版映射遗留的脏数据），需补全
         return True
     return False
 
