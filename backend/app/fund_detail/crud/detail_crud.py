@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import datetime
+import json
 
 from app import db as database
 
@@ -25,15 +26,38 @@ def _fetch_time_expired(row: dict) -> bool:
     return (datetime.datetime.now() - fetched).days >= EXPIRE_DAYS
 
 
+def _is_source_unavailable(row: dict) -> bool:
+    """占位记录：蛋卷源确认不收录该基金（后端份额/定期开放/部分联接等）。
+
+    标记存于闲置的 detail_json 列：{"source_unavailable": true}。
+    此类记录 7 天内视为无需刷新（避免每天空拉），超 7 天由 fetch_time 判据
+    自然过期 → 自动重探（蛋卷若补录则恢复）。
+    """
+    raw = row.get("detail_json")
+    if not raw:
+        return False
+    try:
+        payload = json.loads(raw) if isinstance(raw, str) else raw
+    except (TypeError, ValueError):
+        return False
+    return bool(isinstance(payload, dict) and payload.get("source_unavailable"))
+
+
 def is_expired(fund_code: str, latest_nav_date: str | None) -> bool:
     """详情是否需要刷新。
 
     任一条件成立即过期：无记录 / fetch_time 超 7 天或无法解析 /
-    存储 trade_date 与最新交易日 latest_nav_date 不一致。
+    存储 trade_date 与最新交易日 latest_nav_date 不一致 /
+    关键字段缺失（scale=None）。
+    源不可用占位记录（detail_json.source_unavailable）仅在 fetch_time 超 7 天后
+    才重新视为过期（自动重探），期间跳过以避免每天空拉。
     """
     row = get_detail(fund_code)
     if not row:
         return True
+    if _is_source_unavailable(row):
+        # 占位记录：只按 fetch_time 过期判据，7 天内跳过
+        return _fetch_time_expired(row)
     if _fetch_time_expired(row):
         return True
     if latest_nav_date and str(row.get("trade_date") or "") != str(latest_nav_date):
