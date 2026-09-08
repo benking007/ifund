@@ -12,8 +12,9 @@ from app.fund_nav.fetch import eastmoney
 class _FakeResponse:
     """Minimal response double for ``requests.get``."""
 
-    def __init__(self, payload):
+    def __init__(self, payload, status_code=200):
         self.payload = payload
+        self.status_code = status_code
 
     def raise_for_status(self):
         return None
@@ -103,7 +104,7 @@ class EastMoneyFetcherTests(TestCase):
             "endDate": "2026-07-31",
         })
         self.assertEqual(first_call.kwargs["headers"]["Referer"], "https://fundf10.eastmoney.com/")
-        self.assertEqual(first_call.kwargs["timeout"], 15)
+        self.assertEqual(first_call.kwargs["timeout"], (5, 15))
         self.assertEqual(get.call_args_list[1].kwargs["params"]["pageIndex"], 2)
 
     def test_fetch_nav_incremental_stops_when_page_is_empty(self) -> None:
@@ -118,6 +119,15 @@ class EastMoneyFetcherTests(TestCase):
 
         self.assertEqual(rows, [])
         self.assertEqual(get.call_count, 1)
+
+    def test_fetch_nav_incremental_maps_404_to_no_nav_without_extra_request(self) -> None:
+        response = _FakeResponse({}, status_code=404)
+
+        with patch.object(eastmoney.requests, "get", return_value=response) as get:
+            with self.assertRaisesRegex(ValueError, "HTTP 404"):
+                eastmoney.fetch_nav_incremental("000012", "2000-01-01", "2026-07-31")
+
+        get.assert_called_once()
 
     def test_fetch_nav_incremental_handles_gateway_page_size_compatibility(self) -> None:
         responses = [

@@ -11,6 +11,9 @@
 """
 from __future__ import annotations
 
+# 该循环同时维护索引和值，保持现有确定性输出。
+# pylint: disable=consider-using-enumerate
+
 import re
 
 _SIDE = re.compile(r"[（(](前|后)端[）)]\s*$")    # 「(后端)/(前端)」等申购方式后缀

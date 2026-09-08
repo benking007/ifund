@@ -198,7 +198,7 @@ def _cloud_rows(pool: list[dict], sel: list[int], q01: np.ndarray,
     return rows
 
 
-def run(funds: list[dict], nav_by_code: dict, tenure_by_code: dict,
+def run(funds: list[dict], nav_by_code: dict, tenure_by_code: dict,  # pylint: disable=too-many-locals
         holdings_by_code: dict, diagnose_codes: list[str] | None = None,
         include_cloud: bool = False, as_of: str | None = None,
         shortlist_extra: int = 0) -> dict:

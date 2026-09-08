@@ -5,32 +5,36 @@
 akshare 相关 import 全部延迟到命令内部，
 保证 preset/position/holdings 命令不付 akshare 启动成本。
 """
+
 from __future__ import annotations
 
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from importlib import import_module
 
 from app import db as database
 
 from . import helpers, output
 
-
 DEFAULT_CLI_CONCURRENCY = 4
+_PROCESS_ONE_ATTR = "_process_one"
 
 
 def _cli_concurrency() -> int:
     """读取 CLI 并发数；无效值回退到保守默认值。"""
     try:
-        return max(1, int(os.getenv("IFUND_CLI_CONCURRENCY", str(DEFAULT_CLI_CONCURRENCY))))
+        return max(
+            1, int(os.getenv("IFUND_CLI_CONCURRENCY", str(DEFAULT_CLI_CONCURRENCY)))
+        )
     except ValueError:
         return DEFAULT_CLI_CONCURRENCY
 
 
 def _run_per_fund(args, process_one) -> None:
     """并发处理 resolve 出的目标基金，打印进度汇总。"""
-    from app.common.worker_base import resolve_codes
-
-    targets = resolve_codes(
+    worker_base = import_module("app.common.worker_base")
+    checkpoint_worker = import_module("app.fund_nav.fetch.backfill_worker")
+    targets = worker_base.resolve_codes(
         helpers.csv_list(args.codes),
         helpers.csv_list(args.types),
         incremental=getattr(args, "incremental", False),
@@ -45,7 +49,7 @@ def _run_per_fund(args, process_one) -> None:
             code = futures[future]
             try:
                 r = future.result() or "success"
-            except Exception as exc:  # pylint: disable=broad-exception-caught
+            except Exception as exc:  # noqa: BLE001  # pylint: disable=broad-exception-caught
                 r = "fail"
                 fails.append(f"{code}:{exc}")
             if r == "success":
@@ -55,54 +59,99 @@ def _run_per_fund(args, process_one) -> None:
             else:
                 fail += 1
             if not args.json and (i % 20 == 0 or i == n):
-                print(f"\r进度 {i}/{n}  新增{ok} 跳过{skip} 失败{fail}", end="", flush=True)
+                print(
+                    f"\r进度 {i}/{n}  新增{ok} 跳过{skip} 失败{fail}",
+                    end="",
+                    flush=True,
+                )
+            if i % checkpoint_worker.CHECKPOINT_EVERY == 0:
+                checkpoint_worker.checkpoint_wal()
+        if n and n % checkpoint_worker.CHECKPOINT_EVERY:
+            checkpoint_worker.checkpoint_wal()
     if not args.json:
         print()
     out = {"total": n, "success": ok, "skip": skip, "fail": fail, "fails": fails[:20]}
-    output.emit(out, args.json, lambda d: d["fails"] and print("失败样例:", "; ".join(d["fails"])))
+    output.emit(
+        out,
+        args.json,
+        lambda d: d["fails"] and print("失败样例:", "; ".join(d["fails"])),
+    )
 
 
 def cmd_calendar(args) -> None:
-    from app.trade_calendar.fetch.fetcher import fetch_trade_dates
-    from app.trade_calendar.crud import calendar_crud
-    dates = fetch_trade_dates()
-    n = calendar_crud.replace_all(dates)
-    out = {"count": n, "latest": dates[-1] if dates else None}
-    output.emit(out, args.json, lambda d: print(f"✓ 交易日历已更新：{d['count']} 条，最新 {d['latest']}"))
+    """拉取并更新交易日历。"""
+    service = import_module("app.trade_calendar.service")
+    out = service.sync_calendar()
+    output.emit(
+        out,
+        args.json,
+        lambda d: print(
+            f"✓ 交易日历已更新：{d['count']} 条，最新 {d['latest']}，"
+            f"源 {d['source']}，Tushare {d['tushare_calls']} 次"
+        ),
+    )
 
 
 def cmd_industry(args) -> None:
-    task = database.insert("fetch_tasks", {"task_type": f"{args.mode}_industry",
-                                           "status": "running", "executor_ip": "cli"})
+    """拉取并更新申万或东财行业映射。"""
+    task = database.insert(
+        "fetch_tasks",
+        {
+            "task_type": f"{args.mode}_industry",
+            "status": "running",
+            "executor_ip": "cli",
+        },
+    )
     tid = task["id"]
     if args.mode == "sw":
-        from app.stock_industry.fetch import sw_worker
-        sw_worker.run(tid, helpers.csv_list(args.codes))
+        import_module("app.stock_industry.fetch.sw_worker").run(
+            tid,
+            helpers.csv_list(args.codes),
+        )
     else:
-        from app.stock_industry.fetch import em_worker
-        em_worker.run(tid)
+        import_module("app.stock_industry.fetch.em_worker").run(tid)
     row = database.select_one("fetch_tasks", {"id": f"eq.{tid}"})
-    out = {"mode": args.mode, "status": row.get("status"), "target": row.get("target_count"),
-           "success": row.get("success_count"), "fail": row.get("fail_count")}
-    output.emit(out, args.json, lambda d: print(
-        f"✓ 行业映射({d['mode']}) {d['status']}：目标{d['target']} 成功{d['success']} 失败{d['fail']}"))
+    out = {
+        "mode": args.mode,
+        "status": row.get("status"),
+        "target": row.get("target_count"),
+        "success": row.get("success_count"),
+        "fail": row.get("fail_count"),
+    }
+    output.emit(
+        out,
+        args.json,
+        lambda d: print(
+            f"✓ 行业映射({d['mode']}) {d['status']}：目标{d['target']} 成功{d['success']} 失败{d['fail']}"
+        ),
+    )
 
 
 def cmd_detail(args) -> None:
-    from app.fund_detail.fetch.worker import _process_one
-    _run_per_fund(args, _process_one)
+    """拉取基金详情。"""
+    process_one = getattr(
+        import_module("app.fund_detail.fetch.worker"), _PROCESS_ONE_ATTR
+    )
+    _run_per_fund(args, process_one)
 
 
 def cmd_holdings(args) -> None:
-    from app.fund_holdings.fetch.worker import _process_one
-    _run_per_fund(args, _process_one)
+    """拉取基金股票与债券持仓。"""
+    process_one = getattr(
+        import_module("app.fund_holdings.fetch.worker"), _PROCESS_ONE_ATTR
+    )
+    _run_per_fund(args, process_one)
 
 
 def cmd_nav(args) -> None:
-    from app.fund_nav.fetch.worker import _process_one
-    _run_per_fund(args, _process_one)
+    """拉取基金净值。"""
+    process_one = getattr(import_module("app.fund_nav.fetch.worker"), _PROCESS_ONE_ATTR)
+    _run_per_fund(args, process_one)
 
 
 def cmd_manager(args) -> None:
-    from app.fund_manager.fetch.worker import _process_one
-    _run_per_fund(args, _process_one)
+    """拉取基金经理任职史。"""
+    process_one = getattr(
+        import_module("app.fund_manager.fetch.worker"), _PROCESS_ONE_ATTR
+    )
+    _run_per_fund(args, process_one)

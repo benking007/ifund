@@ -6,6 +6,9 @@
 """
 from __future__ import annotations
 
+# 路由按需导入可选依赖；长路由函数的分支由输入校验自然展开。
+# pylint: disable=import-outside-toplevel,unused-variable,too-many-return-statements
+
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required
 

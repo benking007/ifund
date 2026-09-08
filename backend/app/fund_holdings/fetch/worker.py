@@ -2,6 +2,9 @@
 """fund_holdings worker：拉取股票/债券持仓，按基金全量替换。"""
 from __future__ import annotations
 
+# 与净值 worker 共享同一套请求重试骨架，差异仅在数据源和落库模型。
+# pylint: disable=duplicate-code
+
 import os
 import sys
 from pathlib import Path
@@ -20,16 +23,20 @@ import threading
 import time
 
 import akshare as ak  # pylint: disable=import-error
-import requests
 import akshare.fund.fund_portfolio_em as _fund_portfolio_em  # pylint: disable=import-error
+import requests
 
 from app.common import worker_base
+from app.common.network import (
+    HTTP_TIMEOUT,
+    MAX_NETWORK_ATTEMPTS,
+    NetworkRetryExhausted,
+    is_retryable_network_error,
+)
 from app.fund_holdings.crud import holdings_crud
 
 _QUARTER_RE = re.compile(r"(\d{4}).*?([1-4])\s*季度")
-_REQUEST_TIMEOUT_SECONDS = 15
-# 初次请求 + 4 次重试 = 最多 5 次尝试，退避基准为 2/4/8/16 秒并加入 ±30% jitter。
-_MAX_REQUEST_RETRIES = 4
+_REQUEST_TIMEOUT = HTTP_TIMEOUT
 _BACKOFF_BASE_SECONDS = 2
 _RETRY_JITTER = 0.3
 logger = logging.getLogger(__name__)
@@ -37,6 +44,8 @@ logger = logging.getLogger(__name__)
 
 class _RequestsProxy:
     """只为 AkShare 持仓模块补默认 timeout，不改动全局 requests 模块。"""
+
+    _ifund_timeout_proxy = True
 
     def __init__(self, requests_module):
         self._requests_module = requests_module
@@ -50,7 +59,8 @@ class _RequestsProxy:
         return session
 
     def get(self, *args, **kwargs):
-        kwargs.setdefault("timeout", _REQUEST_TIMEOUT_SECONDS)
+        """注入默认超时后调用线程本地 Session。"""
+        kwargs.setdefault("timeout", _REQUEST_TIMEOUT)
         return self._session().get(*args, **kwargs)
 
     def __getattr__(self, name):
@@ -70,8 +80,8 @@ def _normalize_quarter(text: str) -> str:
 
 
 def _call_with_retry(label, func):
-    """调用单次 AkShare 请求，失败时有限重试并指数退避。"""
-    for attempt in range(_MAX_REQUEST_RETRIES + 1):
+    """AkShare 仅对网络错误重试，总尝试次数不超过三次。"""
+    for attempt in range(MAX_NETWORK_ATTEMPTS):
         try:
             return func()
         except KeyError:
@@ -79,9 +89,12 @@ def _call_with_retry(label, func):
             # 这属于合法的「无数据」，由债券行转换层统一处理，其他 KeyError 继续上抛。
             raise
         except Exception as exc:  # pylint: disable=broad-exception-caught
-            if attempt == _MAX_REQUEST_RETRIES:
-                logger.exception("%s 最终失败（已尝试 %d 次）", label, attempt + 1)
+            if not is_retryable_network_error(exc):
+                logger.warning("%s 业务性失败，不重试：%s", label, exc)
                 raise
+            if attempt + 1 >= MAX_NETWORK_ATTEMPTS:
+                logger.warning("%s 网络失败（已尝试 %d 次）：%s", label, attempt + 1, exc)
+                raise NetworkRetryExhausted(label, attempt + 1) from exc
             delay = (_BACKOFF_BASE_SECONDS ** (attempt + 1)) * random.uniform(
                 1 - _RETRY_JITTER, 1 + _RETRY_JITTER
             )
@@ -90,6 +103,7 @@ def _call_with_retry(label, func):
                 label, attempt + 1, delay, exc,
             )
             time.sleep(delay)
+    raise RuntimeError("重试循环意外结束")
 
 
 def _stock_rows(code, year, now):

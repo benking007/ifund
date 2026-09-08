@@ -19,40 +19,59 @@
 
 所有值走参数化绑定（防注入）。
 """
+
 from __future__ import annotations
+
+# MySQL/SQLite intentionally implement the same small backend contract.
+# pylint: disable=duplicate-code
 
 import atexit
 import re
 import sqlite3
 import threading
+import time
 from collections.abc import Iterator
 from contextlib import contextmanager
 
 from .base import Database, UniqueViolation
 
 # ── 表名白名单：仅允许 schema_sqlite.sql 中已定义的表。新增表时同步更新本清单。 ──
-VALID_TABLES: frozenset[str] = frozenset({
-    "users",
-    "api_tokens",
-    "funds",
-    "fund_types",
-    "query_presets",
-    "fund_snapshots",
-    "fund_details",
-    "fetch_tasks",
-    "trade_dates",
-    "fund_holdings",
-    "fund_nav",
-    "fund_cum_return",
-    "fund_manager_tenure",
-    "stock_industry",
-    "portfolios",
-    "user_holdings",
-    "holding_txns",
-    "fund_ai_analysis",
-    "app_settings",
-    "perpetual_portfolio",
-})
+VALID_TABLES: frozenset[str] = frozenset(
+    {
+        "users",
+        "api_tokens",
+        "funds",
+        "fund_types",
+        "query_presets",
+        "fund_snapshots",
+        "fund_details",
+        "fetch_tasks",
+        "trade_dates",
+        "fund_holdings",
+        "fund_nav",
+        "fund_div_split",
+        "event_scan_status",
+        "nav_repair_queue",
+        "fund_cum_return",
+        "fund_manager_tenure",
+        "stock_industry",
+        "portfolios",
+        "user_holdings",
+        "holding_txns",
+        "fund_ai_analysis",
+        "app_settings",
+        "perpetual_portfolio",
+        "fund_etf_linkage",
+        "fund_sync_state",
+        "fund_ts_code_map",
+        "fund_ts_code_quarantine",
+        "fund_ts_code_alias",
+        "fund_company",
+        "fund_basic_ext",
+        "fund_share",
+        "fund_share_sync_state",
+    }
+)
 
 
 def _check_table(table: str) -> None:
@@ -63,24 +82,40 @@ def _check_table(table: str) -> None:
 
 # 可按 fund_details 列排序的白名单（list_funds_with_details 用）
 SORTABLE_DETAIL = {
-    "scale", "return_ytd", "drawdown_ytd", "sharpe_3y", "sharpe_1y",
-    "max_drawdown_3y", "max_drawdown_1y", "position_stock",
+    "scale",
+    "return_ytd",
+    "drawdown_ytd",
+    "sharpe_3y",
+    "sharpe_1y",
+    "max_drawdown_3y",
+    "max_drawdown_1y",
+    "position_stock",
 }
 # AI 定性分析可排序列（fund_ai_analysis，别名 a）
 SORTABLE_AI = {"skill_score", "rating", "tenure_years"}
 
 # 联合查询返回列（两后端结构必须一致）
 _RESULT_COLS = [
-    'f."id" AS id', 'f."code" AS code', 'f."name" AS name', 'f."type" AS type',
-    'f."fund_type" AS fund_type', 'd."fund_manager" AS fund_manager', 'd."scale" AS scale',
-    'd."sharpe_3y" AS sharpe_3y', 'd."sharpe_1y" AS sharpe_1y',
-    'd."max_drawdown_3y" AS max_drawdown_3y', 'd."max_drawdown_1y" AS max_drawdown_1y',
-    'd."position_stock" AS position_stock', 'd."position_bond" AS position_bond',
-    'd."return_ytd" AS return_ytd', 'd."drawdown_ytd" AS drawdown_ytd',
+    'f."id" AS id',
+    'f."code" AS code',
+    'f."name" AS name',
+    'f."type" AS type',
+    'f."fund_type" AS fund_type',
+    'd."fund_manager" AS fund_manager',
+    'd."scale" AS scale',
+    'd."sharpe_3y" AS sharpe_3y',
+    'd."sharpe_1y" AS sharpe_1y',
+    'd."max_drawdown_3y" AS max_drawdown_3y',
+    'd."max_drawdown_1y" AS max_drawdown_1y',
+    'd."position_stock" AS position_stock',
+    'd."position_bond" AS position_bond',
+    'd."return_ytd" AS return_ytd',
+    'd."drawdown_ytd" AS drawdown_ytd',
 ]
 
 # OR 子句切分：逗号后须跟「非括号字符直到 ( 或 字符串结尾」，避免切到 in.(a,b) 内部
 _OR_SPLIT_RE = re.compile(r",(?=[^()]*(?:\(|$))")
+_CONNECTION_IDLE_SECONDS = 300
 
 
 def _quote_col(col: str) -> str:
@@ -112,7 +147,10 @@ def _in_clause(col: str, raw: str, negate: bool):
 
 # 操作符前缀 → SQL 片段构造器。顺序重要：长前缀/取反在前。
 _OPERATORS = [
-    ("not.ilike.", lambda c, v: (f"{c} NOT LIKE ? COLLATE NOCASE", [v.replace("*", "%")])),
+    (
+        "not.ilike.",
+        lambda c, v: (f"{c} NOT LIKE ? COLLATE NOCASE", [v.replace("*", "%")]),
+    ),
     ("ilike.", lambda c, v: (f"{c} LIKE ? COLLATE NOCASE", [v.replace("*", "%")])),
     ("not.in.", lambda c, v: _in_clause(c, v, True)),
     ("in.", lambda c, v: _in_clause(c, v, False)),
@@ -131,7 +169,7 @@ def _parse_filter(col: str, val) -> tuple[str, list]:
     s = str(val)
     for prefix, builder in _OPERATORS:
         if s.startswith(prefix):
-            return builder(qcol, s[len(prefix):])
+            return builder(qcol, s[len(prefix) :])
     return f"{qcol} = ?", [s]
 
 
@@ -221,16 +259,43 @@ class SqliteDatabase(Database):
         atexit.register(self._close_connections)
 
     def _conn(self) -> sqlite3.Connection:
+        now = time.monotonic()
         conn = getattr(self._local, "conn", None)
+        if conn is not None:
+            last_used = getattr(self._local, "last_used", now)
+            if (
+                now - last_used > _CONNECTION_IDLE_SECONDS
+                and not self._in_transaction()
+                and not conn.in_transaction
+            ):
+                self._remove_connection(conn)
+                try:
+                    conn.close()
+                except sqlite3.Error:
+                    pass
+                self._local.conn = None
+                self._local.last_used = None
+                conn = None
         if conn is None:
             conn = sqlite3.connect(self._db_path, timeout=30, check_same_thread=False)
             conn.row_factory = sqlite3.Row
             conn.execute("PRAGMA journal_mode=WAL")
             conn.execute("PRAGMA busy_timeout=30000")
+            conn.execute("PRAGMA journal_size_limit=536870912")
+            conn.execute("PRAGMA wal_autocheckpoint=1000")
             with self._connections_lock:
                 self._connections.append(conn)
             self._local.conn = conn
+        self._local.last_used = now
         return conn
+
+    def _remove_connection(self, conn: sqlite3.Connection) -> None:
+        """从进程级连接登记表移除一个即将关闭的线程本地连接。"""
+        with self._connections_lock:
+            try:
+                self._connections.remove(conn)
+            except ValueError:
+                pass
 
     def _close_connections(self) -> None:
         with self._connections_lock:
@@ -244,6 +309,11 @@ class SqliteDatabase(Database):
 
     def _in_transaction(self) -> bool:
         return getattr(self._local, "transaction_depth", 0) > 0
+
+    def checkpoint(self) -> tuple:
+        """尝试截断 WAL，返回 SQLite 的 ``(busy, log, checkpointed)`` 结果。"""
+        row = self._conn().execute("PRAGMA wal_checkpoint(TRUNCATE)").fetchone()
+        return tuple(row) if row else ()
 
     @contextmanager
     def transaction(self) -> Iterator[sqlite3.Connection]:
@@ -292,9 +362,9 @@ class SqliteDatabase(Database):
         if c["order"]:
             sql += " " + c["order"]
         if c["limit"] is not None:
-            sql += f' LIMIT {c["limit"]}'
+            sql += f" LIMIT {c['limit']}"
         if c["offset"] is not None:
-            sql += f' OFFSET {c["offset"]}'
+            sql += f" OFFSET {c['offset']}"
         cur = self._conn().execute(sql, c["where_params"])
         return [dict(row) for row in cur.fetchall()]
 
@@ -327,11 +397,24 @@ class SqliteDatabase(Database):
         cols = list(rows[0].keys())
         col_sql = ",".join(f'"{col}"' for col in cols)
         placeholders = ",".join("?" * len(cols))
-        sql = f'INSERT OR REPLACE INTO "{table}" ({col_sql}) VALUES ({placeholders})'
         conn = self._conn()
+        key_columns = self._unique_key_columns(conn, table, set(cols))
+        update_columns = [col for col in cols if col not in key_columns]
+        if key_columns and update_columns:
+            updates = ", ".join(f'"{col}" = excluded."{col}"' for col in update_columns)
+            sql = (
+                f'INSERT INTO "{table}" ({col_sql}) VALUES ({placeholders}) '
+                f"ON CONFLICT DO UPDATE SET {updates}"
+            )
+        else:
+            # 没有可用 UNIQUE/PRIMARY KEY 冲突键的表无法安全生成 UPSERT，
+            # 保留 REPLACE 语义；这类表的插入不会因业务键产生替换。
+            sql = (
+                f'INSERT OR REPLACE INTO "{table}" ({col_sql}) VALUES ({placeholders})'
+            )
         try:
             for i in range(0, len(rows), batch_size):
-                chunk = rows[i:i + batch_size]
+                chunk = rows[i : i + batch_size]
                 conn.executemany(sql, [[row.get(col) for col in cols] for row in chunk])
         except BaseException:
             if not self._in_transaction():
@@ -339,6 +422,31 @@ class SqliteDatabase(Database):
             raise
         if not self._in_transaction():
             conn.commit()
+
+    @staticmethod
+    def _unique_key_columns(
+        conn: sqlite3.Connection,
+        table: str,
+        available_columns: set[str],
+    ) -> set[str]:
+        """返回当前 payload 覆盖到的 UNIQUE/PRIMARY KEY 列集合。"""
+        key_columns: set[str] = set()
+        table_name = table.replace('"', '""')
+        table_info = conn.execute(f'PRAGMA table_info("{table_name}")').fetchall()
+        for row in table_info:
+            if row[5] and row[1] in available_columns:
+                key_columns.add(row[1])
+
+        indexes = conn.execute(f'PRAGMA index_list("{table_name}")').fetchall()
+        for index in indexes:
+            if not index[2]:
+                continue
+            index_name = str(index[1]).replace('"', '""')
+            info = conn.execute(f'PRAGMA index_info("{index_name}")').fetchall()
+            columns = [row[2] for row in info]
+            if columns and all(column in available_columns for column in columns):
+                key_columns.update(columns)
+        return key_columns
 
     def update(self, table: str, filters: dict, data: dict) -> None:
         _check_table(table)
@@ -400,7 +508,9 @@ class SqliteDatabase(Database):
             segs.append(f'{alias}."{field}" {sql_dir}')
         return "ORDER BY " + ", ".join(segs)
 
-    def list_funds_with_details(self, fund_params, detail_params, skip, limit, order_parts):
+    def list_funds_with_details(
+        self, fund_params, detail_params, skip, limit, order_parts
+    ):
         fund_c = _build_clauses(fund_params, "f")
         detail_c = _build_clauses(detail_params, "d")
         where_parts, where_params = [], []
@@ -411,21 +521,25 @@ class SqliteDatabase(Database):
         where_sql = (" WHERE " + " AND ".join(where_parts)) if where_parts else ""
         # base 是模块内硬编码的三表 JOIN，表名来自 schema 定义，非用户输入；
         # 三表名均已在 VALID_TABLES 白名单中。
-        base = ('FROM "funds" f '
-                'LEFT JOIN "fund_details" d ON f."code" = d."fund_code" '
-                'LEFT JOIN "fund_ai_analysis" a ON f."code" = a."fund_code"')
+        base = (
+            'FROM "funds" f '
+            'LEFT JOIN "fund_details" d ON f."code" = d."fund_code" '
+            'LEFT JOIN "fund_ai_analysis" a ON f."code" = a."fund_code"'
+        )
         conn = self._conn()
         total = int(
-            conn.execute(f"SELECT COUNT(*) AS n {base}{where_sql}", where_params).fetchone()["n"]
+            conn.execute(
+                f"SELECT COUNT(*) AS n {base}{where_sql}", where_params
+            ).fetchone()["n"]
         )
         order_sql = self._build_join_order(order_parts)
-        sql = (
-            f'SELECT {", ".join(_RESULT_COLS)} {base}{where_sql} {order_sql} LIMIT ? OFFSET ?'
-        )
+        sql = f"SELECT {', '.join(_RESULT_COLS)} {base}{where_sql} {order_sql} LIMIT ? OFFSET ?"
         rows = conn.execute(sql, where_params + [limit, skip]).fetchall()
         return total, [dict(row) for row in rows]
 
-    def list_industry_mapping(self, *, market="", label_kw="", status="", keyword="", skip=0, limit=50):
+    def list_industry_mapping(
+        self, *, market="", label_kw="", status="", keyword="", skip=0, limit=50
+    ):
         # held：持仓股票去重（带簡称），走 (holding_type, asset_code, asset_name) 覆盖索引，免全表扫。
         # m：LEFT JOIN 行业映射后派生 market（缺映射按代码形态兜底）/ covered（有申万三级或东财）。
         # 末层再算 label（覆盖时取 申万三级→二级→东财），并把过滤/排序/分页全交给 SQL。
@@ -482,35 +596,63 @@ class SqliteDatabase(Database):
             f"{base} SELECT *, COUNT(*) OVER () AS _total FROM r{where_sql} "
             "ORDER BY covered DESC, stock_code ASC LIMIT ? OFFSET ?"
         )
-        rows = [dict(row) for row in self._conn().execute(sql, params + [limit, skip]).fetchall()]
+        rows = [
+            dict(row)
+            for row in self._conn().execute(sql, params + [limit, skip]).fetchall()
+        ]
         total = rows[0].pop("_total") if rows else 0
         for r in rows:
             r.pop("_total", None)
         return total, rows
 
     _MGR_SORTABLE = {
-        "code": "f", "name": "f",
-        "fund_type": "d", "fund_company": "d", "scale": "d", "fund_manager": "d",
-        "return_1y": "d", "return_3y": "d",
-        "managers": "t", "tenure_days": "t", "tenure_return": "t", "start_date": "t",
+        "code": "f",
+        "name": "f",
+        "fund_type": "d",
+        "fund_company": "d",
+        "scale": "d",
+        "fund_manager": "d",
+        "return_1y": "d",
+        "return_3y": "d",
+        "managers": "t",
+        "tenure_days": "t",
+        "tenure_return": "t",
+        "start_date": "t",
     }
 
-    def list_manager_summary(self, *, keyword="", coverage="all", preset_id=None,
-                             skip=0, limit=50, order_field="code", order_dir="asc"):
+    def list_manager_summary(
+        self,
+        *,
+        keyword="",
+        coverage="all",
+        preset_id=None,
+        skip=0,
+        limit=50,
+        order_field="code",
+        order_dir="asc",
+    ):
         # base 是模块内硬编码的三表 JOIN，表名来自 schema 定义，非用户输入。
-        base = ('FROM "funds" f '
-                'LEFT JOIN "fund_details" d ON f."code" = d."fund_code" '
-                'LEFT JOIN "fund_manager_tenure" t '
-                'ON f."code" = t."fund_code" AND t."seq" = 0 AND t."is_current" = 1')
+        base = (
+            'FROM "funds" f '
+            'LEFT JOIN "fund_details" d ON f."code" = d."fund_code" '
+            'LEFT JOIN "fund_manager_tenure" t '
+            'ON f."code" = t."fund_code" AND t."seq" = 0 AND t."is_current" = 1'
+        )
         where, params = ["1 = 1"], []
         if preset_id:
-            where.append(('f."code" IN (SELECT json_extract(value,\'$.code\') '
-                          'FROM "fund_snapshots", json_each("items_json") '
-                          'WHERE "preset_id" = ?)'))
+            where.append(
+                (
+                    "f.\"code\" IN (SELECT json_extract(value,'$.code') "
+                    'FROM "fund_snapshots", json_each("items_json") '
+                    'WHERE "preset_id" = ?)'
+                )
+            )
             params.append(preset_id)
         if keyword:
-            where.append('(f."code" LIKE ? OR d."fund_name" LIKE ? '
-                         'OR d."fund_manager" LIKE ? OR t."managers" LIKE ?)')
+            where.append(
+                '(f."code" LIKE ? OR d."fund_name" LIKE ? '
+                'OR d."fund_manager" LIKE ? OR t."managers" LIKE ?)'
+            )
             kw = f"%{keyword}%"
             params.extend([kw, kw, kw, kw])
         if coverage == "covered":
@@ -520,17 +662,21 @@ class SqliteDatabase(Database):
         where_sql = " WHERE " + " AND ".join(where)
         conn = self._conn()
         total = int(
-            conn.execute(f"SELECT COUNT(*) AS n {base}{where_sql}", params).fetchone()["n"]
+            conn.execute(f"SELECT COUNT(*) AS n {base}{where_sql}", params).fetchone()[
+                "n"
+            ]
         )
         alias = self._MGR_SORTABLE.get(order_field, "f")
         col = order_field if order_field in self._MGR_SORTABLE else "code"
         sql_dir = "DESC" if order_dir.lower() == "desc" else "ASC"
         order_sql = f'ORDER BY {alias}."{col}" {sql_dir}'
-        select_cols = ('f."code" AS code, f."name" AS name, '
-                       'd."fund_type", d."fund_company", d."scale", d."fund_manager", '
-                       'd."return_1y", d."return_3y", '
-                       't."managers", t."start_date", t."end_date", t."tenure_text", '
-                       't."tenure_days", t."tenure_return", t."fetch_time"')
+        select_cols = (
+            'f."code" AS code, f."name" AS name, '
+            'd."fund_type", d."fund_company", d."scale", d."fund_manager", '
+            'd."return_1y", d."return_3y", '
+            't."managers", t."start_date", t."end_date", t."tenure_text", '
+            't."tenure_days", t."tenure_return", t."fetch_time"'
+        )
         sql = f"SELECT {select_cols} {base}{where_sql} {order_sql} LIMIT ? OFFSET ?"
         rows = conn.execute(sql, params + [limit, skip]).fetchall()
         return total, [dict(row) for row in rows]

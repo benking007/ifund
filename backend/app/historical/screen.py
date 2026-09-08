@@ -142,14 +142,14 @@ def _apply_preset_filters(codes: list[str], fund_info: dict[str, dict],
         if "sharpe_3y" in cond_map:
             op, val = cond_map["sharpe_3y"]
             s3 = m.get("sharpe_3y") or 0
-            if op == "gt" and not (s3 > val):
+            if op == "gt" and not s3 > val:
                 continue
         if "position_stock" in cond_map:
             op, val = cond_map["position_stock"]
             ps = detail.get("position_stock")
             if ps is None:
                 continue
-            if op == "gt" and not (ps > val):
+            if op == "gt" and not ps > val:
                 continue
         result.append(code)
     return result

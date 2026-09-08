@@ -16,7 +16,11 @@ def _classify(name: str, fund_type: str) -> str:
 def fetch_all_funds() -> list[dict]:
     """调 ak.fund_name_em() 拿全部基金并分类。"""
     import akshare as ak  # pylint: disable=import-outside-toplevel,import-error
+    from akshare.fund import fund_em  # pylint: disable=import-outside-toplevel,import-error
 
+    from app.common.network import install_module_timeout  # pylint: disable=import-outside-toplevel
+
+    install_module_timeout(fund_em)
     data_frame = ak.fund_name_em()
     funds = []
     for _, row in data_frame.iterrows():

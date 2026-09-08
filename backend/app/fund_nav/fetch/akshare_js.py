@@ -7,13 +7,15 @@ import re
 
 import requests
 
+from app.common.network import HTTP_TIMEOUT
+
 ENDPOINT_TEMPLATE = "https://fund.eastmoney.com/pingzhongdata/{code}.js"
 REFERER = "https://fund.eastmoney.com/"
 USER_AGENT = (
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/131.0 Safari/537.36"
 )
-REQUEST_TIMEOUT = 15
+REQUEST_TIMEOUT = HTTP_TIMEOUT
 SHANGHAI_TZ = datetime.timezone(datetime.timedelta(hours=8))
 
 
@@ -143,8 +145,8 @@ def fetch_nav_js(code: str) -> list[dict]:
     """Fetch and parse full NAV history without executing JavaScript.
 
     The returned rows contain ``trade_date``, ``nav``, ``acc_nav`` and
-    ``daily_return``.  Network, HTTP, malformed-payload and no-data cases all
-    return an empty list so callers can preserve their existing fail contract.
+    ``daily_return``.  HTTP 404、HTML、空壳或解析为空都按业务性无净值返回空
+    列表，且本函数不做重试；网络异常继续抛给上层的分类重试策略。
     """
     try:
         response = requests.get(
@@ -152,16 +154,22 @@ def fetch_nav_js(code: str) -> list[dict]:
             headers={"Referer": REFERER, "User-Agent": USER_AGENT},
             timeout=REQUEST_TIMEOUT,
         )
+        if getattr(response, "status_code", None) == 404:
+            return []
         response.raise_for_status()
         javascript = response.text
+        if not isinstance(javascript, str) or "Data_" not in javascript:
+            return []
         nav_items = _extract_array(javascript, "Data_netWorthTrend")
         if nav_items is not None:
-            return _parse_nav_trend(
+            rows = _parse_nav_trend(
                 nav_items,
                 _extract_array(javascript, "Data_ACWorthTrend"),
             )
-        return _parse_money_fund_nav(
-            _extract_array(javascript, "Data_millionCopiesIncome"),
-        )
-    except (requests.RequestException, TypeError, ValueError, OSError):
+        else:
+            rows = _parse_money_fund_nav(
+                _extract_array(javascript, "Data_millionCopiesIncome"),
+            )
+        return rows or []
+    except (TypeError, ValueError):
         return []

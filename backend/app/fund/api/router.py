@@ -1,6 +1,7 @@
 """基金列表蓝图：筛选/排序/分页、搜索、详情、同步、预设 CRUD。"""
 from __future__ import annotations
 
+import datetime
 import json
 
 from flask import Blueprint, jsonify, request
@@ -9,7 +10,9 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from app import db as database
 from app.fund.crud import fund_crud
 from app.fund.fetch import fetcher
+from app.fund_etf_linkage import crud as linkage_crud
 from app.fund_holdings.crud import holdings_crud
+from app.fund_nav.crud import div_split_crud
 from app.fund_nav.crud import nav_crud
 
 bp = Blueprint("fund", __name__, url_prefix="/api/fund")
@@ -37,6 +40,36 @@ COMPARE_OPS = {"gt", "gte", "lt", "lte", "eq", "neq"}
 def _csv(value: str) -> str:
     """把逗号分隔串去空后重新拼接。"""
     return ",".join(x.strip() for x in value.split(",") if x.strip())
+
+
+def _date_arg(value: str | None, name: str) -> str | None:
+    """把 API 日期参数统一为 ISO 日期；同时兼容 YYYYMMDD。"""
+    if value in (None, ""):
+        return None
+    raw = str(value).strip()
+    if len(raw) == 8 and raw.isdigit():
+        raw = f"{raw[:4]}-{raw[4:6]}-{raw[6:]}"
+    try:
+        return datetime.date.fromisoformat(raw).isoformat()
+    except ValueError as exc:
+        raise ValueError(f"{name} must be YYYY-MM-DD or YYYYMMDD") from exc
+
+
+def _date_window(args) -> tuple[str | None, str | None]:
+    """解析并校验包含端点的日期窗口。"""
+    start_date = _date_arg(args.get("start_date"), "start_date")
+    end_date = _date_arg(args.get("end_date"), "end_date")
+    if start_date and end_date and start_date > end_date:
+        raise ValueError("start_date must not be later than end_date")
+    return start_date, end_date
+
+
+def _requested_fund_code() -> tuple[str, str] | None:
+    """读取 ts_code 查询参数，返回（裸基金代码，原始代码）。"""
+    ts_code = str(request.args.get("ts_code") or "").strip()
+    if not ts_code:
+        return None
+    return ts_code.split(".", maxsplit=1)[0], ts_code
 
 
 def _parse_range_params(args, detail_params: list) -> None:
@@ -348,6 +381,21 @@ def save_snapshot(preset_id):
     return jsonify({"id": row["id"], "fund_count": len(items)}), 201
 
 
+@bp.get("/<code>/linkage")
+def get_linkage(code):
+    """联接基金对应的场内 ETF 血缘；无则 404。"""
+    row = linkage_crud.get_linkage(code)
+    if not row:
+        return jsonify({"detail": "not found"}), 404
+    return jsonify({
+        "fund_code": row.get("fund_code"),
+        "etf_code": row.get("etf_code"),
+        "etf_name": row.get("etf_name"),
+        "confidence": row.get("confidence"),
+        "matched_by": row.get("matched_by"),
+    })
+
+
 @bp.get("/<code>/nav")
 def get_nav(code):
     """某基金最近 N 个交易日的累计净值序列（带日期），供净值走势图。
@@ -359,8 +407,63 @@ def get_nav(code):
     except (TypeError, ValueError):
         limit = 750
     limit = max(2, min(limit, 2000))
-    series = nav_crud.recent_series_dated(code, limit)
-    return jsonify({"items": [{"date": d, "nav": v} for d, v in series]})
+    try:
+        start_date, end_date = _date_window(request.args)
+    except ValueError as exc:
+        return jsonify({"detail": str(exc)}), 400
+    if start_date or end_date:
+        series = nav_crud.recent_series_dated_with_adj(
+            code, limit, start_date=start_date, end_date=end_date
+        )
+    else:
+        series = nav_crud.recent_series_dated_with_adj(code, limit)
+    return jsonify({"items": series})
+
+
+@bp.get("/fee")
+def get_fee():
+    """读取本地 fund_basic_ext 的管理费、托管费和销售服务费。"""
+    requested = _requested_fund_code()
+    if requested is None:
+        return jsonify({"detail": "ts_code required"}), 400
+    code, requested_ts_code = requested
+    row = database.select_one("fund_basic_ext", {"fund_code": f"eq.{code}"})
+    if not row:
+        return jsonify({"detail": "not found", "ts_code": requested_ts_code}), 404
+    return jsonify({
+        "fund_code": row.get("fund_code") or code,
+        "ts_code": row.get("ts_code") or requested_ts_code,
+        "management_fee": row.get("management_fee"),
+        "custodian_fee": row.get("custodian_fee"),
+        "sales_service_fee": row.get("sales_service_fee"),
+    })
+
+
+@bp.get("/div")
+def get_div():
+    """读取本地分红/拆分事件，可按除权日做包含端点的过滤。"""
+    requested = _requested_fund_code()
+    if requested is None:
+        return jsonify({"detail": "ts_code required"}), 400
+    code, requested_ts_code = requested
+    try:
+        start_date, end_date = _date_window(request.args)
+    except ValueError as exc:
+        return jsonify({"detail": str(exc)}), 400
+    items = div_split_crud.list_events(code, start_date=start_date, end_date=end_date)
+    has_structured_split = any(item.get("event_type") == "split" for item in items)
+    split_note = (
+        "split events are included when available"
+        if has_structured_split
+        else "no structured split events are currently available; returned records are dividends only"
+    )
+    return jsonify({
+        "fund_code": code,
+        "ts_code": next((item.get("ts_code") for item in items if item.get("ts_code")), requested_ts_code),
+        "items": items,
+        "total": len(items),
+        "split_coverage": {"structured": has_structured_split, "note": split_note},
+    })
 
 
 @bp.get("/<code>")

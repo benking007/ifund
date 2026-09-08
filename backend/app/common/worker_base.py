@@ -18,11 +18,11 @@ from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_compl
 from dotenv import load_dotenv
 
 from app import db as database
+from app.common.network import MAX_NETWORK_ATTEMPTS, is_retryable_network_error
 
 logger = logging.getLogger(__name__)
 
 DEFAULT_CONCURRENCY = 4
-MAX_RETRIES = 4
 RETRY_JITTER = 0.2
 
 
@@ -160,13 +160,16 @@ def _is_terminated(task_id: int) -> bool:
 
 
 def _safe_process(process_one, code: str) -> tuple[str, str]:
-    """在池内执行单只基金；失败指数退避，且不写任务进度表。"""
-    for attempt in range(MAX_RETRIES + 1):
+    """在池内执行单只基金；只对网络异常做最多三次总尝试。"""
+    for attempt in range(MAX_NETWORK_ATTEMPTS):
         try:
             return code, process_one(code) or "success"
         except Exception as exc:  # pylint: disable=broad-exception-caught
-            if attempt == MAX_RETRIES:
-                logger.exception("处理基金 %s 失败，已重试 %d 次", code, attempt)
+            if not is_retryable_network_error(exc):
+                logger.warning("处理基金 %s 业务性失败，不重试：%s", code, exc)
+                return code, "fail"
+            if attempt + 1 >= MAX_NETWORK_ATTEMPTS:
+                logger.warning("处理基金 %s 网络失败，已尝试 %d 次：%s", code, attempt + 1, exc)
                 return code, "fail"
             logger.warning(
                 "处理基金 %s 失败，将在第 %d 次重试：%s", code, attempt + 1, exc,

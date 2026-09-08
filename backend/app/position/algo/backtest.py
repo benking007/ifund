@@ -48,7 +48,7 @@ def _stats(curve: list[dict]) -> dict:
             "sharpe": round(sharpe, 2), "max_drawdown": _max_drawdown(curve)}
 
 
-def run_backtest(funds: list[dict],
+def run_backtest(funds: list[dict],  # pylint: disable=too-many-locals
                  dated_by_code: dict[str, list[tuple[str, float]]],
                  step: int = STEP, warmup: int = WARMUP) -> dict | None:
     """funds：代表基金 ``[{"code","name"}]``；dated_by_code：code→``(date, 累计净值)`` 升序。

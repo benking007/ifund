@@ -8,6 +8,9 @@
 """
 from __future__ import annotations
 
+# 持仓存储的名称归一化是该模块需要复用的内部契约。
+# pylint: disable=protected-access
+
 import datetime
 import uuid
 

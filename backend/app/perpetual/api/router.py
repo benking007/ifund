@@ -1,6 +1,9 @@
 """永续组合 API：/api/perpetual/run + /api/perpetual/replay。"""
 from __future__ import annotations
 
+# 部分认证/序列化依赖按路由惰性导入，避免循环依赖和无请求时的开销。
+# pylint: disable=import-outside-toplevel
+
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required
 

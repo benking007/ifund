@@ -11,8 +11,9 @@ from app.fund_nav.fetch import akshare_js
 class _FakeResponse:
     """Minimal response double for ``requests.get``."""
 
-    def __init__(self, text: str) -> None:
+    def __init__(self, text: str, status_code: int = 200) -> None:
         self.text = text
+        self.status_code = status_code
 
     def raise_for_status(self) -> None:
         return None
@@ -30,7 +31,7 @@ class AkshareJsFetcherTests(TestCase):
         var Data_ACWorthTrend = [[1704067200000,"1.4"],[1704153600000,1.5]];
         """
 
-        with patch.object(akshare_js.requests, "get", return_value=_FakeResponse(javascript)):
+        with patch.object(akshare_js.requests, "get", return_value=_FakeResponse(javascript)) as get:
             rows = akshare_js.fetch_nav_js("000001")
 
         self.assertEqual(rows, [
@@ -47,6 +48,7 @@ class AkshareJsFetcherTests(TestCase):
                 "daily_return": 0.5,
             },
         ])
+        self.assertEqual(get.call_args.kwargs["timeout"], (5, 15))
 
     def test_fetch_nav_js_uses_money_fund_income_when_nav_trend_is_missing(self) -> None:
         javascript = (
@@ -81,6 +83,18 @@ class AkshareJsFetcherTests(TestCase):
             rows = akshare_js.fetch_nav_js("000012")
 
         self.assertEqual(rows, [])
+
+    def test_fetch_nav_js_returns_empty_once_for_404_or_html(self) -> None:
+        for response in (
+            _FakeResponse("<html>not found</html>", status_code=404),
+            _FakeResponse("<html>temporary test page</html>"),
+        ):
+            with self.subTest(status=response.status_code):
+                with patch.object(akshare_js.requests, "get", return_value=response) as get:
+                    rows = akshare_js.fetch_nav_js("000012")
+
+                self.assertEqual(rows, [])
+                get.assert_called_once()
 
 
 if __name__ == "__main__":

@@ -13,6 +13,7 @@ def recommend(pros: float, dev: float, weight: float, base: float) -> dict:
 
     pros（动量强度）、dev（乖离）不参与判定，仅作中文理由里的观察附注。
     """
+    del dev
     rel = weight - base
     note = f"（动量强度 {pros:.0f}，仅供参考）"
     if rel > REL_BAND:

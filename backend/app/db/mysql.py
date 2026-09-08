@@ -14,12 +14,18 @@ functional ``IF(..., 1, NULL)`` key part, so the converted schema targets
 MySQL 8.0.13+ (the version family that supports functional indexes).
 """
 
+# The schema converter and backend intentionally live together so init_db can
+# reuse the same private SQL helpers without widening the module API.
+# pylint: disable=too-many-lines,duplicate-code
+
 from __future__ import annotations
 
 import atexit
 import os
 import re
 import threading
+import time
+from collections import deque
 from collections.abc import Iterator
 from contextlib import contextmanager
 
@@ -55,6 +61,14 @@ VALID_TABLES: frozenset[str] = frozenset(
         "app_settings",
         "perpetual_portfolio",
         "fund_etf_linkage",
+        "fund_sync_state",
+        "fund_ts_code_map",
+        "fund_ts_code_quarantine",
+        "fund_ts_code_alias",
+        "fund_company",
+        "fund_basic_ext",
+        "fund_share",
+        "fund_share_sync_state",
     }
 )
 
@@ -122,6 +136,7 @@ _LONG_TEXT_COLUMNS = frozenset(
         "invest_target",
         "benchmark",
         "last_error",
+        "source_evidence",
     }
 )
 
@@ -562,12 +577,134 @@ def _convert_schema_sql(schema_sql: str) -> list[str]:
     return converted
 
 
-class MysqlDatabase(Database):
-    """Thread-local, lazily connected PyMySQL backend.
+class MysqlConnectionPoolTimeout(TimeoutError):
+    """Raised when no MySQL connection becomes available before the deadline."""
 
-    PyMySQL connections are not shared between waitress request threads. Each
-    thread owns one connection, and CRUD methods commit only when they are not
-    inside the public ``transaction()`` context manager.
+
+class _MysqlConnectionPool:
+    """Lazy, process-local bounded pool for PyMySQL connections."""
+
+    def __init__(self, connect_kwargs: dict, max_size: int, checkout_timeout: float):
+        if max_size <= 0:
+            raise ValueError("IFUND_DB_POOL_SIZE 必须大于 0")
+        if checkout_timeout <= 0:
+            raise ValueError("IFUND_DB_POOL_TIMEOUT 必须大于 0")
+        self._connect_kwargs = connect_kwargs
+        self.max_size = max_size
+        self.checkout_timeout = checkout_timeout
+        self._condition = threading.Condition()
+        self._idle = deque()
+        self._connections: set = set()
+        self._creating = 0
+        self._closed = False
+
+    @staticmethod
+    def _close_connection(connection) -> None:
+        try:
+            connection.close()
+        except pymysql.MySQLError:
+            pass
+
+    def _discard(self, connection) -> None:
+        with self._condition:
+            self._connections.discard(connection)
+            self._condition.notify()
+        self._close_connection(connection)
+
+    def checkout(self):
+        """Borrow a live connection, waiting at most ``checkout_timeout``."""
+        deadline = time.monotonic() + self.checkout_timeout
+        while True:
+            create_connection = False
+            with self._condition:
+                if self._closed:
+                    raise RuntimeError("MySQL 连接池已关闭")
+                if self._idle:
+                    connection = self._idle.pop()
+                elif len(self._connections) + self._creating < self.max_size:
+                    self._creating += 1
+                    create_connection = True
+                    connection = None
+                else:
+                    remaining = deadline - time.monotonic()
+                    if remaining <= 0:
+                        raise MysqlConnectionPoolTimeout(
+                            "等待 MySQL 连接超时"
+                            f"（上限 {self.max_size}，超时 {self.checkout_timeout:g} 秒）"
+                        )
+                    self._condition.wait(remaining)
+                    continue
+
+            if create_connection:
+                try:
+                    connection = pymysql.connect(**self._connect_kwargs)
+                except BaseException:
+                    with self._condition:
+                        self._creating -= 1
+                        self._condition.notify()
+                    raise
+                with self._condition:
+                    self._creating -= 1
+                    if self._closed:
+                        close_connection = True
+                    else:
+                        self._connections.add(connection)
+                        close_connection = False
+                    self._condition.notify()
+                if close_connection:
+                    self._close_connection(connection)
+                    raise RuntimeError("MySQL 连接池已关闭")
+                return connection
+
+            try:
+                connection.ping(reconnect=False)
+            except pymysql.MySQLError:
+                self._discard(connection)
+                continue
+            return connection
+
+    def checkin(self, connection, *, discard: bool = False) -> None:
+        """Rollback all pending state and return a usable connection to the pool."""
+        try:
+            connection.rollback()
+        except Exception:  # pylint: disable=broad-exception-caught
+            self._discard(connection)
+            return
+
+        if discard:
+            self._discard(connection)
+            return
+
+        with self._condition:
+            if self._closed or connection not in self._connections:
+                close_connection = True
+            else:
+                self._idle.append(connection)
+                close_connection = False
+                self._condition.notify()
+        if close_connection:
+            self._close_connection(connection)
+
+    def close(self) -> None:
+        """Prevent future checkouts and close every connection created by the pool."""
+        with self._condition:
+            if self._closed:
+                return
+            self._closed = True
+            connections = list(self._connections)
+            self._connections.clear()
+            self._idle.clear()
+            self._condition.notify_all()
+        for connection in connections:
+            self._close_connection(connection)
+
+
+class MysqlDatabase(Database):
+    """Lazily connected PyMySQL backend backed by a bounded process pool.
+
+    Each database-layer method borrows and returns a connection. Only an active
+    public ``transaction()`` keeps its connection for the transaction lifetime;
+    nested transactions retain the existing savepoint semantics.
     """
 
     def __init__(self) -> None:
@@ -581,65 +718,39 @@ class MysqlDatabase(Database):
             "autocommit": False,
             "cursorclass": pymysql.cursors.DictCursor,
         }
+        pool_size = int(os.getenv("IFUND_DB_POOL_SIZE", "8"))
+        pool_timeout = float(os.getenv("IFUND_DB_POOL_TIMEOUT", "5"))
+        self._pool = _MysqlConnectionPool(self._connect_kwargs, pool_size, pool_timeout)
         self._local = threading.local()
-        self._connections: list = []
-        self._connections_lock = threading.Lock()
         atexit.register(self.close)
 
-    def _new_connection(self):
-        connection = pymysql.connect(**self._connect_kwargs)
-        with self._connections_lock:
-            self._connections.append(connection)
-        self._local.conn = connection
-        return connection
+    @contextmanager
+    def _connection(self) -> Iterator:
+        """Use the active transaction connection or borrow one for this call."""
+        transaction_connection = getattr(self._local, "transaction_connection", None)
+        if transaction_connection is not None:
+            yield transaction_connection
+            return
 
-    def _remove_connection(self, connection) -> None:
-        with self._connections_lock:
-            try:
-                self._connections.remove(connection)
-            except ValueError:
-                pass
-
-    def _conn(self):
-        connection = getattr(self._local, "conn", None)
-        if connection is None:
-            return self._new_connection()
+        connection = self._pool.checkout()
         try:
-            connection.ping(reconnect=True)
-        except pymysql.MySQLError:
-            self._remove_connection(connection)
-            try:
-                connection.close()
-            except pymysql.MySQLError:
-                pass
-            self._local.conn = None
-            return self._new_connection()
-        return connection
+            yield connection
+        finally:
+            self._pool.checkin(connection)
 
     def close(self) -> None:
-        """Close all thread-local connections at process shutdown or teardown."""
-        with self._connections_lock:
-            connections = self._connections
-            self._connections = []
-        for connection in connections:
-            try:
-                connection.close()
-            except pymysql.MySQLError:
-                pass
+        """Close the process connection pool at shutdown or teardown."""
+        self._pool.close()
 
     def _in_transaction(self) -> bool:
         return getattr(self._local, "transaction_depth", 0) > 0
 
-    def _rollback_if_needed(self, connection) -> None:
-        if not self._in_transaction():
-            connection.rollback()
-
     @contextmanager
     def transaction(self) -> Iterator:
         """Run an atomic transaction, with savepoints for nested calls."""
-        connection = self._conn()
         depth = getattr(self._local, "transaction_depth", 0)
         if depth:
+            connection = self._local.transaction_connection
             savepoint = f"ifund_nested_{depth}"
             with connection.cursor() as cursor:
                 cursor.execute(f"SAVEPOINT {savepoint}")
@@ -658,17 +769,34 @@ class MysqlDatabase(Database):
                 self._local.transaction_depth = depth
             return
 
-        connection.begin()
-        self._local.transaction_depth = 1
+        connection = self._pool.checkout()
+        self._local.transaction_connection = connection
+        discard_connection = False
         try:
-            yield connection
-        except BaseException:
-            connection.rollback()
-            raise
-        else:
-            connection.commit()
+            try:
+                connection.begin()
+            except BaseException:
+                discard_connection = True
+                raise
+            self._local.transaction_depth = 1
+            try:
+                yield connection
+            except BaseException:
+                try:
+                    connection.rollback()
+                except BaseException:
+                    discard_connection = True
+                    raise
+                raise
+            try:
+                connection.commit()
+            except BaseException:
+                discard_connection = True
+                raise
         finally:
             self._local.transaction_depth = 0
+            self._local.transaction_connection = None
+            self._pool.checkin(connection, discard=discard_connection)
 
     def select(self, table: str, params=None) -> list[dict]:
         _check_table(table)
@@ -687,10 +815,10 @@ class MysqlDatabase(Database):
             query_params.append(clauses["limit"])
         if clauses["offset"] is not None:
             query_params.append(clauses["offset"])
-        connection = self._conn()
-        with connection.cursor() as cursor:
-            cursor.execute(sql, query_params)
-            rows = cursor.fetchall()
+        with self._connection() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(sql, query_params)
+                rows = cursor.fetchall()
         return [dict(row) for row in (rows or [])]
 
     def insert(self, table: str, data: dict) -> dict:
@@ -701,30 +829,26 @@ class MysqlDatabase(Database):
         column_sql = ",".join(_quote_col(column) for column in columns)
         placeholders = ",".join(["%s"] * len(columns))
         sql = f"INSERT INTO `{table}` ({column_sql}) VALUES ({placeholders})"
-        connection = self._conn()
-        try:
-            with connection.cursor() as cursor:
-                cursor.execute(sql, [data[column] for column in columns])
-                new_id = cursor.lastrowid
-            if not self._in_transaction():
-                connection.commit()
-        except pymysql.MySQLError as exc:
-            self._rollback_if_needed(connection)
-            if _is_duplicate_key(exc):
-                raise UniqueViolation(str(exc)) from exc
-            raise
-        except BaseException:
-            self._rollback_if_needed(connection)
-            raise
+        with self._connection() as connection:
+            try:
+                with connection.cursor() as cursor:
+                    cursor.execute(sql, [data[column] for column in columns])
+                    new_id = cursor.lastrowid
+                if not self._in_transaction():
+                    connection.commit()
+            except pymysql.MySQLError as exc:
+                if _is_duplicate_key(exc):
+                    raise UniqueViolation(str(exc)) from exc
+                raise
 
-        if new_id:
-            with connection.cursor() as cursor:
-                cursor.execute(f"SELECT * FROM `{table}` WHERE `id` = %s", [new_id])
-                row = cursor.fetchone()
-            if row:
-                return dict(row)
-            return {**data, "id": new_id}
-        return dict(data)
+            if new_id:
+                with connection.cursor() as cursor:
+                    cursor.execute(f"SELECT * FROM `{table}` WHERE `id` = %s", [new_id])
+                    row = cursor.fetchone()
+                if row:
+                    return dict(row)
+                return {**data, "id": new_id}
+            return dict(data)
 
     def batch_insert(self, table: str, rows: list[dict], batch_size: int = 500) -> None:
         _check_table(table)
@@ -744,23 +868,19 @@ class MysqlDatabase(Database):
             f"INSERT INTO `{table}` ({column_sql}) VALUES ({placeholders}) "
             f"ON DUPLICATE KEY UPDATE {updates}"
         )
-        connection = self._conn()
-        try:
-            for start in range(0, len(rows), batch_size):
-                chunk = rows[start : start + batch_size]
-                values = [[row.get(column) for column in columns] for row in chunk]
-                with connection.cursor() as cursor:
-                    cursor.executemany(sql, values)
-        except pymysql.MySQLError as exc:
-            self._rollback_if_needed(connection)
-            if _is_duplicate_key(exc):
-                raise UniqueViolation(str(exc)) from exc
-            raise
-        except BaseException:
-            self._rollback_if_needed(connection)
-            raise
-        if not self._in_transaction():
-            connection.commit()
+        with self._connection() as connection:
+            try:
+                for start in range(0, len(rows), batch_size):
+                    chunk = rows[start : start + batch_size]
+                    values = [[row.get(column) for column in columns] for row in chunk]
+                    with connection.cursor() as cursor:
+                        cursor.executemany(sql, values)
+            except pymysql.MySQLError as exc:
+                if _is_duplicate_key(exc):
+                    raise UniqueViolation(str(exc)) from exc
+                raise
+            if not self._in_transaction():
+                connection.commit()
 
     def update(self, table: str, filters: dict, data: dict) -> None:
         _check_table(table)
@@ -774,15 +894,11 @@ class MysqlDatabase(Database):
                 f"{_quote_col(column)} = %s" for column in filters
             )
             params.extend(filters.values())
-        connection = self._conn()
-        try:
+        with self._connection() as connection:
             with connection.cursor() as cursor:
                 cursor.execute(sql, params)
-        except BaseException:
-            self._rollback_if_needed(connection)
-            raise
-        if not self._in_transaction():
-            connection.commit()
+            if not self._in_transaction():
+                connection.commit()
 
     def delete(self, table: str, filters: dict | None = None) -> None:
         _check_table(table)
@@ -793,15 +909,11 @@ class MysqlDatabase(Database):
                 f"{_quote_col(column)} = %s" for column in filters
             )
             params.extend(filters.values())
-        connection = self._conn()
-        try:
+        with self._connection() as connection:
             with connection.cursor() as cursor:
                 cursor.execute(sql, params)
-        except BaseException:
-            self._rollback_if_needed(connection)
-            raise
-        if not self._in_transaction():
-            connection.commit()
+            if not self._in_transaction():
+                connection.commit()
 
     def count(self, table: str, params=None) -> int:
         _check_table(table)
@@ -809,10 +921,10 @@ class MysqlDatabase(Database):
         sql = f"SELECT COUNT(*) AS n FROM `{table}`"
         if clauses["where"]:
             sql += " WHERE " + clauses["where"]
-        connection = self._conn()
-        with connection.cursor() as cursor:
-            cursor.execute(sql, clauses["where_params"])
-            row = cursor.fetchone()
+        with self._connection() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(sql, clauses["where_params"])
+                row = cursor.fetchone()
         return int(_row_value(row, "n", 0) or 0)
 
     @staticmethod
@@ -848,17 +960,17 @@ class MysqlDatabase(Database):
             "LEFT JOIN `fund_details` d ON f.`code` = d.`fund_code` "
             "LEFT JOIN `fund_ai_analysis` a ON f.`code` = a.`fund_code`"
         )
-        connection = self._conn()
-        with connection.cursor() as cursor:
-            cursor.execute(f"SELECT COUNT(*) AS n {base}{where_sql}", where_params)
-            total = int(_row_value(cursor.fetchone(), "n", 0) or 0)
-            order_sql = self._build_join_order(order_parts)
-            sql = (
-                f"SELECT {', '.join(_RESULT_COLS)} {base}{where_sql} {order_sql} "
-                "LIMIT %s OFFSET %s"
-            )
-            cursor.execute(sql, where_params + [limit, skip])
-            rows = cursor.fetchall()
+        with self._connection() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(f"SELECT COUNT(*) AS n {base}{where_sql}", where_params)
+                total = int(_row_value(cursor.fetchone(), "n", 0) or 0)
+                order_sql = self._build_join_order(order_parts)
+                sql = (
+                    f"SELECT {', '.join(_RESULT_COLS)} {base}{where_sql} {order_sql} "
+                    "LIMIT %s OFFSET %s"
+                )
+                cursor.execute(sql, where_params + [limit, skip])
+                rows = cursor.fetchall()
         return total, [dict(row) for row in (rows or [])]
 
     def list_industry_mapping(
@@ -918,10 +1030,10 @@ class MysqlDatabase(Database):
             f"{base} SELECT *, COUNT(*) OVER () AS _total FROM r{where_sql} "
             "ORDER BY `covered` DESC, `stock_code` ASC LIMIT %s OFFSET %s"
         )
-        connection = self._conn()
-        with connection.cursor() as cursor:
-            cursor.execute(sql, params + [limit, skip])
-            rows = [dict(row) for row in (cursor.fetchall() or [])]
+        with self._connection() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(sql, params + [limit, skip])
+                rows = [dict(row) for row in (cursor.fetchall() or [])]
         total = int(rows[0].pop("_total") or 0) if rows else 0
         for row in rows:
             row.pop("_total", None)
@@ -967,34 +1079,36 @@ class MysqlDatabase(Database):
         elif coverage == "uncovered":
             where.append("t.`fund_code` IS NULL")
         where_sql = " WHERE " + " AND ".join(where)
-        connection = self._conn()
-        with connection.cursor() as cursor:
-            cursor.execute(f"SELECT COUNT(*) AS n {base}{where_sql}", params)
-            total = int(_row_value(cursor.fetchone(), "n", 0) or 0)
-            alias = _MGR_SORTABLE.get(order_field, "f")
-            column = order_field if order_field in _MGR_SORTABLE else "code"
-            sql_direction = "DESC" if str(order_dir).lower() == "desc" else "ASC"
-            order_sql = f"ORDER BY {_quote_col(f'{alias}.{column}')} {sql_direction}"
-            select_cols = (
-                "f.`code` AS code, f.`name` AS name, "
-                "d.`fund_type`, d.`fund_company`, d.`scale`, d.`fund_manager`, "
-                "d.`return_1y`, d.`return_3y`, "
-                "t.`managers`, t.`start_date`, t.`end_date`, t.`tenure_text`, "
-                "t.`tenure_days`, t.`tenure_return`, t.`fetch_time`"
-            )
-            sql = (
-                f"SELECT {select_cols} {base}{where_sql} {order_sql} LIMIT %s OFFSET %s"
-            )
-            cursor.execute(sql, params + [limit, skip])
-            rows = cursor.fetchall()
+        with self._connection() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(f"SELECT COUNT(*) AS n {base}{where_sql}", params)
+                total = int(_row_value(cursor.fetchone(), "n", 0) or 0)
+                alias = _MGR_SORTABLE.get(order_field, "f")
+                column = order_field if order_field in _MGR_SORTABLE else "code"
+                sql_direction = "DESC" if str(order_dir).lower() == "desc" else "ASC"
+                order_sql = (
+                    f"ORDER BY {_quote_col(f'{alias}.{column}')} {sql_direction}"
+                )
+                select_cols = (
+                    "f.`code` AS code, f.`name` AS name, "
+                    "d.`fund_type`, d.`fund_company`, d.`scale`, d.`fund_manager`, "
+                    "d.`return_1y`, d.`return_3y`, "
+                    "t.`managers`, t.`start_date`, t.`end_date`, t.`tenure_text`, "
+                    "t.`tenure_days`, t.`tenure_return`, t.`fetch_time`"
+                )
+                sql = (
+                    f"SELECT {select_cols} {base}{where_sql} {order_sql} "
+                    "LIMIT %s OFFSET %s"
+                )
+                cursor.execute(sql, params + [limit, skip])
+                rows = cursor.fetchall()
         return total, [dict(row) for row in (rows or [])]
 
     def init_db(self, schema_sql: str) -> None:
         statements = _convert_schema_sql(schema_sql)
         if not statements:
             return
-        connection = self._conn()
-        try:
+        with self._connection() as connection:
             with connection.cursor() as cursor:
                 for statement in statements:
                     try:
@@ -1004,6 +1118,3 @@ class MysqlDatabase(Database):
                             continue
                         raise
             connection.commit()
-        except BaseException:
-            connection.rollback()
-            raise

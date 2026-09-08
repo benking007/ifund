@@ -158,11 +158,62 @@ CREATE TABLE IF NOT EXISTS fund_nav (
     nav FLOAT,
     acc_nav FLOAT,
     daily_return FLOAT,
+    adj_nav FLOAT,
+    adj_src TEXT,
     fetch_time TEXT,
     UNIQUE (fund_code, trade_date)
 );
 CREATE INDEX IF NOT EXISTS ix_fund_nav_fund_code ON fund_nav (fund_code);
 CREATE INDEX IF NOT EXISTS ix_fund_nav_trade_date ON fund_nav (trade_date);
+-- 统计及复权写回使用覆盖/部分索引，避免在 6GB 数据库上扫表。
+CREATE INDEX IF NOT EXISTS ix_fund_nav_adj_nav ON fund_nav (adj_nav);
+CREATE INDEX IF NOT EXISTS ix_fund_nav_fund_nav ON fund_nav (fund_code, nav);
+CREATE INDEX IF NOT EXISTS ix_fund_nav_zero_nav_fund ON fund_nav (fund_code)
+    WHERE nav IS NULL OR nav <= 0;
+
+-- 分红/拆分事件：除权日统一为 YYYY-MM-DD；source 记录事件来源。
+CREATE TABLE IF NOT EXISTS fund_div_split (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    fund_code VARCHAR(10) NOT NULL,
+    ex_date VARCHAR(10) NOT NULL,
+    event_type TEXT NOT NULL CHECK (event_type IN ('div', 'split')),
+    cash_per_unit FLOAT,
+    split_ratio FLOAT,
+    source TEXT NOT NULL DEFAULT '',
+    fetch_time TEXT,
+    UNIQUE (fund_code, ex_date, event_type)
+);
+CREATE INDEX IF NOT EXISTS ix_fund_div_split_fund_date
+    ON fund_div_split (fund_code, ex_date);
+CREATE INDEX IF NOT EXISTS ix_fund_div_split_date ON fund_div_split (ex_date);
+
+-- 分红/拆分事件扫描状态；只有 done 才允许事件自算前复权。
+CREATE TABLE IF NOT EXISTS event_scan_status (
+    fund_code TEXT PRIMARY KEY,
+    status TEXT NOT NULL CHECK (status IN ('pending', 'done', 'failed')),
+    scanned_at TEXT NOT NULL
+);
+
+-- 净值/复权缺口队列；next_retry_at 与 status 联合索引支持晚间小批量重试。
+CREATE TABLE IF NOT EXISTS nav_repair_queue (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    fund_code VARCHAR(10) NOT NULL,
+    task_kind TEXT NOT NULL CHECK (task_kind IN ('nav', 'adj')),
+    gap_start VARCHAR(10),
+    gap_end VARCHAR(10),
+    status TEXT NOT NULL DEFAULT 'pending'
+        CHECK (status IN ('pending', 'running', 'done', 'failed')),
+    attempts INTEGER NOT NULL DEFAULT 0,
+    next_retry_at TEXT,
+    last_error TEXT,
+    created_at TEXT DEFAULT (datetime('now')),
+    updated_at TEXT DEFAULT (datetime('now')),
+    UNIQUE (fund_code, task_kind, gap_start, gap_end)
+);
+CREATE INDEX IF NOT EXISTS ix_nav_repair_queue_status_retry
+    ON nav_repair_queue (status, next_retry_at);
+CREATE INDEX IF NOT EXISTS ix_nav_repair_queue_fund_kind
+    ON nav_repair_queue (fund_code, task_kind, status);
 
 CREATE TABLE IF NOT EXISTS fund_cum_return (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -309,3 +360,130 @@ CREATE TABLE IF NOT EXISTS perpetual_portfolio (
     created_at TEXT DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS ix_perpetual_portfolio_user ON perpetual_portfolio (user_id, created_at DESC);
+
+-- 指数 ETF 联接基金 ↔ 场内 ETF 血缘（UNIQUE fund_code，启动时幂等建表）
+CREATE TABLE IF NOT EXISTS fund_etf_linkage (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    fund_code TEXT NOT NULL UNIQUE,
+    fund_name TEXT DEFAULT '',
+    etf_code TEXT DEFAULT '',
+    etf_name TEXT DEFAULT '',
+    matched_by TEXT DEFAULT '',
+    confidence TEXT DEFAULT '',
+    created_at TEXT DEFAULT (datetime('now')),
+    updated_at TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS ix_fund_etf_linkage_fund_code ON fund_etf_linkage (fund_code);
+CREATE INDEX IF NOT EXISTS ix_fund_etf_linkage_etf_code ON fund_etf_linkage (etf_code);
+CREATE INDEX IF NOT EXISTS ix_fund_etf_linkage_confidence ON fund_etf_linkage (confidence);
+
+-- Tushare 基金公司维表（additive；上游无 ts_code，以 company_id 关联）。
+CREATE TABLE IF NOT EXISTS fund_company (
+    company_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE,
+    short_name TEXT,
+    short_en_name TEXT,
+    province TEXT,
+    city TEXT,
+    address TEXT,
+    phone TEXT,
+    office TEXT,
+    website TEXT,
+    chairman TEXT,
+    general_manager TEXT,
+    registered_capital REAL,
+    setup_date TEXT,
+    end_date TEXT,
+    employees INTEGER,
+    main_business TEXT,
+    org_code TEXT,
+    credit_code TEXT,
+    source TEXT NOT NULL DEFAULT 'tushare',
+    fetched_at TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS ix_fund_company_org_code ON fund_company (org_code);
+
+-- fund_basic 权威结构化补丁；不覆盖 funds / fund_details 现有字段。
+CREATE TABLE IF NOT EXISTS fund_basic_ext (
+    fund_code TEXT PRIMARY KEY,
+    ts_code TEXT NOT NULL UNIQUE,
+    company_id INTEGER,
+    name TEXT,
+    management TEXT,
+    custodian TEXT,
+    market TEXT,
+    status TEXT,
+    fund_type TEXT,
+    invest_type TEXT,
+    fund_category TEXT,
+    trustee TEXT,
+    found_date TEXT,
+    due_date TEXT,
+    list_date TEXT,
+    issue_date TEXT,
+    delist_date TEXT,
+    purchase_start_date TEXT,
+    redemption_start_date TEXT,
+    issue_amount REAL,
+    management_fee REAL,
+    custodian_fee REAL,
+    duration_years REAL,
+    par_value REAL,
+    minimum_amount REAL,
+    expected_return REAL,
+    benchmark TEXT,
+    source TEXT NOT NULL DEFAULT 'tushare',
+    fetched_at TEXT DEFAULT (datetime('now')),
+    FOREIGN KEY (company_id) REFERENCES fund_company (company_id)
+);
+CREATE INDEX IF NOT EXISTS ix_fund_basic_ext_company ON fund_basic_ext (company_id);
+CREATE INDEX IF NOT EXISTS ix_fund_basic_ext_market_status ON fund_basic_ext (market, status);
+
+-- Tushare fund_share.fd_share，单位为万份。
+CREATE TABLE IF NOT EXISTS fund_share (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    fund_code TEXT NOT NULL,
+    ts_code TEXT NOT NULL,
+    trade_date TEXT NOT NULL,
+    share_type TEXT NOT NULL DEFAULT 'fund_total',
+    share_value REAL NOT NULL,
+    share_unit TEXT NOT NULL DEFAULT '10k_shares',
+    source_field TEXT NOT NULL DEFAULT 'fd_share',
+    source TEXT NOT NULL DEFAULT 'tushare',
+    fetched_at TEXT DEFAULT (datetime('now')),
+    UNIQUE (ts_code, trade_date, share_type)
+);
+CREATE INDEX IF NOT EXISTS ix_fund_share_code_date ON fund_share (fund_code, trade_date);
+
+CREATE TABLE IF NOT EXISTS fund_share_sync_state (
+    ts_code TEXT PRIMARY KEY,
+    requested_start TEXT,
+    requested_end TEXT,
+    status TEXT NOT NULL,
+    row_count INTEGER NOT NULL DEFAULT 0,
+    attempts INTEGER NOT NULL DEFAULT 0,
+    last_error TEXT,
+    updated_at TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS ix_fund_share_sync_status
+    ON fund_share_sync_state (status, updated_at);
+
+-- 同一六位码在 Tushare fund_basic 同时存在场内/场外角色时的附加别名。
+-- 主映射仍由 fund_ts_code_map 唯一决定；本表只提供按业务上下文显式选角色的证据。
+CREATE TABLE IF NOT EXISTS fund_ts_code_alias (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    fund_code VARCHAR(10) NOT NULL,
+    primary_ts_code VARCHAR(20) NOT NULL,
+    alias_ts_code VARCHAR(20) NOT NULL,
+    primary_channel VARCHAR(4) NOT NULL,
+    alias_channel VARCHAR(4) NOT NULL,
+    source VARCHAR(32) NOT NULL DEFAULT 'tushare.fund_basic',
+    source_evidence TEXT,
+    status VARCHAR(16) NOT NULL DEFAULT 'active',
+    verified_at TEXT NOT NULL,
+    UNIQUE (fund_code, alias_ts_code)
+);
+CREATE INDEX IF NOT EXISTS ix_fund_ts_code_alias_alias
+    ON fund_ts_code_alias (alias_ts_code);
+CREATE INDEX IF NOT EXISTS ix_fund_ts_code_alias_status
+    ON fund_ts_code_alias (status);

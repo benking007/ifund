@@ -1,4 +1,5 @@
 """交易日历数据访问。"""
+
 from __future__ import annotations
 
 import datetime
@@ -12,10 +13,12 @@ NAV_PUBLISH_HOUR = 20
 
 
 def replace_all(dates: list[str]) -> int:
-    """全量替换交易日表。返回写入条数。"""
-    database.delete("trade_dates", {})
-    rows = [{"trade_date": d} for d in dates]
-    if rows:
+    """事务内全量替换交易日表；空列表拒绝清库。"""
+    rows = [{"trade_date": d} for d in sorted(set(dates))]
+    if not rows:
+        raise ValueError("交易日历不能为空")
+    with database.get_db().transaction():
+        database.delete("trade_dates", {})
         database.batch_insert("trade_dates", rows)
     return len(rows)
 
@@ -23,7 +26,8 @@ def replace_all(dates: list[str]) -> int:
 def prev_trade_date(date: str) -> str | None:
     """严格早于 ``date`` 的最近交易日；无则 None。"""
     row = database.select_one(
-        "trade_dates", {"trade_date": f"lt.{date}", "order": "trade_date.desc"})
+        "trade_dates", {"trade_date": f"lt.{date}", "order": "trade_date.desc"}
+    )
     return row["trade_date"] if row else None
 
 
@@ -38,10 +42,11 @@ def base_trade_date(now: datetime.datetime | None = None) -> str | None:
     要的是真实最近交易日 T；本函数专供拉取缓存，宁可保守取 T-1 也不空拉。
     交易日历为空时返回 None（调用方据此降级为「照常拉」，避免首次空库永不拉取）。
     """
-    now = now or datetime.datetime.now()
+    now = now or datetime.datetime.now().astimezone()
     today = now.date().isoformat()
     row = database.select_one(
-        "trade_dates", {"trade_date": f"lte.{today}", "order": "trade_date.desc"})
+        "trade_dates", {"trade_date": f"lte.{today}", "order": "trade_date.desc"}
+    )
     if not row:
         return None
     latest = row["trade_date"]

@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import argparse
+import datetime
 import os
 from pathlib import Path
 
@@ -19,7 +20,45 @@ if _env_file.exists():
         key, _, value = line.partition("=")
         os.environ.setdefault(key.strip(), value.strip())
 
-from . import ai_analyze, analyze, bundle, fetch, historical, holdings, perpetual, preset, trade
+from . import (
+    ai_analyze,
+    analyze,
+    bundle,
+    fetch,
+    historical,
+    holdings,
+    nav,
+    perpetual,
+    preset,
+    trade,
+)
+
+
+def _non_negative_int(value: str) -> int:
+    """解析 CLI 允许为零的非负整数。"""
+    try:
+        parsed = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("必须是整数") from exc
+    if parsed < 0:
+        raise argparse.ArgumentTypeError("必须是非负整数")
+    return parsed
+
+
+def _positive_int(value: str) -> int:
+    """解析必须大于零的并发数。"""
+    parsed = _non_negative_int(value)
+    if parsed == 0:
+        raise argparse.ArgumentTypeError("必须大于零")
+    return parsed
+
+
+def _iso_date(raw: str) -> str:
+    """解析 YYYY-MM-DD 日期参数。"""
+    try:
+        return datetime.date.fromisoformat(raw).isoformat()
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("日期必须是 YYYY-MM-DD") from exc
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -76,6 +115,42 @@ def build_parser() -> argparse.ArgumentParser:
                 help="仅拉取缺上一季度持仓的非货币型基金",
             )
         p.set_defaults(fn=fn)
+
+    # nav（净值数据治理：全史回补 / 前复权 / 分红拆分事件）
+    g = groups.add_parser("nav", help="净值数据治理")
+    g = g.add_subparsers(dest="cmd", required=True)
+    p = g.add_parser("backfill", parents=[common], help="东财净值全史回补")
+    p.add_argument("--codes", help="基金代码(逗号)")
+    p.add_argument("--types", help="基金类型匹配(逗号)")
+    p.add_argument("--all", action="store_true", help="处理全部匹配基金；默认仅 pending 队列")
+    p.add_argument("--concurrency", type=_positive_int, default=8, help="并发数（默认 8）")
+    p.add_argument("--limit", type=_non_negative_int)
+    p.set_defaults(fn=nav.cmd_backfill)
+    p = g.add_parser("rankbackfill", parents=[common], help="AkShare rank 快照批量补缺")
+    p.add_argument("--dry-run", action="store_true", help="只统计缺口，不写 fund_nav")
+    p.add_argument("--limit", type=_non_negative_int, help="最多对齐前 N 只 funds 基金")
+    p.add_argument(
+        "--target-date",
+        type=_iso_date,
+        help="仅保留快照中该净值日期；接口不支持历史截止日（YYYY-MM-DD）",
+    )
+    p.set_defaults(fn=nav.cmd_rankbackfill)
+    p = g.add_parser("adj", parents=[common], help="Tushare 前复权/事件自算")
+    p.add_argument("--codes", help="基金代码(逗号)")
+    p.add_argument("--types", help="基金类型匹配(逗号)")
+    p.add_argument("--all", action="store_true", help="处理全部匹配基金")
+    p.add_argument("--src", choices=["tushare", "calc", "both"], default="both")
+    p.add_argument("--only-null", action="store_true", help="calc 只填补 adj_nav 为空的行")
+    p.add_argument("--concurrency", type=_positive_int, default=4, help="并发数（默认 4）")
+    p.add_argument("--limit", type=_non_negative_int)
+    p.set_defaults(fn=nav.cmd_adj)
+    p = g.add_parser("events", parents=[common], help="采集 Tushare 分红/拆分事件")
+    p.add_argument("--codes", help="基金代码(逗号)")
+    p.add_argument("--types", help="基金类型匹配(逗号)")
+    p.add_argument("--all", action="store_true", help="处理全部匹配基金")
+    p.add_argument("--concurrency", type=_positive_int, default=4, help="并发数（默认 4）")
+    p.add_argument("--limit", type=_non_negative_int)
+    p.set_defaults(fn=nav.cmd_events)
 
     # analyze（组合分析）
     g = groups.add_parser("analyze", help="组合分析：预设→仓位建议→穿透/赛道/表现")

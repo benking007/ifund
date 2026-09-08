@@ -51,7 +51,7 @@ def register():
         return jsonify({"detail": exc.errors()}), 422
     if database.select_one("users", {"username": f"eq.{payload.username}"}):
         return jsonify({"detail": "用户名已存在"}), 400
-    hashed = bcrypt.hashpw(payload.password.encode(), bcrypt.gensalt()).decode()
+    hashed = bcrypt.hashpw(payload.password.encode(), bcrypt.gensalt()).decode()  # pylint: disable=no-member
     user = database.insert("users", {"username": payload.username, "hashed_password": hashed})
     return jsonify({"id": user["id"], "username": user["username"]}), 201
 

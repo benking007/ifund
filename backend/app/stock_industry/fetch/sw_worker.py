@@ -21,17 +21,21 @@ import time
 from io import StringIO
 
 import akshare as ak  # pylint: disable=import-error
+import akshare.index.index_sw as _index_sw  # pylint: disable=import-error
 import pandas as pd  # pylint: disable=import-error
 import requests  # pylint: disable=import-error
 
 from app import db as database
 from app.common import worker_base
+from app.common.network import install_module_timeout
 from app.stock_industry.crud import industry_crud
 
 SLEEP_SEC = 2.0          # 行业间隔，规避 legulegu 限流
 RETRY = 3
 HDR = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36"}
+
+install_module_timeout(_index_sw)
 
 
 def _fetch_cons(industry_code: str):

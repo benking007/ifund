@@ -44,6 +44,7 @@ def _select_at(anchor: str, universe: list[dict], nav_by_code: dict,
 
 def _rebalance(prev_codes: list[str], fresh: list[dict], shortlist: list[dict],
                keep_rank: int, max_replace: int) -> tuple[list[str], list[dict]]:
+    del keep_rank
     fresh_codes = [h["code"] for h in fresh]
     sl_codes = [s["code"] for s in shortlist]
     safe_set = set(fresh_codes + sl_codes)
@@ -130,7 +131,7 @@ def _segment(codes: list[str], weights: np.ndarray, nav_by_code: dict,
     return [(common[i], float(port[i])) for i in range(len(common))]
 
 
-def run_replay(codes: list[str] | None = None, start: str = "2024-01-01",
+def run_replay(codes: list[str] | None = None, start: str = "2024-01-01",  # pylint: disable=too-many-locals
                step_months: int = 6, keep_rank: int = 20,
                max_replace: int = 3) -> dict:
     """定期重筛回放主入口。"""
@@ -147,8 +148,6 @@ def run_replay(codes: list[str] | None = None, start: str = "2024-01-01",
     turnover = []
     prev_codes: list[str] = []
     last_nav = 1.0
-    first_weights: np.ndarray | None = None
-    first_codes: list[str] = []
 
     for k, anchor in enumerate(anchors):
         end = anchors[k + 1] if k + 1 < len(anchors) else \
@@ -174,8 +173,6 @@ def run_replay(codes: list[str] | None = None, start: str = "2024-01-01",
             stitched.extend((d, v * last_nav) for d, v in seg)
             last_nav = stitched[-1][1]
         if k == 0:
-            first_codes = cur_codes
-            first_weights = weights
             bh_seg = _segment(cur_codes, weights, nav_by_code, anchor,
                               (date.today() + timedelta(days=1)).isoformat())
             bh_curve = bh_seg

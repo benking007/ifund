@@ -4,12 +4,15 @@
 """
 from __future__ import annotations
 
+# 联合回测与 Resonance 回测共享交易汇总骨架，保留各自公开入口。
+# pylint: disable=duplicate-code
+
 from app.historical.backtest import fetch_trade_pairs, _fetch_510300_prices
 from app.historical.nav_metrics import get_nav_on_or_before
 from app.perpetual.api.router import build_result
 
 
-def run_perpetual_backtest(pairs: list[dict] | None = None,
+def run_perpetual_backtest(pairs: list[dict] | None = None,  # pylint: disable=too-many-locals
                            codes: list[str] | None = None,
                            on_progress=None) -> dict:
     """对每个交易对：永续选基 → 持有期收益 → 复合。"""

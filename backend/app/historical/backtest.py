@@ -1,6 +1,9 @@
 """Resonance 交易对收益计算：ifund 选基 + Resonance 择时的组合回测。"""
 from __future__ import annotations
 
+# 该模块兼容外部 Resonance 服务异常，并保留长回测流程的局部状态。
+# pylint: disable=broad-exception-caught,too-many-locals,duplicate-code
+
 import json
 import urllib.request
 

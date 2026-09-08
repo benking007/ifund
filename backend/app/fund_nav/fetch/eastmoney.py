@@ -5,11 +5,14 @@ import datetime
 
 import requests
 
+from app.common.network import HTTP_TIMEOUT
+from app.fund_nav.fetch.errors import F10_404, NoNavDataError
+
 ENDPOINT = "https://api.fund.eastmoney.com/f10/lsjz"
 REFERER = "https://fundf10.eastmoney.com/"
 PAGE_SIZE = 500
 FALLBACK_PAGE_SIZE = 200
-REQUEST_TIMEOUT = 15
+REQUEST_TIMEOUT = HTTP_TIMEOUT
 
 
 def _to_float(value):
@@ -41,6 +44,8 @@ def _map_row(raw_row: dict) -> dict:
 
 def _parse_page(response: requests.Response) -> tuple[list[dict], int, bool]:
     """Validate and map one F10 response page."""
+    if getattr(response, "status_code", None) == 404:
+        raise NoNavDataError("East Money F10 returned HTTP 404", reason=F10_404)
     response.raise_for_status()
     payload = response.json()
     if not isinstance(payload, dict):

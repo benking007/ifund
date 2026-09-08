@@ -28,9 +28,13 @@ import time
 
 import akshare as ak  # pylint: disable=import-error
 from akshare.stock import stock_industry_cninfo as _cninfo_api  # pylint: disable=import-error
+from akshare.stock import stock_info as _stock_info  # pylint: disable=import-error
+from akshare.stock import stock_info_em as _stock_info_em  # pylint: disable=import-error
+from akshare.stock import stock_profile_em as _stock_profile_em  # pylint: disable=import-error
 
 from app import db as database
 from app.common import worker_base
+from app.common.network import install_module_timeout
 from app.stock_industry.crud import industry_crud
 
 SLEEP_SEC = 0.6
@@ -38,6 +42,10 @@ _PROGRESS_BATCH_SIZE = 10
 INDIVIDUAL_TIMEOUT = 3.0
 CNINFO_TIMEOUT = 8.0
 CNINFO_START_DATE = "20000101"
+
+install_module_timeout(_stock_info)
+install_module_timeout(_stock_info_em)
+install_module_timeout(_stock_profile_em)
 
 
 def _log(msg: str) -> None:

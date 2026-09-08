@@ -22,6 +22,7 @@ class _SlidingWindowStore:
         self._last_cleanup = time.monotonic()
 
     def is_allowed(self, key: str, max_requests: int, window_sec: int) -> bool:
+        """记录本次请求并返回是否仍处于配额内。"""
         now = time.monotonic()
         with self._lock:
             # 每 300 秒清理一次过期条目，控制内存
@@ -41,7 +42,7 @@ class _SlidingWindowStore:
             timestamps.append(now)
             return True
 
-    def _gc(self, now: float) -> None:
+    def _gc(self, now: float) -> None:  # pylint: disable=unused-argument
         """清理无时间戳记录的 key。调用方需持锁。"""
         stale = [k for k, v in self._store.items() if not v]
         for k in stale:

@@ -14,6 +14,9 @@
 """
 from __future__ import annotations
 
+# 穿透路径按需加载两个可选数据模块，避免循环导入。
+# pylint: disable=import-outside-toplevel
+
 import datetime
 
 from app import db as database

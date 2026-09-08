@@ -5,7 +5,7 @@ from datetime import date, datetime, timedelta
 
 from app import db as database
 
-from .params import (MAX_SCALE, MIN_SCALE, MIN_TENURE_DAYS, NAME_EXCLUDES,
+from .params import (MAX_SCALE, MIN_SCALE, NAME_EXCLUDES,
                      NAV_START, TYPE_PREFIXES)
 
 

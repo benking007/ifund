@@ -12,6 +12,7 @@ from datetime import date
 
 
 def latest_disclosed_quarter(buy_date: str) -> str:
+    """返回买入日已经披露的最新季报季度。"""
     d = date.fromisoformat(buy_date)
     y, m = d.year, d.month
 

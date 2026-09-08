@@ -2,8 +2,10 @@
 from __future__ import annotations
 
 import json
-import os
 from pathlib import Path
+
+# 任务端点按需导入后台任务实现，避免启动时引入 worker。
+# pylint: disable=import-outside-toplevel
 
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required

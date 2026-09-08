@@ -182,7 +182,7 @@ def select_representatives(clusters: list[dict], holdings_by_code: dict[str, lis
     return valid, cands, choice, selected
 
 
-def run(clusters: list[dict], nav_by_code: dict[str, list[tuple[str, float]]],
+def run(clusters: list[dict], nav_by_code: dict[str, list[tuple[str, float]]],  # pylint: disable=too-many-locals
         holdings_by_code: dict[str, list[dict]] | None = None,
         detail_by_code: dict[str, dict] | None = None,
         cap: float = optimize.DEFAULT_CAP) -> dict:

@@ -23,6 +23,9 @@
 """
 from __future__ import annotations
 
+# 对账规则需要同时维护多个簇级状态，保留为单一确定性计算入口。
+# pylint: disable=too-many-locals,too-many-branches,too-many-statements,multiple-statements
+
 import math
 
 from app.cluster.algo.dedup import _base_name
