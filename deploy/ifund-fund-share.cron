@@ -1,0 +1,7 @@
+# iFund fund_share：每日按交易日增量（Tushare fund_share，不按 SH/SZ 过滤，以覆盖场外 .OF）。仅 DB_BACKEND=mysql。
+# 首次运行会从 MAX(trade_date) 的次日补到昨天。5 日内的空日不推进水位，避免份额晚发布被跳过。
+# 安装：cp deploy/ifund-fund-share.cron /etc/cron.d/ifund-fund-share && chmod 644 /etc/cron.d/ifund-fund-share
+#
+# 生产 root crontab（无用户字段）使用这一行：
+# 40 6 * * * /bin/bash /root/workspace/ifund/backend/scripts/run_fund_share_incremental.sh
+40 6 * * * root /bin/bash /root/workspace/ifund/backend/scripts/run_fund_share_incremental.sh

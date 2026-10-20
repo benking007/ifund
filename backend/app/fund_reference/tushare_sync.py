@@ -195,6 +195,22 @@ def fetch_all_basic(*, page_size: int = 5000) -> list[dict]:
     return list(rows_by_ts_code.values())
 
 
+def _page_share(params: dict[str, object], page_size: int) -> list[dict]:
+    """按 offset 分页调用 fund_share，直到不足一页。"""
+    rows: list[dict] = []
+    offset = 0
+    for _page in range(200):
+        page = dict(params)
+        page["limit"] = page_size
+        page["offset"] = offset
+        batch = tushare_client.call("fund_share", page, SHARE_FIELDS)
+        rows.extend(batch)
+        if len(batch) < page_size:
+            return rows
+        offset += page_size
+    raise RuntimeError("fund_share 分页超过 200 页，拒绝推进水位")
+
+
 def fetch_share_history(
     ts_code: str,
     *,
@@ -203,24 +219,67 @@ def fetch_share_history(
     page_size: int = 2000,
 ) -> list[dict]:
     """按 offset 分页获取一只基金的份额历史。"""
-    rows: list[dict] = []
-    offset = 0
-    while True:
-        params: dict[str, object] = {
-            "ts_code": ts_code,
-            "limit": page_size,
-            "offset": offset,
-        }
-        if start_date:
-            params["start_date"] = tushare_client.to_yyyymmdd(start_date)
-        if end_date:
-            params["end_date"] = tushare_client.to_yyyymmdd(end_date)
-        batch = tushare_client.call("fund_share", params, SHARE_FIELDS)
-        rows.extend(batch)
-        if len(batch) < page_size:
-            break
-        offset += page_size
-    return rows
+    params: dict[str, object] = {"ts_code": ts_code}
+    if start_date:
+        params["start_date"] = tushare_client.to_yyyymmdd(start_date)
+    if end_date:
+        params["end_date"] = tushare_client.to_yyyymmdd(end_date)
+    return _page_share(params, page_size)
+
+
+def fetch_share_by_trade_date(
+    trade_date: str,
+    *,
+    page_size: int = 2000,
+) -> list[dict]:
+    """按交易日拉取全市场基金份额，包含场内和场外代码。
+
+    ``fund_share`` 的 market 过滤是交易所 SH/SZ，不能用来代表场外 ``.OF``。
+    增量只传 trade_date，再由本地映射表丢弃无法对应的代码。
+    """
+    return _page_share(
+        {"trade_date": tushare_client.to_yyyymmdd(trade_date)},
+        page_size,
+    )
+
+
+def share_incremental_start(
+    watermark: dt.date | None,
+    latest_fact: dt.date | None,
+) -> dt.date:
+    """增量起点为水位或事实最大日的次日。两者都没有时拒绝全历史。"""
+    anchor = watermark if watermark is not None else latest_fact
+    if anchor is None:
+        raise ValueError(
+            "fund_share 没有增量水位，也没有历史行；拒绝从全历史开始。"
+            "请先执行 scripts/sync_tushare_fund_share.py --all --resume"
+        )
+    return anchor + dt.timedelta(days=1)
+
+
+def share_empty_day_settled(
+    day: dt.date, end: dt.date, *, settle_days: int = 5
+) -> bool:
+    """空日只有离开发布延迟窗口后才允许推进水位。
+
+    份额经常晚于自然日才出现在 Tushare。最近几天返回 0 行时不记水位，
+    下次增量会重试；更早的空日（休市或确无披露）可以跳过。
+    """
+    if settle_days < 1:
+        raise ValueError("settle_days 必须为正数")
+    return day <= end - dt.timedelta(days=settle_days)
+
+
+def iter_share_dates(start: dt.date, end: dt.date) -> list[dt.date]:
+    """闭区间自然日。空区间返回空列表。"""
+    if start > end:
+        return []
+    days: list[dt.date] = []
+    cursor = start
+    while cursor <= end:
+        days.append(cursor)
+        cursor += dt.timedelta(days=1)
+    return days
 
 
 def select_basic_samples(rows: list[dict], per_group: int = 5) -> list[dict]:

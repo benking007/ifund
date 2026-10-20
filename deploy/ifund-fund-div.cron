@@ -1,0 +1,7 @@
+# iFund fund_div_split：每日从 div_ann_date 水位的次日补到昨天（Tushare fund_div）。
+# MySQL。无水位时脚本 rc=2，不会从 1998 全量回填。
+# 安装：cp deploy/ifund-fund-div.cron /etc/cron.d/ifund-fund-div && chmod 644 /etc/cron.d/ifund-fund-div
+#
+# 生产 root crontab（无用户字段）使用这一行：
+# 10 6 * * * /bin/bash /root/workspace/ifund/backend/scripts/run_fund_div_incremental.sh
+10 6 * * * root /bin/bash /root/workspace/ifund/backend/scripts/run_fund_div_incremental.sh

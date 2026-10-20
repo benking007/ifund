@@ -81,6 +81,17 @@ def list_pending(limit: int = 50, now: str | None = None,
     return database.select(TABLE, params)
 
 
+def list_failed(limit: int | None = None) -> list[dict]:
+    """读取 failed 任务，供分批重试/归档；不含已归档。"""
+    params: list[tuple[str, str] | tuple[str, int]] = [
+        ("status", "eq.failed"),
+        ("order", "id.asc"),
+    ]
+    if limit is not None:
+        params.append(("limit", int(limit)))
+    return database.select(TABLE, params)
+
+
 def list_retryable(limit: int = 50, now: str | None = None,
                    task_kind: str | None = None) -> list[dict]:
     """读取 pending/failed 且到达重试时间的任务。"""
@@ -163,6 +174,15 @@ def record_failure(
         next_retry_at=_retry_at(attempts),
         last_error=str(error)[:2000],
     )
+
+
+def mark_archived(task_id: int) -> None:
+    """确认不可恢复后归档：保留行和 last_error，不再进入重试或超龄统计。"""
+    database.update(TABLE, {"id": task_id}, {
+        "status": "archived",
+        "next_retry_at": None,
+        "updated_at": _now(),
+    })
 
 
 def mark_done_for_fund(fund_code: str, task_kind: str) -> int:

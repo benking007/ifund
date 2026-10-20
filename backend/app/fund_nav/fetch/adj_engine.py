@@ -136,6 +136,7 @@ def fetch_adj_tushare(
     """按基金拉取 Tushare 全史/区间 adj_nav 并写回 fund_nav。"""
     total_rows = 0
     failed: list[str] = []
+    errors: list[str] = []
     unique_codes = list(dict.fromkeys(str(item).strip() for item in codes if str(item).strip()))
     for code in unique_codes:
         try:
@@ -163,13 +164,19 @@ def fetch_adj_tushare(
             total_rows += nav_crud.upsert_adj_rows(code, mapped, source="tushare")
         except Exception as exc:  # pylint: disable=broad-exception-caught
             failed.append(code)
+            errors.append(str(exc))
             try:
                 attempts = exc.attempts if isinstance(exc, NetworkRetryExhausted) else 1
                 repair_crud.record_failure(code, "adj", str(exc), attempts=attempts)
             except Exception as queue_exc:  # pylint: disable=broad-exception-caught
                 logger.warning("基金 %s adj 失败入队也失败：%s", code, queue_exc)
             logger.warning("Tushare adj_nav 失败(%s)：%s", code, exc)
-    return {"funds": len(unique_codes), "rows": total_rows, "failed": failed}
+    return {
+        "funds": len(unique_codes),
+        "rows": total_rows,
+        "failed": failed,
+        "errors": errors,
+    }
 
 
 def calc_adj_from_events(code: str, *, only_null: bool = False) -> dict:

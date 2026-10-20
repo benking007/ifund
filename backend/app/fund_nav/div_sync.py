@@ -126,12 +126,32 @@ def iter_dates(start: dt.date, end: dt.date):
         cur += dt.timedelta(days=1)
 
 
+def resolve_backfill_start(
+    explicit_start: str | None,
+    watermark: str | None,
+    *,
+    require_watermark: bool,
+) -> dt.date:
+    """决定 ann_date 起点。定时增量必须已有水位，避免从 1998 年重拉。"""
+    if explicit_start:
+        return dt.date.fromisoformat(explicit_start)
+    if watermark:
+        return dt.date.fromisoformat(str(watermark)[:10]) + dt.timedelta(days=1)
+    if require_watermark:
+        raise RuntimeError(
+            "fund_div 缺少 div_ann_date 水位，拒绝从 1998 全量回填；"
+            "确认水位或使用 --start YYYY-MM-DD 做有界补数"
+        )
+    return dt.date(1998, 1, 1)
+
+
 def run_backfill(
     *,
     start_date: str | None = None,
     end_date: str | None = None,
     limit_days: int | None = None,
     interval: float | None = None,
+    require_watermark: bool = False,
 ) -> dict:
     """按日 ann_date 回填；默认从水位+1 到昨天。"""
     interval = interval if interval is not None else DEFAULT_INTERVAL
@@ -140,15 +160,10 @@ def run_backfill(
         if end_date
         else dt.datetime.now().astimezone().date() - dt.timedelta(days=1)
     )
-    if start_date:
-        start = dt.date.fromisoformat(start_date)
-    else:
-        wm = get_watermark()
-        start = (
-            dt.date.fromisoformat(wm) + dt.timedelta(days=1)
-            if wm
-            else dt.date(1998, 1, 1)
-        )
+    watermark = None if start_date else get_watermark()
+    start = resolve_backfill_start(
+        start_date, watermark, require_watermark=require_watermark
+    )
 
     rev = get_reverse_map()
     days = list(iter_dates(start, end))

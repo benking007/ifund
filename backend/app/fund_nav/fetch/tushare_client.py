@@ -384,11 +384,10 @@ def fetch_fund_split(
     *,
     timeout: tuple[int, int] = REQUEST_TIMEOUT,
 ) -> list[dict]:
-    """拉取单只基金拆分事件。"""
-    del start_date, end_date
-    return call(
-        "fund_split",
-        {"ts_code": resolve_ts_code(code)},
-        "ts_code,ann_date,split_date,split_ratio",
-        timeout=timeout,
-    )
+    """拒绝调用不存在的 ``fund_split`` 接口。
+
+    该接口名会让 Tushare 返回「请指定正确的接口名」。事件扫描只使用 ``fund_div``，
+    这里直接失败且不发请求，避免再把接口名错误写进修复队列。
+    """
+    del code, start_date, end_date, timeout
+    raise TushareError("Tushare 不提供 fund_split 接口，事件扫描仅使用 fund_div")

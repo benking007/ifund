@@ -202,7 +202,7 @@ CREATE TABLE IF NOT EXISTS nav_repair_queue (
     gap_start VARCHAR(10),
     gap_end VARCHAR(10),
     status TEXT NOT NULL DEFAULT 'pending'
-        CHECK (status IN ('pending', 'running', 'done', 'failed')),
+        CHECK (status IN ('pending', 'running', 'done', 'failed', 'archived')),
     attempts INTEGER NOT NULL DEFAULT 0,
     next_retry_at TEXT,
     last_error TEXT,

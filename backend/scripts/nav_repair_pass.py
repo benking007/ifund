@@ -22,6 +22,7 @@ os.chdir(BACKEND_DIR)
 
 from app.fund_nav.crud import repair_crud  # noqa: E402  pylint: disable=wrong-import-position
 from app.fund_nav.fetch import adj_engine, backfill_worker  # noqa: E402 pylint: disable=wrong-import-position
+from app.fund_nav.repair_triage import failure_message  # noqa: E402 pylint: disable=wrong-import-position
 
 
 logger = logging.getLogger("nav_repair_pass")
@@ -41,7 +42,8 @@ def _run_task(task: dict) -> tuple[dict, bool, str]:
         else:
             result = adj_engine.fetch_adj_tushare([code])
             ok = not result.get("failed")
-            error = ";".join(result.get("failed") or [])
+            # failed 是基金代码列表。直接 join 会把 last_error 写成纯代码。
+            error = failure_message(result)
         if ok:
             repair_crud.mark_done(task_id)
             return task, True, ""

@@ -103,23 +103,124 @@ def _state(
     )
 
 
-def main() -> int:
+SHARE_TASK_KIND = "fund_share_daily"
+
+
+def _as_date(value: object) -> dt.date | None:
+    if value is None or value == "":
+        return None
+    if isinstance(value, dt.datetime):
+        return value.date()
+    if isinstance(value, dt.date):
+        return value
+    return dt.date.fromisoformat(str(value)[:10])
+
+
+def _load_share_anchor(cursor) -> tuple[dt.date | None, dt.date | None]:
+    cursor.execute(
+        "SELECT watermark_date FROM fund_sync_state "
+        "WHERE fund_code=%s AND task_kind=%s",
+        ("__global__", SHARE_TASK_KIND),
+    )
+    watermark_row = cursor.fetchone() or {}
+    cursor.execute("SELECT MAX(trade_date) AS latest FROM fund_share")
+    fact_row = cursor.fetchone() or {}
+    return _as_date(watermark_row.get("watermark_date")), _as_date(fact_row.get("latest"))
+
+
+def _save_share_watermark(cursor, day: dt.date) -> None:
+    cursor.execute(
+        "INSERT INTO fund_sync_state "
+        "(fund_code,task_kind,watermark_date,status,attempts,last_error) "
+        "VALUES (%s,%s,%s,'success',0,NULL) "
+        "ON DUPLICATE KEY UPDATE watermark_date=VALUES(watermark_date),"
+        "status='success',attempts=0,last_error=NULL",
+        ("__global__", SHARE_TASK_KIND, day.isoformat()),
+    )
+
+
+def run_incremental(connection, *, end: str, page_size: int) -> dict:
+    """按交易日补 fund_share。失败日不推进水位；近期空日留待重试。"""
+    end_day = dt.date.fromisoformat(end)
+    with connection.cursor() as cursor:
+        watermark, latest = _load_share_anchor(cursor)
+        cursor.execute("SELECT fund_code,ts_code FROM fund_ts_code_map")
+        mapping = list(cursor.fetchall())
+    reverse = {str(row["ts_code"]).upper(): str(row["fund_code"]) for row in mapping}
+    start = tushare_sync.share_incremental_start(watermark, latest)
+    days = tushare_sync.iter_share_dates(start, end_day)
+    report = {
+        "mode": "incremental",
+        "start": start.isoformat(),
+        "end": end_day.isoformat(),
+        "days": len(days),
+        "written_rows": 0,
+        "failed_date": None,
+        "watermark": None,
+    }
+    hold_watermark = False
+    for day in days:
+        mapped_rows: list[dict] = []
+        try:
+            raw_rows = tushare_sync.fetch_share_by_trade_date(
+                day.isoformat(), page_size=page_size
+            )
+            mapped_rows.extend(
+                mapped
+                for raw in raw_rows
+                if (mapped := tushare_sync.map_share_row(raw, reverse)) is not None
+            )
+            advance = bool(mapped_rows) or tushare_sync.share_empty_day_settled(day, end_day)
+            with connection.cursor() as cursor:
+                _upsert_shares(cursor, mapped_rows)
+                if advance and not hold_watermark:
+                    _save_share_watermark(cursor, day)
+            connection.commit()
+            report["written_rows"] += len(mapped_rows)
+            if advance and not hold_watermark:
+                report["watermark"] = day.isoformat()
+            elif not advance:
+                hold_watermark = True
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            connection.rollback()
+            report["failed_date"] = day.isoformat()
+            report["error"] = f"{type(exc).__name__}: {exc}"
+            break
+    return report
+
+
+def main(argv: list[str] | None = None) -> int:
     """同步指定或全部映射基金；单只失败不阻断后续目标。"""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--codes", help="逗号分隔六位基金代码")
     parser.add_argument("--all", action="store_true", help="同步全部映射基金")
     parser.add_argument("--resume", action="store_true", help="跳过状态为 success 的基金")
+    parser.add_argument(
+        "--incremental",
+        action="store_true",
+        help="按交易日增量，从水位或 MAX(trade_date) 的次日补到 --end",
+    )
     parser.add_argument("--start", help="YYYY-MM-DD")
     parser.add_argument(
         "--end",
         default=(dt.date.today() - dt.timedelta(days=1)).isoformat(),
     )
     parser.add_argument("--page-size", type=int, default=2000)
-    args = parser.parse_args()
-    if not args.all and not args.codes:
-        parser.error("--all 与 --codes 必须指定一个")
+    args = parser.parse_args(argv)
+    if args.incremental and (args.all or args.codes):
+        parser.error("--incremental 不能与 --all/--codes 同时使用")
+    if not args.incremental and not args.all and not args.codes:
+        parser.error("--all、--codes 与 --incremental 必须指定一个")
     if os.getenv("DB_BACKEND", "").lower() != "mysql":
         raise RuntimeError("fund_share 同步仅允许 DB_BACKEND=mysql")
+    if args.incremental:
+        connection = _connect()
+        try:
+            report = run_incremental(connection, end=args.end, page_size=args.page_size)
+        finally:
+            connection.close()
+        print(json.dumps(report, ensure_ascii=False))
+        return 0 if not report.get("failed_date") else 2
     codes = None
     if args.codes:
         codes = sorted({item.strip() for item in args.codes.split(",") if item.strip()})

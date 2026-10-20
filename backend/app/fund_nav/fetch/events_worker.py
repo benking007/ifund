@@ -177,36 +177,15 @@ def _float(value: object) -> float | None:
         return None
 
 
-# Tushare 无基金拆分接口（fund_split 不存在，返回「请指定正确的接口名」）。
-# 首次确认接口不存在后全局禁用拆分通道，避免每只基金重复空跑。
-_SPLIT_CHANNEL_OK = True
-
-
-def _probe_split_channel() -> bool:
-    """探测拆分接口可用性；接口不存在则全局禁用并返回 False。"""
-    global _SPLIT_CHANNEL_OK  # pylint: disable=global-statement
-    if not _SPLIT_CHANNEL_OK:
-        return False
-    try:
-        call_tushare_with_retry(
-            "基金拆分接口探测",
-            tushare_client.fetch_fund_split,
-            "000001",
-            timeout=tushare_client.REQUEST_TIMEOUT,
-        )
-        return True
-    except tushare_client.TushareError as exc:
-        if "请指定正确的接口名" in str(exc):
-            _SPLIT_CHANNEL_OK = False
-            logger.warning("Tushare 无基金拆分接口（fund_split），拆分通道已全局禁用")
-            return False
-        raise
-
-
 def fetch_event_rows(
     code: str, start_date: str | None = None, end_date: str | None = None
 ) -> list[dict]:
-    """从 Tushare 两个事件源读取并转换为本地统一行。"""
+    """从 Tushare ``fund_div`` 读取分红并转换为本地统一行。
+
+    Tushare 没有 ``fund_split``。历史实现每次扫描都请求该接口名，上游返回
+    「请指定正确的接口名」，异常被记成 ``event scan failed`` 并使整次扫描失败。
+    拆分不再走这个入口。
+    """
     rows = []
     for raw in call_tushare_with_retry(
         f"基金 {code} 分红事件",
@@ -234,28 +213,6 @@ def fetch_event_rows(
                     "source": "tushare",
                 }
             )
-    if _probe_split_channel():
-        for raw in call_tushare_with_retry(
-            f"基金 {code} 拆分事件",
-            tushare_client.fetch_fund_split,
-            code,
-            start_date,
-            end_date,
-            timeout=tushare_client.REQUEST_TIMEOUT,
-        ):
-            ex_date = _date(raw.get("split_date") or raw.get("ex_date"))
-            ratio = _float(raw.get("split_ratio"))
-            if ex_date and ratio is not None and ratio > 0:
-                rows.append(
-                    {
-                        "fund_code": code,
-                        "ex_date": ex_date,
-                        "event_type": "split",
-                        "cash_per_unit": None,
-                        "split_ratio": ratio,
-                        "source": "tushare",
-                    }
-                )
     return rows
 
 

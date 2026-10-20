@@ -73,6 +73,29 @@ class NavAlertTests(TestCase):
         self.assertEqual(payload["status"], "ok")
         self.assertEqual(payload["alerts"], [])
 
+    def test_archived_rows_are_outside_overage_population(self) -> None:
+        self.assertNotIn("archived", alerts.OPEN_REPAIR_STATUSES)
+        sql = alerts.open_repair_status_sql()
+        self.assertIn("'failed'", sql)
+        self.assertNotIn("archived", sql)
+        report = {
+            "round": "reconcile",
+            "target_date": "2026-10-20",
+            "integrity_gate": {"coverage": 0.9, "baseline_median": 100},
+        }
+        payload = alerts.build_payload(
+            report,
+            {
+                "consecutive_trade_days_without_update": 0,
+                "blacklist_daily_new": 0,
+                "repair_open_count": 0,
+                "repair_oldest_age_hours": 2000,
+                "watermark_fact_mismatch": 0,
+            },
+            configured_thresholds=LIMITS,
+        )
+        self.assertEqual(payload["alerts"], [])
+
     def test_watermark_fact_check_uses_batched_business_keys(self) -> None:
         cursor = MagicMock()
         cursor.fetchall.side_effect = [
