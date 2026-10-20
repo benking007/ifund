@@ -16,6 +16,10 @@ DEFAULT_COVERAGE_THRESHOLD = 0.8
 DEFAULT_NO_UPDATE_TRADE_DAYS = 2
 DEFAULT_BLACKLIST_DAILY_THRESHOLD = 50
 DEFAULT_REPAIR_MAX_AGE_HOURS = 24
+# 开放任务才参与超龄告警。archived 是确认不可恢复后的闭环，
+# 不是待重试积压；把它算进 open 会让 nav_repair_queue_overage 永久为真，
+# 并使每日 reconcile 一直 rc=1。
+OPEN_REPAIR_STATUSES = ("pending", "failed", "running")
 
 
 def _env_float(name: str, default: float) -> float:
@@ -55,6 +59,16 @@ def _fetchone(cursor, sql: str, args: tuple[Any, ...] = ()) -> dict:
     cursor.execute(sql, args)
     row = cursor.fetchone() or {}
     return dict(row)
+
+
+def open_repair_status_sql() -> str:
+    """未闭环修复任务的统计 SQL。已归档状态不在 IN 列表中。"""
+    quoted = ",".join(f"'{item}'" for item in OPEN_REPAIR_STATUSES)
+    return (
+        "SELECT COUNT(*) AS open_count,MIN(created_at) AS oldest_created_at,"
+        "COALESCE(MAX(TIMESTAMPDIFF(HOUR,created_at,NOW())),0) AS oldest_age_hours "
+        f"FROM nav_repair_queue WHERE status IN ({quoted})"
+    )
 
 
 def _watermark_fact_mismatch(cursor, *, batch_size: int = 5000) -> int:
@@ -99,12 +113,7 @@ def collect_observations(
         latest_fact = _fetchone(
             cursor, "SELECT MAX(trade_date) AS latest FROM fund_nav"
         ).get("latest")
-        repair = _fetchone(
-            cursor,
-            "SELECT COUNT(*) AS open_count,MIN(created_at) AS oldest_created_at,"
-            "COALESCE(MAX(TIMESTAMPDIFF(HOUR,created_at,NOW())),0) AS oldest_age_hours "
-            "FROM nav_repair_queue WHERE status IN ('pending','failed','running')",
-        )
+        repair = _fetchone(cursor, open_repair_status_sql())
         mismatch_count = _watermark_fact_mismatch(cursor)
 
     latest_text = str(latest_fact) if latest_fact else None

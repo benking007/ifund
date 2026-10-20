@@ -32,6 +32,11 @@ def main() -> int:
     parser.add_argument("--end", help="结束 ISO 日期 YYYY-MM-DD")
     parser.add_argument("--limit-days", type=int, help="最多处理天数（小批验证）")
     parser.add_argument("--interval-ms", type=int, default=3000, help="请求间隔毫秒")
+    parser.add_argument(
+        "--require-watermark",
+        action="store_true",
+        help="没有 div_ann_date 水位时失败，供每日 cron 使用",
+    )
     args = parser.parse_args()
 
     if not tushare_client.get_token():
@@ -42,12 +47,17 @@ def main() -> int:
     interval = max(args.interval_ms / 1000.0, 2.0)
     os.environ["TUSHARE_INTERVAL_MS"] = str(args.interval_ms)
 
-    result = div_sync.run_backfill(
-        start_date=args.start,
-        end_date=args.end,
-        limit_days=args.limit_days,
-        interval=interval,
-    )
+    try:
+        result = div_sync.run_backfill(
+            start_date=args.start,
+            end_date=args.end,
+            limit_days=args.limit_days,
+            interval=interval,
+            require_watermark=args.require_watermark,
+        )
+    except RuntimeError as exc:
+        logger.error("%s", exc)
+        return 2
     print(result)
     return 0 if not result.get("errors") else 2
 

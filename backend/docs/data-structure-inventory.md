@@ -82,7 +82,10 @@
 | 脚本 | 用途 |
 |---|---|
 | `daily_nav_sync.py` | 净值增量同步（P1 货币/债券 → P2 股票/混合 → P3 QDII/FOF 分组，可 --round morning/noon、--type-priority） |
-| `quarterly_holdings_sync.sh` | 季报持仓增量同步（窗口门控） |
+| `quarterly_holdings_sync.sh` | 季报持仓增量同步（窗口门控；脚本内 `cd` backend 并设置 `PYTHONPATH`，任意 cwd 可跑） |
+| `run_fund_div_incremental.sh` | 每日从 `div_ann_date` 水位补 `fund_div_split`（无水位则失败） |
+| `run_fund_share_incremental.sh` | 每日按交易日增量 `fund_share`（仅 MySQL） |
+| `retry_nav_repair_queue.py` | 修复队列按错误类型 dry-run / 分批重试 / 归档 |
 | `nav_repair_pass.py` / `run_nav_gov_full.sh` / `run_nav_events_adj.sh` | 净值治理（缺口修复/事件复权） |
 | `mark_source_unavailable.py` | 蛋卷不收录基金占位标记（2026-09-01 新增） |
 | `backfill_etf_linkage.py` | ETF 映射回填 |
@@ -96,7 +99,9 @@
 | 周一至五 20:00 | `daily_nav_sync.py`（round=主） | 净值增量 |
 | 周二至六 08:00 | `daily_nav_sync.py --round morning` | 早盘净值 |
 | 周二至六 12:00 | `daily_nav_sync.py --round noon` | 午间净值 |
-| 每天 08:00 | `quarterly_holdings_sync.sh` | 季报持仓（窗口门控，脚本内加载 env） |
+| 每天 08:00 | `quarterly_holdings_sync.sh` | 季报持仓（窗口门控，脚本内加载 env，并 `cd` 到 backend） |
+| **每天 06:10** | `run_fund_div_incremental.sh` | `fund_div_split` 公告日增量；模板 `deploy/ifund-fund-div.cron` |
+| **每天 06:40** | `run_fund_share_incremental.sh` | `fund_share` 交易日增量，仅 MySQL；模板 `deploy/ifund-fund-share.cron` |
 | **每天 20:10** | `ifund_cli.py fetch detail`（2026-09-01 新增） | fund_details 区间收益刷新，is_expired 去重 |
 
 ### 5. AI 分析
@@ -116,6 +121,8 @@ Tushare ─────┼→ fetch detail/nav/holdings/manager ─→ MySQL ifu
    │
    └→ daily_nav_sync.py (cron 20:00/08:00/12:00) → fund_nav 增量
    └→ quarterly_holdings_sync.sh (cron 08:00)     → fund_holdings
+   └→ run_fund_div_incremental.sh (cron 06:10)    → fund_div_split
+   └→ run_fund_share_incremental.sh (cron 06:40)  → fund_share
    └→ fetch detail (cron 20:10)                   → fund_details 区间收益
 
 本地 LLM ──→ ai-analyze → fund_ai_analysis

@@ -1,9 +1,11 @@
 """Tushare 基金公司、基础扩展与份额字段映射测试。"""
 from __future__ import annotations
 
+import datetime as dt
 from unittest import TestCase
 from unittest.mock import patch
 
+from app.fund_nav import div_sync
 from app.fund_reference import tushare_sync
 
 
@@ -57,6 +59,45 @@ class FundReferenceMappingTests(TestCase):
         self.assertEqual(len(rows), 3)
         self.assertEqual(call.call_args_list[0].args[1]["offset"], 0)
         self.assertEqual(call.call_args_list[1].args[1]["offset"], 2)
+
+    def test_share_by_trade_date_pages_market(self) -> None:
+        with patch.object(
+            tushare_sync.tushare_client,
+            "call",
+            side_effect=[[{"ts_code": "510300.SH"}], []],
+        ) as call:
+            rows = tushare_sync.fetch_share_by_trade_date("2026-09-05", page_size=1)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(call.call_args_list[0].args[0], "fund_share")
+        params = call.call_args_list[0].args[1]
+        self.assertEqual(params["trade_date"], "20260905")
+        self.assertNotIn("market", params)
+
+    def test_share_incremental_starts_after_watermark_or_fact(self) -> None:
+        start = tushare_sync.share_incremental_start(dt.date(2026, 9, 4), None)
+        self.assertEqual(start, dt.date(2026, 9, 5))
+        start = tushare_sync.share_incremental_start(None, dt.date(2026, 9, 4))
+        self.assertEqual(
+            tushare_sync.iter_share_dates(start, dt.date(2026, 9, 6)),
+            [dt.date(2026, 9, 5), dt.date(2026, 9, 6)],
+        )
+        with self.assertRaises(ValueError):
+            tushare_sync.share_incremental_start(None, None)
+        end = dt.date(2026, 10, 19)
+        self.assertTrue(tushare_sync.share_empty_day_settled(dt.date(2026, 10, 14), end))
+        self.assertFalse(tushare_sync.share_empty_day_settled(dt.date(2026, 10, 15), end))
+
+    def test_div_incremental_requires_watermark(self) -> None:
+        self.assertEqual(
+            div_sync.resolve_backfill_start(None, "2026-09-04", require_watermark=True),
+            dt.date(2026, 9, 5),
+        )
+        with self.assertRaises(RuntimeError):
+            div_sync.resolve_backfill_start(None, None, require_watermark=True)
+        self.assertEqual(
+            div_sync.resolve_backfill_start("2026-09-04", None, require_watermark=True),
+            dt.date(2026, 9, 4),
+        )
 
     def test_basic_samples_cover_four_groups(self) -> None:
         rows = [

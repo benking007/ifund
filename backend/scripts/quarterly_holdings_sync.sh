@@ -12,8 +12,13 @@ fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BACKEND_DIR="$(dirname "$SCRIPT_DIR")"
-LOG_DIR="$BACKEND_DIR/logs"
-PYTHON="$BACKEND_DIR/venv/bin/python3"
+LOG_DIR="${IFUND_SYNC_LOG_DIR:-$BACKEND_DIR/logs}"
+# 生产 cron 不注入 PATH 上的解释器；默认用仓库 venv。测试可设绝对路径 IFUND_PYTHON。
+if [ -n "${IFUND_PYTHON:-}" ]; then
+  PYTHON="$IFUND_PYTHON"
+else
+  PYTHON="$BACKEND_DIR/venv/bin/python3"
+fi
 
 mkdir -p "$LOG_DIR"
 LOG_FILE="$LOG_DIR/quarterly_sync_$(date +%Y%m%d).log"
@@ -24,6 +29,16 @@ exec >> "$LOG_FILE" 2>&1
 log() {
   printf '[%s] %s\n' "$(date '+%F %T')" "$*"
 }
+
+# `python -m cli` 只在 backend 在 sys.path / cwd 时能找到包。
+# 生产主机 2026-10-20 曾临时插入 `cd "$BACKEND_DIR"`（备份 quarterly_holdings_sync.sh.bak-20261020）。
+# 这里使用同一绝对路径，重复 cd 无副作用；部署前先还原主机上的那份本地改动再覆盖本脚本。
+if ! cd "$BACKEND_DIR"; then
+  log "ERROR: 无法进入 backend 目录: $BACKEND_DIR"
+  exit 1
+fi
+export PYTHONPATH="${BACKEND_DIR}${PYTHONPATH:+:$PYTHONPATH}"
+log "runtime: cwd=$(pwd) python=$PYTHON pythonpath=$PYTHONPATH"
 
 month="$(date +%m)"
 day="$(date +%d)"
@@ -113,6 +128,7 @@ log "statistics: $stats"
 if ((cli_rc == 0)); then
   log "quarterly holdings sync finished: rc=0 elapsed=${SECONDS}s"
 else
+  log "ERROR: holdings fetch failed rc=$cli_rc elapsed=${SECONDS}s cwd=$(pwd)"
   log "quarterly holdings sync finished: rc=$cli_rc elapsed=${SECONDS}s"
 fi
 

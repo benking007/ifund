@@ -63,6 +63,7 @@ class NavGovernancePureTests(TestCase):
             result = adj_engine.fetch_adj_tushare(["519981"])
 
         self.assertEqual(result["failed"], ["519981"])
+        self.assertEqual(result["errors"], ["upstream timeout"])
         record_failure.assert_called_once_with(
             "519981", "adj", "upstream timeout", attempts=1,
         )
@@ -342,6 +343,7 @@ class SchemaGovernanceTests(TestCase):
             "CREATE TABLE IF NOT EXISTS event_scan_status",
             "CREATE TABLE IF NOT EXISTS nav_repair_queue",
             "ix_nav_repair_queue_status_retry",
+            "'archived'",
         ):
             self.assertIn(needle, schema)
 
