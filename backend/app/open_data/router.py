@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from datetime import date
+import math
 import re
 
 from flask import Blueprint, jsonify, request
@@ -14,12 +15,12 @@ _CODE = re.compile(r"^[0-9]{6}$")
 _QUARTER = re.compile(r"^[0-9]{4}Q[1-4]$")
 _COMMON = {"fund_code", "fund_codes", "start_date", "end_date", "page", "page_size"}
 _MASTER = ("code", "name", "type", "fund_type")
-_DETAILS = ("fund_code", "trade_date", "fund_full_name", "establish_date", "scale", "fund_company",
+_DETAILS = ("fund_code", "trade_date", "fund_name", "fund_full_name", "establish_date", "scale", "fund_company",
             "fund_manager", "custodian_bank", "benchmark", "position_stock", "position_bond",
             "position_cash", "position_other", "return_1m", "return_3m", "return_6m", "return_1y",
-            "return_3y", "return_5y", "return_ytd", "return_since_inception")
-_EXT = ("ts_code", "market", "status", "list_date", "delist_date", "found_date", "issue_date",
-        "fund_category", "management_fee", "custodian_fee", "sales_service_fee")
+            "return_3y", "return_5y", "return_ytd", "return_since_inception", "invest_target", "invest_strategy")
+_EXT = ("ts_code", "market", "status", "list_date", "delist_date", "found_date", "issue_date", "due_date",
+        "fund_category", "management", "custodian", "management_fee", "custodian_fee", "sales_service_fee")
 # funds.type is the source's actual classification (fund_name_em), whereas
 # fund_type=stock/non_stock is merely this app's screening bucket.  In legacy
 # fund_nav, money-fund Data_millionCopiesIncome is also stored in nav; it is
@@ -98,6 +99,31 @@ def _page(table, filters, fields, order, page, page_size):
     return {"items": items, "total": total, "page": page, "page_size": page_size, "source": "ifund"}
 
 
+def _rows_page(rows, page, size, **metadata):
+    offset = (page - 1) * size
+    return {"items": rows[offset:offset + size], "total": len(rows), "page": page,
+            "page_size": size, "source": "ifund", **metadata}
+
+
+def _valid_amount(value):
+    if isinstance(value, bool):
+        return False
+    try:
+        return math.isfinite(float(value)) and float(value) >= 0
+    except (TypeError, ValueError):
+        return False
+
+
+def _add_names(result):
+    codes = sorted({row["fund_code"] for row in result["items"]})
+    if codes:
+        names = database.select("funds", {"code": f"in.({','.join(codes)})", "select": "code,name"})
+        by_code = {row["code"]: row["name"] for row in names}
+        for row in result["items"]:
+            row["fund_name"] = by_code.get(row["fund_code"])
+    return result
+
+
 @bp.get("/fund/nav")
 def nav_history():
     """Return independent unit, accumulated and adjusted NAV with exact pagination."""
@@ -116,6 +142,7 @@ def nav_history():
         result = _page("fund_nav", _filters(code, start, end),
                        ("fund_code", "trade_date", "nav", "acc_nav", "daily_return", "adj_nav", "adj_src"),
                        "trade_date.asc,fund_code.asc", page, size)
+        _add_names(result)
     return jsonify(result)
 
 
@@ -169,7 +196,8 @@ def fund_returns():
     code, start, end, page, size = _arguments()
     fields = ("fund_code", "trade_date", "return_1m", "return_3m", "return_6m", "return_1y",
               "return_3y", "return_5y", "return_ytd", "return_since_inception")
-    result = _page("fund_details", _filters(code, start, end), fields, "fund_code.asc", page, size)
+    with database.get_db().transaction(read_only=True):
+        result = _add_names(_page("fund_details", _filters(code, start, end), fields, "fund_code.asc", page, size))
     result["units"] = {"returns": "percent"}
     return jsonify(result)
 
@@ -237,7 +265,7 @@ def fund_holdings():
 @bp.get("/fund/manager-tenure")
 def manager_tenure():
     """Return fund-level tenure segments and their actual percentage returns."""
-    code, start, end, page, size = _arguments({"is_current"})
+    code, start, end, page, size = _arguments({"is_current", "manager_name"})
     if start or end:
         raise ValueError("Manager tenure does not support NAV date filtering")
     filters = _filters(code)
@@ -246,9 +274,15 @@ def manager_tenure():
         if current not in {"0", "1"}:
             raise ValueError("is_current must be 0 or 1")
         filters.append(("is_current", f"eq.{current}"))
-    result = _page("fund_manager_tenure", filters,
-                   ("fund_code", "seq", "managers", "start_date", "end_date", "is_current",
-                    "tenure_days", "tenure_return"), "seq.asc,fund_code.asc", page, size)
+    name = request.args.get("manager_name")
+    if name is not None:
+        if not name.strip() or len(name) > 80:
+            raise ValueError("manager_name must be one to eighty characters")
+        filters.append(("managers", f"eq.{name}"))
+    with database.get_db().transaction(read_only=True):
+        result = _add_names(_page("fund_manager_tenure", filters,
+                                 ("fund_code", "seq", "managers", "start_date", "end_date", "is_current",
+                                  "tenure_days", "tenure_return"), "seq.asc,fund_code.asc", page, size))
     result["units"] = {"tenure_return": "percent"}
     return jsonify(result)
 
@@ -260,3 +294,109 @@ def fund_shares():
     return jsonify(_page("fund_share", _filters(code, start, end),
                          ("fund_code", "ts_code", "trade_date", "share_type", "share_value", "share_unit"),
                          "trade_date.asc,ts_code.asc,share_type.asc", page, size))
+
+
+@bp.get("/fund/reference-categories")
+def reference_categories():
+    """Expose actual fund types for the reviewed public first-level taxonomy."""
+    code, start, end, page, size = _arguments()
+    if start or end:
+        raise ValueError("Current classifications do not support historical dates")
+    result = _page("funds", [("code", f"in.({code})")], ("code", "name", "type"), "code.asc", page, size)
+    result["items"] = [{"fund_code": row["code"], "fund_name": row["name"], "type": row["type"]}
+                       for row in result["items"]]
+    result["coverage"] = "first_level_classification_from_funds_type"
+    return jsonify(result)
+
+
+@bp.get("/fund/reference-fees")
+def reference_fees():
+    """Return real fixed fee rows, never manufacture subscription fee tiers."""
+    code, start, end, page, size = _arguments()
+    if start or end:
+        raise ValueError("Current fee snapshots have no verified publication date")
+    with database.get_db().transaction(read_only=True):
+        masters = database.select("fund_basic_ext", _filters(code))
+        rows = []
+        for master in sorted(masters, key=lambda row: row["fund_code"]):
+            if all(master.get(field) is None for field in ("management_fee", "custodian_fee", "sales_service_fee")):
+                return jsonify({"error": "product_window_incomplete", "reason": "fee_facts_unavailable"}), 503
+            for field, label in (("management_fee", "管理费"), ("custodian_fee", "托管费"),
+                                 ("sales_service_fee", "销售服务费")):
+                value = master.get(field)
+                if value is None:
+                    continue
+                if not _valid_amount(value):
+                    return jsonify({"error": "product_window_incomplete", "reason": "fee_value_unverified"}), 503
+                rows.append({"fund_code": master["fund_code"], "fee_kind": label,
+                             "fee_percent": value, "source": master.get("source")})
+        result = _add_names(_rows_page(rows, page, size, units={"fee_percent": "percent"},
+                                      coverage="fixed_management_custodian_sales_service_rates"))
+    return jsonify(result)
+
+
+@bp.get("/fund/reference-listings")
+def reference_listings():
+    """Read documented issue/open dates, par value and fees from the extension."""
+    code, start, end, page, size = _arguments()
+    if start or end:
+        raise ValueError("Issue snapshots have no verified first publication date")
+    fields = ("fund_code", "issue_date", "par_value", "purchase_start_date", "redemption_start_date",
+              "management_fee", "custodian_fee")
+    with database.get_db().transaction(read_only=True):
+        masters = database.select("fund_basic_ext", [*_filters(code), ("select", ",".join(fields)),
+                                                   ("order", "fund_code.asc")])
+        if any(all(row.get(field) is None for field in fields[1:]) for row in masters):
+            return jsonify({"error": "product_window_incomplete", "reason": "issue_facts_unavailable"}), 503
+        result = _add_names(_rows_page(masters, page, size, units={"fees": "percent"},
+                                      coverage="issue_open_dates_par_value_and_fixed_rates"))
+    return jsonify(result)
+
+
+@bp.get("/fund/reference-shares")
+def reference_shares():
+    """Return canonical end-point total shares with explicit unit provenance."""
+    code, start, end, page, size = _arguments()
+    filters = [*_filters(code, start, end), ("share_type", "eq.fund_total"), ("source_field", "eq.fd_share")]
+    with database.get_db().transaction(read_only=True):
+        masters = database.select("fund_basic_ext", [*_filters(code), ("select", "fund_code,ts_code")])
+        if {row["fund_code"] for row in masters} != set(code.split(",")):
+            return jsonify({"error": "product_window_incomplete", "reason": "share_role_unverified"}), 503
+        # A six-digit code can have OF and exchange aliases. Use the unique
+        # canonical extension role, never sum the two or discard their suffix
+        # only after projecting them into indistinguishable public records.
+        roles = sorted({row["ts_code"] for row in masters})
+        filters.append(("ts_code", f"in.({','.join(roles)})"))
+        if database.count("fund_share", [*filters, ("share_unit", "neq.10k_shares")]):
+            return jsonify({"error": "product_window_incomplete", "reason": "share_unit_unverified"}), 503
+        result = _add_names(_page("fund_share", filters,
+                                 ("fund_code", "ts_code", "trade_date", "share_type", "share_value",
+                                  "share_unit", "source_field"),
+                                 "trade_date.asc,fund_code.asc,ts_code.asc", page, size))
+        if any(not _valid_amount(row["share_value"]) for row in result["items"]):
+            return jsonify({"error": "product_window_incomplete", "reason": "share_value_unverified"}), 503
+    result["coverage"] = "canonical_role_point_in_time_total_shares_only"
+    result["units"] = {"share_value": "10k_shares"}
+    return jsonify(result)
+
+
+@bp.get("/fund/reference-performance")
+def reference_performance():
+    """Expose observed return/risk snapshots without inventing attribution."""
+    code, start, end, page, size = _arguments()
+    if start or end:
+        raise ValueError("Risk snapshots have no verified historical measurement cutoff")
+    periods = ("since_inception", "ytd", "1m", "3m", "6m", "1y", "3y", "5y")
+    fields = ("fund_code", *(f"return_{period}" for period in periods),
+              *(f"{metric}_{period}" for metric in ("volatility", "sharpe", "max_drawdown")
+                for period in ("1y", "3y", "5y")))
+    with database.get_db().transaction(read_only=True):
+        snapshots = database.select("fund_details", [*_filters(code), ("select", ",".join(fields)),
+                                                     ("order", "fund_code.asc")])
+        if any(all(row.get(field) is None for field in fields[1:]) for row in snapshots):
+            return jsonify({"error": "product_window_incomplete", "reason": "risk_facts_unavailable"}), 503
+        result = _add_names(_rows_page(snapshots, page, size))
+    result["coverage"] = "observed_return_annual_volatility_sharpe_and_drawdown_only"
+    result["units"] = {"returns": "percent", "volatility": "percent", "sharpe": "ratio",
+                       "max_drawdown": "percent"}
+    return jsonify(result)

@@ -94,7 +94,7 @@ def test_nav_type_check_covers_entire_batch_before_pagination(client):
 @pytest.mark.parametrize('fund_type', ['股票型', '混合型-灵活', '债券型-长债',
                                       '指数型-股票', 'QDII-普通股票', 'FOF-稳健型', 'REITs'])
 def test_verified_nav_types_preserve_unit_and_adjusted_values(client, fund_type):
-    database.update('funds', {'code': 'eq.110011'}, {'type': fund_type, 'fund_type': 'non_stock'})
+    database.update('funds', {'code': '110011'}, {'type': fund_type, 'fund_type': 'non_stock'})
     database.insert('fund_nav', {'fund_code': '110011', 'trade_date': '2026-11-04',
                                 'nav': 1.2, 'acc_nav': 2.3, 'adj_nav': 3.4, 'adj_src': 'tushare'})
     response = client.get('/api/open-data/v1/fund/nav?fund_code=110011')
@@ -243,3 +243,95 @@ def test_mysql_read_snapshot_uses_read_only_transaction():
             connection.commit.assert_called_once()
         finally:
             db.close()
+
+
+def test_reference_fee_rows_paginate_after_expansion_and_preserve_zero(client):
+    database.update('fund_basic_ext', {'fund_code': '110011'}, {'custodian_fee': 0})
+    first = client.get('/api/open-data/v1/fund/reference-fees?fund_code=110011&page_size=1').json
+    second = client.get('/api/open-data/v1/fund/reference-fees?fund_code=110011&page_size=1&page=2').json
+    assert first['total'] == second['total'] == 2
+    assert first['items'][0]['fee_kind'] == '管理费'
+    assert first['items'][0]['fee_percent'] == 1.2
+    assert second['items'][0]['fee_kind'] == '托管费'
+    assert second['items'][0]['fee_percent'] == 0
+    assert first['units']['fee_percent'] == 'percent'
+    assert first['items'][0]['fund_name'] == '样例基金'
+    assert client.get('/api/open-data/v1/fund/reference-fees?fund_code=110011&start_date=2026-01-01').status_code == 400
+
+
+def test_reference_share_snapshots_use_unique_canonical_role_and_real_count(client):
+    database.batch_insert('fund_share', [
+        {'fund_code': '110011', 'ts_code': '110011.OF', 'trade_date': '2026-11-03',
+         'share_value': 10, 'share_unit': '10k_shares'},
+        {'fund_code': '110011', 'ts_code': '110011.OF', 'trade_date': '2026-11-04',
+         'share_value': 20, 'share_unit': '10k_shares'},
+        {'fund_code': '110011', 'ts_code': '110011.SH', 'trade_date': '2026-11-04',
+         'share_value': 999, 'share_unit': '10k_shares'},
+    ])
+    data = client.get('/api/open-data/v1/fund/reference-shares?fund_code=110011&page_size=1&page=2').json
+    assert data['total'] == 2
+    assert data['items'][0]['share_value'] == 20
+    assert data['items'][0]['ts_code'] == '110011.OF'
+    assert data['items'][0]['source_field'] == 'fd_share'
+    assert data['items'][0]['share_unit'] == '10k_shares'
+    sliced = client.get('/api/open-data/v1/fund/reference-shares?fund_code=110011&start_date=2026-11-04').json
+    assert sliced['total'] == 1
+    assert 'subscribeShare' not in sliced['items'][0]
+
+
+def test_reference_share_rejects_unknown_role_and_unit_before_pagination(client):
+    assert client.get('/api/open-data/v1/fund/reference-shares?fund_code=000001').status_code == 503
+    database.batch_insert('fund_share', [
+        {'fund_code': '110011', 'ts_code': '110011.OF', 'trade_date': '2026-11-03',
+         'share_value': 10, 'share_unit': '10k_shares'},
+        {'fund_code': '110011', 'ts_code': '110011.OF', 'trade_date': '2026-11-04',
+         'share_value': 20, 'share_unit': 'shares'},
+    ])
+    response = client.get('/api/open-data/v1/fund/reference-shares?fund_code=110011&page_size=1')
+    assert response.status_code == 503
+    assert response.json['reason'] == 'share_unit_unverified'
+
+
+def test_reference_listings_and_risk_use_actual_source_values(client):
+    database.update('fund_basic_ext', {'fund_code': '110011'},
+                    {'issue_date': '2010-01-01', 'purchase_start_date': '2010-03-01',
+                     'redemption_start_date': '2010-03-02', 'par_value': 1})
+    row = client.get('/api/open-data/v1/fund/reference-listings?fund_code=110011').json['items'][0]
+    assert row['issue_date'] == '2010-01-01'
+    assert row['par_value'] == 1
+    assert 'issue_amount' not in row
+    database.update('fund_details', {'fund_code': '110011'},
+                    {'volatility_1y': 23.5, 'sharpe_1y': 1.2, 'max_drawdown_1y': 8.5})
+    row = client.get('/api/open-data/v1/fund/reference-performance?fund_code=110011').json['items'][0]
+    assert row['volatility_1y'] == 23.5
+    assert row['sharpe_1y'] == 1.2
+    assert row['max_drawdown_1y'] == 8.5
+    assert 'trade_date' not in row
+    assert 'detail_json' not in row
+    assert client.get('/api/open-data/v1/fund/reference-performance?fund_code=110011&end_date=2026-11-01').status_code == 400
+
+
+def test_reference_categories_keep_actual_type_and_manager_filters_apply_before_paging(client):
+    categories = client.get('/api/open-data/v1/fund/reference-categories?fund_codes=110011').json
+    assert categories['items'] == [{'fund_code': '110011', 'fund_name': '样例基金', 'type': '混合型'}]
+    database.batch_insert('fund_manager_tenure', [
+        {'fund_code': '110011', 'seq': 0, 'managers': '甲 乙', 'is_current': 1},
+        {'fund_code': '110011', 'seq': 1, 'managers': '甲', 'is_current': 0},
+        {'fund_code': '110011', 'seq': 2, 'managers': '甲丙', 'is_current': 0},
+    ])
+    data = client.get('/api/open-data/v1/fund/manager-tenure?fund_code=110011&manager_name=甲&is_current=0').json
+    assert data['total'] == 1
+    assert data['items'][0]['managers'] == '甲'
+    assert data['items'][0]['fund_name'] == '样例基金'
+
+
+def test_empty_tables_remain_empty_but_existing_placeholder_snapshots_fail_quality(client):
+    assert client.get('/api/open-data/v1/fund/reference-performance?fund_code=000001').json['items'] == []
+    assert client.get('/api/open-data/v1/fund/reference-listings?fund_code=000001').json['items'] == []
+    assert client.get('/api/open-data/v1/fund/reference-fees?fund_code=000001').json['items'] == []
+    database.insert('fund_details', {'fund_code': '000001'})
+    database.insert('fund_basic_ext', {'fund_code': '000001', 'ts_code': '000001.OF'})
+    for path in ('reference-performance', 'reference-listings', 'reference-fees'):
+        response = client.get('/api/open-data/v1/fund/' + path + '?fund_code=000001')
+        assert response.status_code == 503
+        assert response.json['error'] == 'product_window_incomplete'
