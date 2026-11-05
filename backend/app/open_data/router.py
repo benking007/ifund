@@ -1,7 +1,7 @@
 """Authenticated, bounded read models. These endpoints never fetch or write data."""
 from __future__ import annotations
 
-from datetime import date
+from datetime import date, datetime
 import math
 import re
 
@@ -9,8 +9,10 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import verify_jwt_in_request
 
 from app import db as database
+from .product_routes import register_product_routes
 
 bp = Blueprint("open_data", __name__, url_prefix="/api/open-data/v1")
+register_product_routes(bp)
 _CODE = re.compile(r"^[0-9]{6}$")
 _QUARTER = re.compile(r"^[0-9]{4}Q[1-4]$")
 _COMMON = {"fund_code", "fund_codes", "start_date", "end_date", "page", "page_size"}
@@ -87,7 +89,19 @@ def _filters(code, start=None, end=None, *, date_field="trade_date"):
 
 
 def _project(row, fields):
-    return {field: row.get(field) for field in fields}
+    return _jsonable({field: row.get(field) for field in fields})
+
+
+def _jsonable(value):
+    # MySQL DATE columns arrive as datetime.date; Flask's default serializer
+    # emits RFC1123 ("Tue, 30 Jun ... GMT"), which is not the source contract.
+    if isinstance(value, (date, datetime)):
+        return value.isoformat()
+    if isinstance(value, dict):
+        return {key: _jsonable(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_jsonable(item) for item in value]
+    return value
 
 
 def _page(table, filters, fields, order, page, page_size):
@@ -96,12 +110,12 @@ def _page(table, filters, fields, order, page, page_size):
     with database.get_db().transaction(read_only=True):
         total = database.count(table, filters)
         items = database.select(table, params)
-    return {"items": items, "total": total, "page": page, "page_size": page_size, "source": "ifund"}
+    return {"items": _jsonable(items), "total": total, "page": page, "page_size": page_size, "source": "ifund"}
 
 
 def _rows_page(rows, page, size, **metadata):
     offset = (page - 1) * size
-    return {"items": rows[offset:offset + size], "total": len(rows), "page": page,
+    return {"items": _jsonable(rows[offset:offset + size]), "total": len(rows), "page": page,
             "page_size": size, "source": "ifund", **metadata}
 
 

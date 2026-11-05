@@ -1,0 +1,20 @@
+{
+  "master": {
+    "fund_code": "110011",
+    "ts_code": "110011.OF",
+    "company_id": 63,
+    "name": "易方达优质精选混合(QDII)",
+    "management": "易方达基金管理有限公司",
+    "market": "O",
+    "source": "tushare"
+  },
+  "company": {
+    "company_id": 63,
+    "name": "易方达基金管理有限公司",
+    "short_name": "易方达基金",
+    "setup_date": "2001-04-17",
+    "source": "tushare"
+  },
+  "mode": "remote-read-only",
+  "writes": 0
+}

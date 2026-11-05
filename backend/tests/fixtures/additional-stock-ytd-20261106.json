@@ -1,0 +1,477 @@
+{
+  "source": "official-tushare-read-only-financial-facts",
+  "purpose": "Minimal literal endpoint observations from complete disclosed portfolio and exact calendar boundaries",
+  "portfolio": [
+    {
+      "ts_code": "161725.SZ",
+      "ann_date": "20261027",
+      "end_date": "20260930",
+      "symbol": "688801.SH",
+      "mkv": 1194138.4,
+      "amount": 3640.0,
+      "stk_mkv_ratio": 0.0,
+      "stk_float_ratio": 0.02
+    },
+    {
+      "ts_code": "161725.SZ",
+      "ann_date": "20261027",
+      "end_date": "20260930",
+      "symbol": "600779.SH",
+      "mkv": 555924079.48,
+      "amount": 21234686.0,
+      "stk_mkv_ratio": 1.76,
+      "stk_float_ratio": 4.36
+    },
+    {
+      "ts_code": "161725.SZ",
+      "ann_date": "20261027",
+      "end_date": "20260930",
+      "symbol": "603198.SH",
+      "mkv": 1145796857.92,
+      "amount": 29591861.0,
+      "stk_mkv_ratio": 3.62,
+      "stk_float_ratio": 3.7
+    },
+    {
+      "ts_code": "161725.SZ",
+      "ann_date": "20261027",
+      "end_date": "20260930",
+      "symbol": "688981.SH",
+      "mkv": 14802278.25,
+      "amount": 132175.0,
+      "stk_mkv_ratio": 0.05,
+      "stk_float_ratio": 0.01
+    },
+    {
+      "ts_code": "161725.SZ",
+      "ann_date": "20261027",
+      "end_date": "20260930",
+      "symbol": "603369.SH",
+      "mkv": 1733554153.29,
+      "amount": 61714281.0,
+      "stk_mkv_ratio": 5.48,
+      "stk_float_ratio": 4.95
+    },
+    {
+      "ts_code": "161725.SZ",
+      "ann_date": "20261027",
+      "end_date": "20260930",
+      "symbol": "601658.SH",
+      "mkv": 4349315.88,
+      "amount": 796578.0,
+      "stk_mkv_ratio": 0.01,
+      "stk_float_ratio": 0.0
+    },
+    {
+      "ts_code": "161725.SZ",
+      "ann_date": "20261027",
+      "end_date": "20260930",
+      "symbol": "600809.SH",
+      "mkv": 5994607700.8,
+      "amount": 51856468.0,
+      "stk_mkv_ratio": 18.96,
+      "stk_float_ratio": 4.25
+    },
+    {
+      "ts_code": "161725.SZ",
+      "ann_date": "20261027",
+      "end_date": "20260930",
+      "symbol": "600519.SH",
+      "mkv": 6202953859.74,
+      "amount": 4928377.0,
+      "stk_mkv_ratio": 19.62,
+      "stk_float_ratio": 0.39
+    },
+    {
+      "ts_code": "161725.SZ",
+      "ann_date": "20261027",
+      "end_date": "20260930",
+      "symbol": "688825.SH",
+      "mkv": 15624976.29,
+      "amount": 372153.0,
+      "stk_mkv_ratio": 0.05,
+      "stk_float_ratio": 0.01
+    },
+    {
+      "ts_code": "161725.SZ",
+      "ann_date": "20261027",
+      "end_date": "20260930",
+      "symbol": "000799.SZ",
+      "mkv": 584793101.51,
+      "amount": 15947453.0,
+      "stk_mkv_ratio": 1.85,
+      "stk_float_ratio": 4.91
+    },
+    {
+      "ts_code": "161725.SZ",
+      "ann_date": "20261027",
+      "end_date": "20260930",
+      "symbol": "000596.SZ",
+      "mkv": 1892537829.4,
+      "amount": 20230228.0,
+      "stk_mkv_ratio": 5.99,
+      "stk_float_ratio": 4.95
+    },
+    {
+      "ts_code": "161725.SZ",
+      "ann_date": "20261027",
+      "end_date": "20260930",
+      "symbol": "002304.SZ",
+      "mkv": 2619101736.0,
+      "amount": 70311456.0,
+      "stk_mkv_ratio": 8.28,
+      "stk_float_ratio": 4.67
+    },
+    {
+      "ts_code": "161725.SZ",
+      "ann_date": "20261027",
+      "end_date": "20260930",
+      "symbol": "000858.SZ",
+      "mkv": 3027106870.94,
+      "amount": 43207349.0,
+      "stk_mkv_ratio": 9.57,
+      "stk_float_ratio": 1.11
+    },
+    {
+      "ts_code": "161725.SZ",
+      "ann_date": "20261027",
+      "end_date": "20260930",
+      "symbol": "000568.SZ",
+      "mkv": 5142579752.96,
+      "amount": 71148032.0,
+      "stk_mkv_ratio": 16.27,
+      "stk_float_ratio": 4.84
+    },
+    {
+      "ts_code": "161725.SZ",
+      "ann_date": "20261027",
+      "end_date": "20260930",
+      "symbol": "001248.SZ",
+      "mkv": 549873.82,
+      "amount": 58873.0,
+      "stk_mkv_ratio": 0.0,
+      "stk_float_ratio": 0.01
+    }
+  ],
+  "quotes": {
+    "000568.SZ": [
+      {
+        "ts_code": "000568.SZ",
+        "trade_date": "20251231",
+        "close": 116.22
+      },
+      {
+        "ts_code": "000568.SZ",
+        "trade_date": "20261105",
+        "close": 81.1
+      }
+    ],
+    "000596.SZ": [
+      {
+        "ts_code": "000596.SZ",
+        "trade_date": "20251231",
+        "close": 132.6
+      },
+      {
+        "ts_code": "000596.SZ",
+        "trade_date": "20261105",
+        "close": 105.2
+      }
+    ],
+    "000799.SZ": [
+      {
+        "ts_code": "000799.SZ",
+        "trade_date": "20251231",
+        "close": 54.58
+      },
+      {
+        "ts_code": "000799.SZ",
+        "trade_date": "20261105",
+        "close": 35.83
+      }
+    ],
+    "000858.SZ": [
+      {
+        "ts_code": "000858.SZ",
+        "trade_date": "20251231",
+        "close": 105.94
+      },
+      {
+        "ts_code": "000858.SZ",
+        "trade_date": "20261105",
+        "close": 75.82
+      }
+    ],
+    "001248.SZ": [
+      {
+        "ts_code": "001248.SZ",
+        "trade_date": "20261105",
+        "close": 10.82
+      }
+    ],
+    "002304.SZ": [
+      {
+        "ts_code": "002304.SZ",
+        "trade_date": "20251231",
+        "close": 60.74
+      },
+      {
+        "ts_code": "002304.SZ",
+        "trade_date": "20261105",
+        "close": 38.49
+      }
+    ],
+    "600519.SH": [
+      {
+        "ts_code": "600519.SH",
+        "trade_date": "20251231",
+        "close": 1377.18
+      },
+      {
+        "ts_code": "600519.SH",
+        "trade_date": "20261105",
+        "close": 1452.0
+      }
+    ],
+    "600779.SH": [
+      {
+        "ts_code": "600779.SH",
+        "trade_date": "20251231",
+        "close": 38.46
+      },
+      {
+        "ts_code": "600779.SH",
+        "trade_date": "20261105",
+        "close": 28.95
+      }
+    ],
+    "600809.SH": [
+      {
+        "ts_code": "600809.SH",
+        "trade_date": "20251231",
+        "close": 171.7
+      },
+      {
+        "ts_code": "600809.SH",
+        "trade_date": "20261105",
+        "close": 130.32
+      }
+    ],
+    "601658.SH": [
+      {
+        "ts_code": "601658.SH",
+        "trade_date": "20251231",
+        "close": 5.45
+      },
+      {
+        "ts_code": "601658.SH",
+        "trade_date": "20261105",
+        "close": 5.52
+      }
+    ],
+    "603198.SH": [
+      {
+        "ts_code": "603198.SH",
+        "trade_date": "20251231",
+        "close": 39.56
+      },
+      {
+        "ts_code": "603198.SH",
+        "trade_date": "20261105",
+        "close": 46.16
+      }
+    ],
+    "603369.SH": [
+      {
+        "ts_code": "603369.SH",
+        "trade_date": "20251231",
+        "close": 34.78
+      },
+      {
+        "ts_code": "603369.SH",
+        "trade_date": "20261105",
+        "close": 34.96
+      }
+    ],
+    "688801.SH": [
+      {
+        "ts_code": "688801.SH",
+        "trade_date": "20261105",
+        "close": 394.89
+      }
+    ],
+    "688825.SH": [
+      {
+        "ts_code": "688825.SH",
+        "trade_date": "20261105",
+        "close": 42.53
+      }
+    ],
+    "688981.SH": [
+      {
+        "ts_code": "688981.SH",
+        "trade_date": "20251231",
+        "close": 122.83
+      },
+      {
+        "ts_code": "688981.SH",
+        "trade_date": "20261105",
+        "close": 110.69
+      }
+    ]
+  },
+  "capitalizations": {
+    "001248.SZ": {
+      "ts_code": "001248.SZ",
+      "trade_date": "20261105",
+      "total_mv": 14413985.1578
+    },
+    "688801.SH": {
+      "ts_code": "688801.SH",
+      "trade_date": "20261105",
+      "total_mv": 16994158.2813
+    },
+    "688825.SH": {
+      "ts_code": "688825.SH",
+      "trade_date": "20261105",
+      "total_mv": 288711073.4723
+    }
+  },
+  "expected": [
+    {
+      "record_key": "161725:688801.SH",
+      "data": {
+        "fundCode": "161725",
+        "stockCode": "688801",
+        "endDate": "2026-11-05",
+        "marketCap": 169941582813.0
+      }
+    },
+    {
+      "record_key": "161725:600779.SH",
+      "data": {
+        "fundCode": "161725",
+        "stockCode": "600779",
+        "endDate": "2026-11-05",
+        "returnYtd": -24.72698907956319
+      }
+    },
+    {
+      "record_key": "161725:603198.SH",
+      "data": {
+        "fundCode": "161725",
+        "stockCode": "603198",
+        "endDate": "2026-11-05",
+        "returnYtd": 16.68351870576339
+      }
+    },
+    {
+      "record_key": "161725:688981.SH",
+      "data": {
+        "fundCode": "161725",
+        "stockCode": "688981",
+        "endDate": "2026-11-05",
+        "returnYtd": -9.883578930228776
+      }
+    },
+    {
+      "record_key": "161725:603369.SH",
+      "data": {
+        "fundCode": "161725",
+        "stockCode": "603369",
+        "endDate": "2026-11-05",
+        "returnYtd": 0.5175388154111449
+      }
+    },
+    {
+      "record_key": "161725:601658.SH",
+      "data": {
+        "fundCode": "161725",
+        "stockCode": "601658",
+        "endDate": "2026-11-05",
+        "returnYtd": 1.284403669724754
+      }
+    },
+    {
+      "record_key": "161725:600809.SH",
+      "data": {
+        "fundCode": "161725",
+        "stockCode": "600809",
+        "endDate": "2026-11-05",
+        "returnYtd": -24.100174723354684
+      }
+    },
+    {
+      "record_key": "161725:600519.SH",
+      "data": {
+        "fundCode": "161725",
+        "stockCode": "600519",
+        "endDate": "2026-11-05",
+        "returnYtd": 5.4328410229599555
+      }
+    },
+    {
+      "record_key": "161725:688825.SH",
+      "data": {
+        "fundCode": "161725",
+        "stockCode": "688825",
+        "endDate": "2026-11-05",
+        "marketCap": 2887110734723.0
+      }
+    },
+    {
+      "record_key": "161725:000799.SZ",
+      "data": {
+        "fundCode": "161725",
+        "stockCode": "000799",
+        "endDate": "2026-11-05",
+        "returnYtd": -34.353242946134124
+      }
+    },
+    {
+      "record_key": "161725:000596.SZ",
+      "data": {
+        "fundCode": "161725",
+        "stockCode": "000596",
+        "endDate": "2026-11-05",
+        "returnYtd": -20.663650075414775
+      }
+    },
+    {
+      "record_key": "161725:002304.SZ",
+      "data": {
+        "fundCode": "161725",
+        "stockCode": "002304",
+        "endDate": "2026-11-05",
+        "returnYtd": -36.63154428712545
+      }
+    },
+    {
+      "record_key": "161725:000858.SZ",
+      "data": {
+        "fundCode": "161725",
+        "stockCode": "000858",
+        "endDate": "2026-11-05",
+        "returnYtd": -28.431187464602615
+      }
+    },
+    {
+      "record_key": "161725:000568.SZ",
+      "data": {
+        "fundCode": "161725",
+        "stockCode": "000568",
+        "endDate": "2026-11-05",
+        "returnYtd": -30.21855102392016
+      }
+    },
+    {
+      "record_key": "161725:001248.SZ",
+      "data": {
+        "fundCode": "161725",
+        "stockCode": "001248",
+        "endDate": "2026-11-05",
+        "marketCap": 144139851578.0
+      }
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "source": "official-tushare-fund-nav",
+  "raw": [
+    {
+      "ts_code": "110011.OF",
+      "nav_date": "20260930",
+      "ann_date": "20260930",
+      "unit_nav": 4.0054,
+      "net_asset": null
+    },
+    {
+      "ts_code": "110011.OF",
+      "nav_date": "20260929",
+      "ann_date": "20260929",
+      "unit_nav": 3.9702,
+      "net_asset": null
+    }
+  ],
+  "mapped": [
+    {
+      "record_key": "110011:2026-09-30",
+      "data": {
+        "fundCode": "110011",
+        "reportPeriodEnd": "2026-09-30",
+        "reportType": "Q3",
+        "navPerShareEnd": 4.0054
+      }
+    }
+  ]
+}

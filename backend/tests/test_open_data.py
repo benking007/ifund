@@ -335,3 +335,25 @@ def test_empty_tables_remain_empty_but_existing_placeholder_snapshots_fail_quali
         response = client.get('/api/open-data/v1/fund/' + path + '?fund_code=000001')
         assert response.status_code == 503
         assert response.json['error'] == 'product_window_incomplete'
+
+
+def test_mysql_date_driver_values_are_iso_not_flask_rfc1123(client, monkeypatch):
+    from decimal import Decimal
+
+    database.insert('fund_share', {'fund_code': '110011', 'ts_code': '110011.OF',
+                                  'trade_date': '2026-06-30', 'share_value': 170448.1647})
+    original = database.select
+
+    def driver_rows(table, params=None):
+        rows = original(table, params)
+        if table == 'fund_share':
+            for row in rows:
+                row['trade_date'] = date(2026, 6, 30)
+                row['share_value'] = Decimal('170448.164700')
+        return rows
+
+    monkeypatch.setattr(database, 'select', driver_rows)
+    response = client.get('/api/open-data/v1/fund/reference-shares?fund_code=110011')
+    assert response.status_code == 200
+    assert response.json['items'][0]['trade_date'] == '2026-06-30'
+    assert 'GMT' not in response.text
