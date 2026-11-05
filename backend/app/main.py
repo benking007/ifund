@@ -67,6 +67,7 @@ def create_app() -> Flask:
 
     # 注册蓝图
     from app.routers.auth import bp as auth_bp
+    from app.open_data.router import bp as open_data_bp
     from app.fund.api.router import bp as fund_bp
     from app.fund_detail.api.router import bp as fund_detail_bp
     from app.fund_holdings.api.router import bp as holdings_bp
@@ -81,7 +82,7 @@ def create_app() -> Flask:
     from app.fund_manager.api.router import bp as fund_manager_bp
     from app.fund_etf_linkage.api.router import bp as fund_linkage_bp
     from app.trade_dates.api.router import bp as trade_dates_bp
-    for blueprint in (auth_bp, fund_bp, fund_detail_bp, holdings_bp, nav_bp,
+    for blueprint in (auth_bp, open_data_bp, fund_bp, fund_detail_bp, holdings_bp, nav_bp,
                       calendar_bp, industry_bp, cluster_bp, position_bp, reconcile_bp,
                       ai_analyze_bp, perpetual_bp, fund_manager_bp, fund_linkage_bp,
                       trade_dates_bp):

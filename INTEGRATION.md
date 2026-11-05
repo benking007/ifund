@@ -91,3 +91,7 @@ As verified on 2026-09-01 (post SQLite→MySQL migration):
   skipped for 7 days, then auto-reprobed.
 - Direct health is `/api/health`; through the dashboard it is
   `/ifund/api/health`.
+
+## Strict gateway read APIs
+
+The independent open API gateway can use the authenticated `/api/open-data/v1` source views. See [the source contract](backend/app/open_data/README.md) for exact NAV, master, holdings, event, tenure and share schemas. These endpoints retain separate unit and accumulated NAV and never substitute a different explicitly requested holdings quarter.

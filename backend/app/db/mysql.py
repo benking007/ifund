@@ -746,8 +746,8 @@ class MysqlDatabase(Database):
         return getattr(self._local, "transaction_depth", 0) > 0
 
     @contextmanager
-    def transaction(self) -> Iterator:
-        """Run an atomic transaction, with savepoints for nested calls."""
+    def transaction(self, *, read_only: bool = False) -> Iterator:
+        """Run an atomic transaction, optionally READ ONLY, with nested savepoints."""
         depth = getattr(self._local, "transaction_depth", 0)
         if depth:
             connection = self._local.transaction_connection
@@ -774,7 +774,11 @@ class MysqlDatabase(Database):
         discard_connection = False
         try:
             try:
-                connection.begin()
+                if read_only:
+                    with connection.cursor() as cursor:
+                        cursor.execute("START TRANSACTION READ ONLY")
+                else:
+                    connection.begin()
             except BaseException:
                 discard_connection = True
                 raise
