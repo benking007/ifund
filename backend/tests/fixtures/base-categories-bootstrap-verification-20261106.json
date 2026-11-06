@@ -1,0 +1,24 @@
+{
+  "status": "ready",
+  "kind": "base-categories",
+  "scope_id": "*",
+  "quality": {
+    "status": "ready",
+    "complete": true,
+    "row_count": 28061,
+    "verified_empty": false,
+    "source": "eastmoney:original-fund-classification",
+    "method_version": "base-categories-strict-v1",
+    "coverage_start": "2026-11-06",
+    "coverage_end": "2026-11-06",
+    "observed_at": 1793930906.331739,
+    "valid_until": 1794017306.331739,
+    "evidence_sha256": "977d929b2441fc5d278e0bffa600e0b2453d46a78b32bd89a15f937ca020f409",
+    "provider_classification_rows": 28287,
+    "canonical_exact_matches": 28061,
+    "unknown_category_rows_excluded": 25,
+    "canonical_missing_or_unknown_category": 4957
+  },
+  "verified_fof_scopes": 1347,
+  "006581_type": "FOF-稳健型"
+}

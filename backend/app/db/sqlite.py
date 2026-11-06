@@ -316,7 +316,8 @@ class SqliteDatabase(Database):
         return tuple(row) if row else ()
 
     @contextmanager
-    def transaction(self, *, read_only: bool = False) -> Iterator[sqlite3.Connection]:
+    def transaction(self, *, read_only: bool = False,
+                    consistent_snapshot: bool = False) -> Iterator[sqlite3.Connection]:
         """在当前线程的连接上执行原子事务。
 
         使用 ``BEGIN IMMEDIATE`` 在读-改-写前取得 SQLite 写锁，配合连接上的
@@ -324,6 +325,7 @@ class SqliteDatabase(Database):
         CRUD 方法不会自行提交，异常时由这里统一回滚。read_only 使用延迟 BEGIN，
         允许同步任务并发写入，同时保持本次查询的快照一致。
         """
+        del consistent_snapshot  # SQLite BEGIN already provides one transaction snapshot.
         conn = self._conn()
         depth = getattr(self._local, "transaction_depth", 0)
         if depth:

@@ -1,0 +1,11 @@
+{
+  "510300": {
+    "verified": true,
+    "code": "000300",
+    "ts_code": "000300.SH",
+    "fund_benchmark_expression": "沪深300指数",
+    "evidence_uri": "https://fundf10.eastmoney.com/jbgk_510300.html",
+    "verified_on": "2026-11-06",
+    "method": "exact-single-index-benchmark-not-weighted-multi-component"
+  }
+}

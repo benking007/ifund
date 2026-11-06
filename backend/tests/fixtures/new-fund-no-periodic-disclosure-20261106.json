@@ -1,0 +1,19 @@
+{
+  "master": {
+    "ts_code": "029725.OF",
+    "name": "华泰柏瑞消费成长灵活配置混合-C",
+    "found_date": "20261106",
+    "market": "O",
+    "status": "L"
+  },
+  "periodic_index": {
+    "Data": "",
+    "ErrCode": -999,
+    "ErrMsg": "",
+    "TotalCount": 0,
+    "Expansion": null,
+    "PageSize": 0,
+    "PageIndex": 0
+  },
+  "source": "official-tushare-fund-basic+official-complete-periodic-index"
+}

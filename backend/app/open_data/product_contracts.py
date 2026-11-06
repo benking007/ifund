@@ -11,7 +11,7 @@ import re
 DATE_FIELDS = {223: "date", 224: "date", 225: "date", 226: "dataTime", 227: "date", 228: "date",
                229: "date", 230: "date", 231: "date", 238: "resumeDate", 240: "startDate",
                241: "publishDate", 243: "publishDate", 245: "date", 246: "date", 247: "date",
-               251: "date", 252: "date", 254: "date", 255: "date", 256: "exDividendDate",
+               251: "date", 252: "date", 253: "endDate", 254: "date", 255: "date", 256: "exDividendDate",
                257: "splitExDate", 265: "reportDate", 266: "endDate", 270: "publishDate",
                271: "publishDate", 272: "date", 273: "reportPeriodEnd", 274: "reportPeriodEnd"}
 IDENTITY_FIELDS = frozenset({"fundCode", "fundId", "fundName", "fundManagerName", "fundManagerCode",
@@ -20,10 +20,10 @@ IDENTITY_FIELDS = frozenset({"fundCode", "fundId", "fundName", "fundManagerName"
                              "industryCode", "industryName", "conceptCode", "conceptName"})
 
 
-REQUIRED_MEASURES = {
+REQUIRED_MEASURES = {142: {"holdingAssetAnnual", "holdingNavAnnual"}, 143: {"holdingWeightAnnual"},
     226: {"currentPrice"}, 240: {"benchmarkWeightPct"}, 247: {"avgDailyProfitPer10k", "avg7dYieldAnn"},
     251: {"returnMtd", "return1m", "return3m", "return6m", "returnYtd", "return1y", "return3y", "return5y"},
-    252: {"returnTenure"}, 254: {"closePrice", "chg", "changePct"},
+    252: {"returnTenure", "isIncumbent"}, 254: {"closePrice", "chg", "changePct"},
     255: {"corr6m", "corr1y", "corr3y", "corr5y"}, 272: {"premiumRate"},
     273: {"navChangePctCurrent", "navReturnWeightedAvg", "distributableIncome", "distributableIncomePerShare",
           "navPerShareEnd", "navReturnCurrent", "profitExclFairValueChange", "navEnd", "navReturnCumulative",
@@ -112,11 +112,19 @@ def validate_query(product, query):
         properties = {item["name"]: {"type": item["type"]} for item in operation["parameters"]}
         schema = {"type": "object", "properties": properties}
     _validate(query, schema, "query")
+    if product in {142, 143}:
+        other = 'industryCodes' if product == 142 else 'conceptCodes'
+        if bool(query.get('fundCodes')) == bool(query.get(other)):
+            raise ValueError('Provide exactly one fundCodes or association selector')
+        if 'minAnnualWeight' in query and not 0 <= query['minAnnualWeight'] <= 100:
+            raise ValueError('Annual weight must lie in zero to one hundred')
     for single, multiple in (("fundCode", "fundCodes"), ("benchmarkIndexCode", "benchmarkIndexCodes"),
                              ("industryCode", "industryCodes"), ("conceptCode", "conceptCodes")):
         if single not in schema.get("properties", {}) and multiple not in schema.get("properties", {}):
             continue
         left, right = query.get(single), query.get(multiple)
+        if product in {142, 143} and left is None and right is None:
+            continue
         if single in schema.get("properties", {}) and multiple in schema.get("properties", {}):
             if (left is None) == (right is None):
                 raise ValueError(f"Provide exactly one of {single}/{multiple}")

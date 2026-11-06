@@ -131,7 +131,8 @@ def collect_tushare(api_name, params, fields="", *, page_size=3000, max_pages=10
     if tushare_client.ENDPOINT != "https://api.tushare.pro":
         raise ValueError("Open-data collection requires the official HTTPS source")
     reviewed = {"fund_manager", "margin_detail", "etf_sh_cons", "etf_sz_cons", "index_daily",
-                "fund_daily", "fund_portfolio", "fund_nav", "daily", "hk_daily", "daily_basic"}
+                "fund_daily", "fund_portfolio", "fund_nav", "daily", "hk_daily", "daily_basic",
+                "fund_basic", "fund_company", "fund_div", "fund_share"}
     if api_name not in reviewed:
         raise ValueError("Unreviewed Tushare operation")
     result, seen, byte_count = [], set(), 0

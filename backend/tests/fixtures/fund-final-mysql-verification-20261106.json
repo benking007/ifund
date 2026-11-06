@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "engine": "isolated_local_mariadb",
+  "checks": [
+    "complete_base_and_ten_product_tables_migration_idempotent",
+    "cold_master_atomic_base_watermark_mysql",
+    "actual_21_tushare_nav_rows_authenticated_mysql_http_and_strict_freshness",
+    "partial_running_uniqueness_preserved_with_generated_column",
+    "real_64_stock_808_memberships_atomic_concept_generation_mysql",
+    "cross_page_concept_physical_corruption_rejected",
+    "actual_manager_team_global_cte_name_filter_and_pagination_mysql",
+    "global_purchase_filter_and_bounded_retention_mysql"
+  ],
+  "production_database_writes": false
+}

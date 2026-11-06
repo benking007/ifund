@@ -1,0 +1,23 @@
+{
+  "status": "ready",
+  "kind": "base-master",
+  "scope_id": "*",
+  "quality": {
+    "status": "ready",
+    "complete": true,
+    "row_count": 33018,
+    "verified_empty": false,
+    "source": "tushare:official-fund-base",
+    "method_version": "base-master-strict-v1",
+    "coverage_start": "2026-11-06",
+    "coverage_end": "2026-11-06",
+    "observed_at": 1793928853.522423,
+    "valid_until": 1794015253.522423,
+    "evidence_sha256": "7d609f55efe6dbaa882624a4cc066acafed869ccf94dcf41a5914d95c5685eb2",
+    "observed_provider_roles": 33349,
+    "ambiguous_roles_excluded": 0,
+    "company_count": 214,
+    "unsupported_code_roles_excluded": 258,
+    "unknown_status_roles_excluded_from_active": 657
+  }
+}

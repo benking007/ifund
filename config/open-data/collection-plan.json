@@ -1,0 +1,2142 @@
+{
+  "service": "ifund",
+  "schemaVersion": 6,
+  "manifestVersion": 1,
+  "timezone": "Asia/Shanghai",
+  "execution": {
+    "shell": false,
+    "secrets": "existing ifund credential file only; never argv/env manifest",
+    "migrate_command": [
+      "python",
+      "-m",
+      "app.open_data.product_worker",
+      "migrate",
+      "--base-schema"
+    ],
+    "max_workers": 2,
+    "request_side_effects": false
+  },
+  "jobs": [
+    {
+      "id": "ifund-base-master",
+      "kind": "base-master",
+      "products": [
+        233,
+        235,
+        236
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "global",
+      "depends_on": [],
+      "start_policy": "rolling_actual_source_window",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "base-master",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}"
+      ],
+      "timeout_seconds": 3600,
+      "watermark": {
+        "table": "open_fund_base_watermark",
+        "scope": "global",
+        "date_field": "observed_at",
+        "coverage_rule": "actual_provider_records_in_explicit_window_not_all_history"
+      }
+    },
+    {
+      "id": "ifund-base-categories",
+      "kind": "base-categories",
+      "products": [
+        237
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "global",
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "rolling_actual_source_window",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "base-categories",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}"
+      ],
+      "timeout_seconds": 3600,
+      "watermark": {
+        "table": "open_fund_base_watermark",
+        "scope": "global",
+        "date_field": "observed_at",
+        "coverage_rule": "actual_provider_records_in_explicit_window_not_all_history"
+      }
+    },
+    {
+      "id": "ifund-base-nav",
+      "kind": "base-nav",
+      "products": [
+        245,
+        246
+      ],
+      "interval_seconds": 14400,
+      "ttl_seconds": 86400,
+      "universe": "global",
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "rolling_actual_source_window",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "base-nav",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--lookback-days",
+        "7",
+        "--bootstrap-days",
+        "35"
+      ],
+      "timeout_seconds": 3600,
+      "watermark": {
+        "table": "open_fund_base_watermark",
+        "scope": "global",
+        "date_field": "observed_at",
+        "coverage_rule": "actual_provider_records_in_explicit_window_not_all_history"
+      }
+    },
+    {
+      "id": "ifund-etf-directory",
+      "kind": "etf-directory",
+      "products": [],
+      "interval_seconds": 43200,
+      "ttl_seconds": 172800,
+      "universe": "global",
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "rolling_actual_source_window",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "etf-directory",
+        "--ttl-seconds",
+        "172800",
+        "--end",
+        "{end}"
+      ],
+      "timeout_seconds": 3600,
+      "watermark": {
+        "table": "open_fund_etf_directory",
+        "scope": "whole_official_listed_etf_directory",
+        "date_field": "observed_at",
+        "coverage_rule": "whole_source_hash_count_and_governed_roles_expire_before_fallback"
+      }
+    },
+    {
+      "id": "ifund-base-dividends",
+      "kind": "base-dividends",
+      "products": [
+        256
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "active_funds",
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "rolling_actual_source_window",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "base-dividends",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}"
+      ],
+      "timeout_seconds": 3600,
+      "watermark": {
+        "table": "open_fund_base_watermark",
+        "scope": "active_funds",
+        "date_field": "observed_at",
+        "coverage_rule": "actual_provider_records_in_explicit_window_not_all_history"
+      },
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "active_funds"
+      ]
+    },
+    {
+      "id": "ifund-base-splits",
+      "kind": "base-splits",
+      "products": [
+        257
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "active_funds",
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "rolling_actual_source_window",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "base-splits",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}"
+      ],
+      "timeout_seconds": 3600,
+      "watermark": {
+        "table": "open_fund_base_watermark",
+        "scope": "active_funds",
+        "date_field": "observed_at",
+        "coverage_rule": "actual_provider_records_in_explicit_window_not_all_history"
+      },
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "active_funds"
+      ]
+    },
+    {
+      "id": "ifund-base-stock-holdings",
+      "kind": "base-holdings",
+      "products": [
+        258
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "active_funds",
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "rolling_actual_source_window",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "base-holdings",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}",
+        "--holding-type",
+        "stock"
+      ],
+      "timeout_seconds": 3600,
+      "watermark": {
+        "table": "open_fund_base_watermark",
+        "scope": "active_funds",
+        "date_field": "observed_at",
+        "coverage_rule": "actual_provider_records_in_explicit_window_not_all_history"
+      },
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "active_funds"
+      ]
+    },
+    {
+      "id": "ifund-base-bond-holdings",
+      "kind": "base-holdings",
+      "products": [
+        261
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "active_funds",
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "rolling_actual_source_window",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "base-holdings",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}",
+        "--holding-type",
+        "bond"
+      ],
+      "timeout_seconds": 3600,
+      "watermark": {
+        "table": "open_fund_base_watermark",
+        "scope": "active_funds",
+        "date_field": "observed_at",
+        "coverage_rule": "actual_provider_records_in_explicit_window_not_all_history"
+      },
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "active_funds"
+      ]
+    },
+    {
+      "id": "ifund-base-tenures",
+      "kind": "base-tenures",
+      "products": [
+        232,
+        239,
+        250
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "active_funds",
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "rolling_actual_source_window",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "base-tenures",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}"
+      ],
+      "timeout_seconds": 3600,
+      "watermark": {
+        "table": "open_fund_base_watermark",
+        "scope": "active_funds",
+        "date_field": "observed_at",
+        "coverage_rule": "actual_provider_records_in_explicit_window_not_all_history"
+      },
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "active_funds"
+      ]
+    },
+    {
+      "id": "ifund-base-returns",
+      "kind": "base-returns",
+      "products": [
+        249
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "unit_nav_funds",
+      "depends_on": [
+        "ifund-base-nav"
+      ],
+      "start_policy": "rolling_actual_source_window",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "base-returns",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}"
+      ],
+      "timeout_seconds": 3600,
+      "watermark": {
+        "table": "open_fund_base_watermark",
+        "scope": "unit_nav_funds",
+        "date_field": "observed_at",
+        "coverage_rule": "actual_provider_records_in_explicit_window_not_all_history"
+      },
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "unit_nav_funds"
+      ]
+    },
+    {
+      "id": "ifund-purchase-status",
+      "kind": "purchase-status-all",
+      "products": [
+        238
+      ],
+      "interval_seconds": 240,
+      "ttl_seconds": 300,
+      "universe": "global",
+      "depends_on": [],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "purchase-status-all",
+        "--ttl-seconds",
+        "300",
+        "--end",
+        "{end}"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "global",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_unexpired_snapshot_no_older_fallback"
+      },
+      "timeout_seconds": 3600
+    },
+    {
+      "id": "ifund-investment-scope",
+      "kind": "investment-scope",
+      "products": [
+        241
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "active_funds",
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "investment-scope",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_unexpired_snapshot_no_older_fallback"
+      },
+      "timeout_seconds": 3600,
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "active_funds"
+      ]
+    },
+    {
+      "id": "ifund-company-profile",
+      "kind": "company-profile",
+      "products": [
+        244
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "active_funds",
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "company-profile",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_unexpired_snapshot_no_older_fallback"
+      },
+      "timeout_seconds": 3600,
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "active_funds"
+      ]
+    },
+    {
+      "id": "ifund-peer-returns",
+      "kind": "peer-returns",
+      "products": [
+        248
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "unit_nav_funds",
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "peer-returns",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_unexpired_snapshot_no_older_fallback"
+      },
+      "timeout_seconds": 3600,
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "unit_nav_funds"
+      ]
+    },
+    {
+      "id": "ifund-industry-exposure",
+      "kind": "industry-exposure",
+      "products": [
+        264
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "active_funds",
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "industry-exposure",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_unexpired_snapshot_no_older_fallback"
+      },
+      "timeout_seconds": 3600,
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "active_funds"
+      ]
+    },
+    {
+      "id": "ifund-manager-directory",
+      "kind": "manager-directory",
+      "products": [],
+      "interval_seconds": 1800,
+      "ttl_seconds": 3600,
+      "universe": "global",
+      "depends_on": [],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "manager-directory",
+        "--ttl-seconds",
+        "3600",
+        "--end",
+        "{end}"
+      ],
+      "watermark": {
+        "table": "open_fund_manager_directory_batch",
+        "scope": "global",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_unexpired_snapshot_no_older_fallback"
+      },
+      "timeout_seconds": 3600
+    },
+    {
+      "id": "ifund-manager-intervals",
+      "kind": "manager-intervals",
+      "products": [
+        251
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "unique_current_managers",
+      "depends_on": [
+        "ifund-manager-directory",
+        "ifund-base-master"
+      ],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "manager-intervals",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--manager-id",
+        "{manager_id}",
+        "--manager-name",
+        "{manager_name}"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "manager",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_unexpired_snapshot_no_older_fallback"
+      },
+      "timeout_seconds": 3600,
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "unique_current_managers"
+      ]
+    },
+    {
+      "id": "ifund-manager-history",
+      "kind": "manager-history",
+      "products": [],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "active_funds",
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "manager-history",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_unexpired_snapshot_no_older_fallback"
+      },
+      "timeout_seconds": 3600,
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "active_funds"
+      ]
+    },
+    {
+      "id": "ifund-holding-stock-returns",
+      "kind": "holding-stock-returns",
+      "products": [
+        269
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "stock_holding_funds",
+      "depends_on": [
+        "ifund-base-master",
+        "ifund-asset-allocation"
+      ],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "holding-stock-returns",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_unexpired_snapshot_no_older_fallback"
+      },
+      "timeout_seconds": 3600,
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "stock_holding_funds"
+      ]
+    },
+    {
+      "id": "ifund-pcf-header",
+      "kind": "pcf-header",
+      "products": [
+        270
+      ],
+      "interval_seconds": 14400,
+      "ttl_seconds": 86400,
+      "universe": "sse_exchange_funds",
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "pcf-header",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_unexpired_snapshot_no_older_fallback"
+      },
+      "timeout_seconds": 3600,
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "sse_exchange_funds"
+      ]
+    },
+    {
+      "id": "ifund-pcf-components",
+      "kind": "pcf-components",
+      "products": [
+        271
+      ],
+      "interval_seconds": 14400,
+      "ttl_seconds": 86400,
+      "universe": "exchange_funds",
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "pcf-components",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}",
+        "--start",
+        "{start}"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_unexpired_snapshot_no_older_fallback"
+      },
+      "timeout_seconds": 3600,
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "exchange_funds"
+      ]
+    },
+    {
+      "id": "ifund-premium",
+      "kind": "premium",
+      "products": [
+        272
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "exchange_funds",
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "premium",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}",
+        "--start",
+        "{start}"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_unexpired_snapshot_no_older_fallback"
+      },
+      "timeout_seconds": 3600,
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "exchange_funds"
+      ]
+    },
+    {
+      "id": "ifund-financial-indicators",
+      "kind": "financial-indicators",
+      "products": [
+        273
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "active_funds",
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "quarter_history",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "financial-indicators",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}",
+        "--start",
+        "{start}"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_unexpired_snapshot_no_older_fallback"
+      },
+      "timeout_seconds": 3600,
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "active_funds"
+      ]
+    },
+    {
+      "id": "ifund-asset-allocation",
+      "kind": "asset-allocation",
+      "products": [
+        259
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "active_funds",
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "asset-allocation",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_unexpired_snapshot_no_older_fallback"
+      },
+      "timeout_seconds": 3600,
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "active_funds"
+      ]
+    },
+    {
+      "id": "ifund-money-income",
+      "kind": "money-income",
+      "products": [
+        247
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "money_funds",
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "money-income",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}",
+        "--start",
+        "{start}"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_unexpired_snapshot_no_older_fallback"
+      },
+      "timeout_seconds": 3600,
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "money_funds"
+      ]
+    },
+    {
+      "id": "ifund-announcements",
+      "kind": "announcements",
+      "products": [
+        223
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "active_funds",
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "quarter_history",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "announcements",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}",
+        "--start",
+        "{start}"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_unexpired_snapshot_no_older_fallback"
+      },
+      "timeout_seconds": 3600,
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "active_funds"
+      ]
+    },
+    {
+      "id": "ifund-correlations",
+      "kind": "correlations",
+      "products": [
+        255
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "benchmark_verified_funds",
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "nav_5y",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "correlations",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}",
+        "--start",
+        "{start}",
+        "--benchmark-code",
+        "{benchmark_code}",
+        "--benchmark-ts-code",
+        "{benchmark_ts_code}"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_unexpired_snapshot_no_older_fallback"
+      },
+      "timeout_seconds": 3600,
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "benchmark_verified_funds"
+      ]
+    },
+    {
+      "id": "ifund-benchmark-components",
+      "kind": "benchmark-components",
+      "products": [
+        240
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "active_funds",
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "benchmark-components",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_unexpired_snapshot_no_older_fallback"
+      },
+      "timeout_seconds": 3600,
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "active_funds"
+      ]
+    },
+    {
+      "id": "ifund-industry-reverse-262",
+      "kind": "industry-reverse",
+      "products": [
+        262
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "global",
+      "depends_on": [
+        "ifund-industry-exposure"
+      ],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "industry-reverse",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--product",
+        "262"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "global",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_unexpired_snapshot_no_older_fallback"
+      },
+      "timeout_seconds": 3600,
+      "dependency_mode": "all",
+      "accept_verified_absence": true
+    },
+    {
+      "id": "ifund-industry-reverse-268",
+      "kind": "industry-reverse",
+      "products": [
+        268
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "global",
+      "depends_on": [
+        "ifund-industry-exposure"
+      ],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "industry-reverse",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--product",
+        "268"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "global",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_unexpired_snapshot_no_older_fallback"
+      },
+      "timeout_seconds": 3600,
+      "dependency_mode": "all",
+      "accept_verified_absence": true
+    },
+    {
+      "id": "ifund-fee-tiers",
+      "kind": "fee-tiers",
+      "products": [
+        243
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "timeout_seconds": 3600,
+      "universe": "active_funds",
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "active_funds"
+      ],
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "fee-tiers",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}",
+        "--end",
+        "{end}",
+        "--ttl-seconds",
+        "86400"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_unexpired_snapshot_no_older_fallback"
+      }
+    },
+    {
+      "id": "ifund-performance",
+      "kind": "performance",
+      "products": [
+        253
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "timeout_seconds": 3600,
+      "universe": "benchmark_verified_funds",
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "benchmark_verified_funds"
+      ],
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "nav_5y",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "performance",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}",
+        "--end",
+        "{end}",
+        "--ttl-seconds",
+        "86400",
+        "--start",
+        "{start}",
+        "--benchmark-code",
+        "{benchmark_code}",
+        "--benchmark-ts-code",
+        "{benchmark_ts_code}"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_unexpired_snapshot_no_older_fallback"
+      }
+    },
+    {
+      "id": "ifund-quarter-report",
+      "kind": "quarter-report",
+      "products": [
+        274
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "timeout_seconds": 3600,
+      "universe": "active_funds",
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "active_funds"
+      ],
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "quarter_history",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "quarter-report",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}",
+        "--start",
+        "{start}",
+        "--end",
+        "{end}",
+        "--ttl-seconds",
+        "86400"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "complete_declared_report_document_window"
+      }
+    },
+    {
+      "id": "ifund-fof-holdings",
+      "kind": "fof-holdings",
+      "products": [
+        260
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "timeout_seconds": 3600,
+      "universe": "fof_funds",
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "fof_funds"
+      ],
+      "depends_on": [
+        "ifund-base-master",
+        "ifund-base-categories"
+      ],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "fof-holdings",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}",
+        "--start",
+        "{start}",
+        "--end",
+        "{end}",
+        "--ttl-seconds",
+        "86400"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "complete_declared_report_document_window"
+      }
+    },
+    {
+      "id": "ifund-share-relations",
+      "kind": "share-relations",
+      "products": [
+        234
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "timeout_seconds": 3600,
+      "universe": "active_funds",
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "active_funds"
+      ],
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "share-relations",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}",
+        "--start",
+        "{start}",
+        "--end",
+        "{end}",
+        "--ttl-seconds",
+        "86400"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "complete_declared_report_document_window"
+      }
+    },
+    {
+      "id": "ifund-share-flows",
+      "kind": "share-flows",
+      "products": [
+        266
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "timeout_seconds": 3600,
+      "universe": "active_funds",
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "active_funds"
+      ],
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "share-flows",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}",
+        "--start",
+        "{start}",
+        "--end",
+        "{end}",
+        "--ttl-seconds",
+        "86400"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "complete_declared_report_document_window"
+      }
+    },
+    {
+      "id": "ifund-awards",
+      "kind": "awards",
+      "products": [
+        242
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "timeout_seconds": 3600,
+      "universe": "active_funds",
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "active_funds"
+      ],
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "awards",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}",
+        "--start",
+        "{start}",
+        "--end",
+        "{end}",
+        "--ttl-seconds",
+        "86400"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "complete_declared_report_document_window"
+      }
+    },
+    {
+      "id": "ifund-holder-report",
+      "kind": "holder-report",
+      "products": [
+        265
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "timeout_seconds": 3600,
+      "universe": "active_funds",
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "active_funds"
+      ],
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "quarter_history",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "holder-report",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}",
+        "--start",
+        "{start}",
+        "--end",
+        "{end}",
+        "--ttl-seconds",
+        "86400"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "complete_declared_report_document_window"
+      }
+    },
+    {
+      "id": "ifund-fee-history",
+      "kind": "fee-history",
+      "products": [
+        243
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "timeout_seconds": 3600,
+      "universe": "active_funds",
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "active_funds"
+      ],
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "quarter_history",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "fee-history",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}",
+        "--start",
+        "{start}",
+        "--end",
+        "{end}",
+        "--ttl-seconds",
+        "86400"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "complete_declared_report_document_window"
+      }
+    },
+    {
+      "id": "ifund-concept-exposure",
+      "kind": "concept-exposure",
+      "products": [],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "timeout_seconds": 3600,
+      "universe": "active_funds",
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "active_funds"
+      ],
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "concept-exposure",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}",
+        "--start",
+        "{start}",
+        "--end",
+        "{end}",
+        "--ttl-seconds",
+        "86400"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "complete_declared_report_document_window"
+      }
+    },
+    {
+      "id": "ifund-manager-history-global",
+      "kind": "manager-history-global",
+      "products": [
+        252
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "timeout_seconds": 3600,
+      "universe": "global",
+      "depends_on": [
+        "ifund-manager-history"
+      ],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "manager-history-global",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "global",
+        "date_field": "recorded_at",
+        "coverage_rule": "complete_declared_report_document_window"
+      },
+      "dependency_mode": "all"
+    },
+    {
+      "id": "ifund-concept-reverse",
+      "kind": "concept-reverse",
+      "products": [
+        263,
+        267
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "timeout_seconds": 3600,
+      "universe": "global",
+      "depends_on": [
+        "ifund-concept-exposure"
+      ],
+      "start_policy": "latest",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "concept-reverse",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "global",
+        "date_field": "recorded_at",
+        "coverage_rule": "complete_declared_report_document_window"
+      },
+      "dependency_mode": "all",
+      "accept_verified_absence": true
+    },
+    {
+      "id": "ifund-industry-etf-mapping",
+      "kind": "industry-etf-mapping",
+      "products": [],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "verified_etf_funds",
+      "depends_on": [
+        "ifund-etf-directory"
+      ],
+      "start_policy": "rolling_actual_source_window",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "industry-etf-mapping",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}"
+      ],
+      "timeout_seconds": 3600,
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_issuer_report_and_current_classification_observation"
+      },
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "verified_etf_funds"
+      ]
+    },
+    {
+      "id": "ifund-concept-etf-mapping",
+      "kind": "concept-etf-mapping",
+      "products": [],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "verified_etf_funds",
+      "depends_on": [
+        "ifund-etf-directory"
+      ],
+      "start_policy": "rolling_actual_source_window",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "concept-etf-mapping",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}",
+        "--fund-code",
+        "{fund_code}",
+        "--ts-code",
+        "{ts_code}"
+      ],
+      "timeout_seconds": 3600,
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "fund",
+        "date_field": "recorded_at",
+        "coverage_rule": "latest_complete_issuer_report_and_current_classification_observation"
+      },
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "verified_etf_funds"
+      ]
+    },
+    {
+      "id": "ifund-benchmark-quotes",
+      "kind": "index-quotes",
+      "products": [
+        254
+      ],
+      "interval_seconds": 43200,
+      "ttl_seconds": 86400,
+      "universe": "unique_benchmarks",
+      "depends_on": [
+        "ifund-base-master"
+      ],
+      "max_members": 100000,
+      "max_calls": 500000,
+      "start_policy": "nav_5y",
+      "timeout_seconds": 3600,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "index-quotes",
+        "--ts-code",
+        "{ts_code}",
+        "--benchmark-code",
+        "{benchmark_code}",
+        "--start",
+        "{start}",
+        "--end",
+        "{end}",
+        "--ttl-seconds",
+        "86400"
+      ],
+      "universe_command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "universe",
+        "--kind",
+        "unique_benchmarks"
+      ],
+      "watermark": {
+        "table": "open_fund_product_batch",
+        "scope": "benchmark",
+        "date_field": "recorded_at",
+        "coverage_rule": "actual_official_benchmark_role_and_observed_dates"
+      }
+    },
+    {
+      "id": "ifund-industry-etf-reverse",
+      "kind": "industry-etf-reverse",
+      "products": [
+        142
+      ],
+      "interval_seconds": 1800,
+      "ttl_seconds": 86400,
+      "universe": "global",
+      "depends_on": [
+        "ifund-etf-directory",
+        "ifund-industry-etf-mapping"
+      ],
+      "start_policy": "rolling_actual_source_window",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "industry-etf-reverse",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}"
+      ],
+      "timeout_seconds": 3600,
+      "watermark": {
+        "table": "open_fund_etf_generation",
+        "scope": "shared_forward_reverse_whole_etf_version",
+        "date_field": "observed_at",
+        "coverage_rule": "atomic_same_cutoff_every_etf_scope_explained_physical_count_and_shortest_source_expiry"
+      },
+      "dependency_mode": "all",
+      "accept_verified_absence": true
+    },
+    {
+      "id": "ifund-concept-etf-reverse",
+      "kind": "concept-etf-reverse",
+      "products": [
+        143
+      ],
+      "interval_seconds": 1800,
+      "ttl_seconds": 86400,
+      "universe": "global",
+      "depends_on": [
+        "ifund-etf-directory",
+        "ifund-concept-etf-mapping"
+      ],
+      "start_policy": "rolling_actual_source_window",
+      "max_members": 100000,
+      "max_calls": 500000,
+      "command": [
+        "python",
+        "-m",
+        "app.open_data.product_worker",
+        "collect",
+        "--kind",
+        "concept-etf-reverse",
+        "--ttl-seconds",
+        "86400",
+        "--end",
+        "{end}"
+      ],
+      "timeout_seconds": 3600,
+      "watermark": {
+        "table": "open_fund_etf_generation",
+        "scope": "shared_forward_reverse_whole_etf_version",
+        "date_field": "observed_at",
+        "coverage_rule": "atomic_same_cutoff_every_etf_scope_explained_physical_count_and_shortest_source_expiry"
+      },
+      "dependency_mode": "all",
+      "accept_verified_absence": true
+    }
+  ]
+}

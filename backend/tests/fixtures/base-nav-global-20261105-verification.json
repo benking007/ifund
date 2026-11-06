@@ -1,0 +1,19 @@
+{
+  "status": "ready",
+  "kind": "base-nav",
+  "scope_id": "*",
+  "quality": {
+    "status": "ready",
+    "complete": true,
+    "row_count": 23534,
+    "verified_empty": false,
+    "source": "tushare:official-fund-base",
+    "method_version": "base-nav-strict-v1",
+    "coverage_start": "2026-11-05",
+    "coverage_end": "2026-11-05",
+    "observed_at": 1793931196.167518,
+    "valid_until": 1794017596.167518,
+    "evidence_sha256": "4ce2be7f4eaf8197b801fdeb87c47438183b8152dd6edc216faf57d437ee3f15",
+    "unverified_or_money_rows_excluded": 405
+  }
+}

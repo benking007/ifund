@@ -3,6 +3,8 @@ from __future__ import annotations
 
 from datetime import date, datetime
 import math
+import json
+import os
 import re
 
 from flask import Blueprint, jsonify, request
@@ -10,6 +12,8 @@ from flask_jwt_extended import verify_jwt_in_request
 
 from app import db as database
 from .product_routes import register_product_routes
+from .product_base_read import require_base
+from .product_nav_types import NAV_UNIT_TYPES
 
 bp = Blueprint("open_data", __name__, url_prefix="/api/open-data/v1")
 register_product_routes(bp)
@@ -29,14 +33,7 @@ _EXT = ("ts_code", "market", "status", "list_date", "delist_date", "found_date",
 # income per ten thousand shares, never a verified unit or adjusted NAV.
 # Keep this list explicit: a new/empty classification is not evidence of NAV
 # semantics and must be reviewed before the public source serves its values.
-_UNIT_NAV_TYPES = frozenset({
-    "股票型", "混合型", "混合型-偏股", "混合型-偏债", "混合型-灵活", "混合型-股债平衡",
-    "债券型", "债券型-长债", "债券型-中短债", "债券型-利率债", "债券型-信用债",
-    "债券型-混合一级", "债券型-混合二级", "指数型-股票", "指数型-固收",
-    "FOF-稳健型", "FOF-均衡型", "FOF-进取型", "REITs",
-    "QDII-混合偏股", "QDII-普通股票", "QDII-纯债", "QDII-混合灵活", "QDII-混合债",
-    "QDII-商品", "QDII-FOF", "QDII-混合平衡", "QDII-REITs",
-})
+_UNIT_NAV_TYPES = NAV_UNIT_TYPES
 
 
 @bp.before_request
@@ -49,6 +46,130 @@ def authenticate():
 def invalid_request(exc):
     """Return validation errors without database or deployment details."""
     return jsonify({"error": "invalid_request", "message": str(exc)}), 400
+
+
+@bp.errorhandler(LookupError)
+def unavailable_base(_exc):
+    """Expose no SQL, deployment internals or fabricated successful empties."""
+    return jsonify({'error': 'product_window_incomplete', 'reason': 'source_window_not_verified'}), 503
+
+
+@bp.get("/_ready")
+def open_data_ready():
+    """Authenticated, bounded read-only schema and current-fact readiness."""
+    import time  # pylint: disable=import-outside-toplevel
+    from .product_store import _sql  # pylint: disable=import-outside-toplevel,protected-access
+    try:
+        with database.get_db().transaction(read_only=True) as conn:
+            required = {
+                'users': 'id,username', 'api_tokens': 'id,user_id,token_hash,last_used_at',
+                'funds': 'code,name,type,fund_type', 'fund_basic_ext': 'fund_code,ts_code,status,source',
+                'fund_nav': 'fund_code,trade_date,nav,acc_nav,adj_nav,adj_src',
+                'fund_holdings': 'fund_code,quarter,holding_type,asset_code,hold_amount,hold_market_value,hold_ratio',
+                'fund_manager_tenure': 'fund_code,managers,start_date,end_date,tenure_return',
+                'fund_div_split': 'fund_code,event_type,ex_date',
+                'open_fund_base_watermark': 'version_id,kind,scope_id,row_count,observed_at,valid_until',
+                'open_fund_product_batch': 'batch_id,product_id,scope_kind,scope_key,recorded_at,valid_until,'
+                                           'row_count,scope_metadata_json',
+                'open_fund_etf_directory': 'version_id,cohort_hash,valid_until,row_count,payload_hash',
+                'open_fund_etf_generation': 'generation_id,product_id,cohort_hash,valid_until,fact_count,scope_count',
+                'open_fund_etf_generation_scope': 'generation_id,fund_code,source_version,eligibility_status,row_count',
+                'open_fund_etf_generation_fact': 'generation_id,fund_code,association_code,annual_weight,payload_hash',
+                'open_fund_product_fact': 'batch_id,product_id,fund_code,event_date,payload_json,etf_flag',
+                'open_fund_manager_directory_batch': 'snapshot_id,declared_count,recorded_at,valid_until',
+                'open_fund_manager_directory': 'snapshot_id,manager_id,manager_name',
+                'open_fund_concept_generation': 'generation_id,scope_count,fact_count,dictionary_count,'
+                                                'valid_until,eligible_count,undisclosed_count,'
+                                                'not_applicable_count',
+                'open_fund_concept_fact': 'generation_id,fund_code,concept_code,weight_nav,report_period,is_etf',
+                'open_fund_concept_fund': 'generation_id,fund_code,batch_id,report_period,row_count',
+                'open_fund_concept_dictionary': 'generation_id,concept_code,concept_name',
+                'open_fund_disclosure_eligibility': 'version_id,product_id,fund_code,status,'
+                                                  'evidence_sha256,valid_until'}
+            for table, columns in required.items():
+                _sql(conn, 'SELECT '+columns+' FROM '+table+' WHERE 1=0', fetch=True)
+            products = _sql(conn, "WITH newest AS (SELECT *,ROW_NUMBER() OVER(PARTITION BY product_id,"
+                            "scope_kind,scope_key ORDER BY recorded_at DESC,batch_id DESC) AS rn "
+                            "FROM open_fund_product_batch WHERE status='ready') "
+                            "SELECT product_id,scope_kind,COUNT(*) AS scopes,MAX(recorded_at) AS observed_at,"
+                            "MIN(valid_until) AS valid_until,SUM(row_count) AS attested_rows "
+                            "FROM newest WHERE rn=1 GROUP BY product_id,scope_kind LIMIT 300",
+                            fetch=True)
+            scoped = _sql(conn, "SELECT product_id,LENGTH(scope_metadata_json) AS bytes,"
+                          "CASE WHEN LENGTH(scope_metadata_json)<=4096 THEN scope_metadata_json "
+                          "ELSE NULL END AS metadata "
+                          "FROM open_fund_product_batch WHERE scope_kind='global' AND scope_metadata_json IS NOT NULL "
+                          "ORDER BY recorded_at DESC,batch_id DESC LIMIT 300", fetch=True)
+            latest_scope = {}
+            for row in scoped:
+                if row['product_id'] not in latest_scope:
+                    if row['bytes'] > 4096:
+                        raise ValueError('Invalid scope-metadata byte budget')
+                    latest_scope[row['product_id']] = json.loads(row['metadata'])
+            for row in products:
+                row['dataset_scope'] = latest_scope.get(row['product_id'], {})
+            # Readiness needs actual fresh published facts; table existence is
+            # reported independently and must not make an empty deployment green.
+            global_status = any(row['product_id'] == 238 and row['scope_kind'] == 'global'
+                                for row in products)
+            for row in products:
+                staged = row['product_id'] in {142, 143, 252, 263} and row['scope_kind'] == 'fund'
+                row['stage'] = ('preparation' if staged
+                                else 'read_cache')
+                if global_status and row['product_id'] == 238 and row['scope_kind'] == 'fund':
+                    row['stage'] = 'superseded'
+            generations = _sql(conn, 'SELECT observed_at,valid_until,scope_count,fact_count,eligible_count,'
+                               'undisclosed_count,not_applicable_count '
+                               'FROM open_fund_concept_generation ORDER BY observed_at DESC LIMIT 1', fetch=True)
+            if generations:
+                products.extend({'product_id': number, 'scope_kind': 'global', 'scopes': generations[0]['scope_count'],
+                                 'observed_at': generations[0]['observed_at'],
+                                 'valid_until': generations[0]['valid_until'],
+                                 'attested_rows': generations[0]['fact_count'],
+                                 'eligible_fund_count': generations[0]['eligible_count'],
+                                 'undisclosed_fund_count': generations[0]['undisclosed_count'],
+                                 'not_applicable_fund_count': generations[0]['not_applicable_count'],
+                                 'stage': 'read_cache' if generations[0]['eligible_count'] else 'not_disclosed'}
+                                for number in (263, 267))
+            etfs = _sql(conn, 'SELECT * FROM (SELECT product_id,observed_at,valid_until,scope_count,fact_count,'
+                        'eligible_count,undisclosed_count,not_applicable_count,method_version,ROW_NUMBER() OVER('
+                        'PARTITION BY product_id ORDER BY observed_at DESC,generation_id DESC) AS rn '
+                        'FROM open_fund_etf_generation) latest WHERE rn=1', fetch=True)
+            products.extend({'product_id': row['product_id'], 'scope_kind': 'global',
+                             'observed_at': row['observed_at'], 'valid_until': row['valid_until'],
+                             'scopes': row['scope_count'], 'attested_rows': row['fact_count'],
+                             'eligible_fund_count': row['eligible_count'],
+                             'undisclosed_fund_count': row['undisclosed_count'],
+                             'not_applicable_fund_count': row['not_applicable_count'],
+                             'stage': 'read_cache' if (row['eligible_count']
+                                                      and row['method_version'].endswith('v2-bound-immutable'))
+                             else 'not_disclosed'} for row in etfs)
+            base = _sql(conn, 'SELECT kind,scope_id,row_count,observed_at,valid_until,window_start,window_end '
+                        'FROM (SELECT *,ROW_NUMBER() OVER (PARTITION BY kind,scope_id '
+                        'ORDER BY observed_at DESC,version_id DESC) AS rank_no FROM open_fund_base_watermark) latest '
+                        'WHERE rank_no=1 ORDER BY observed_at DESC LIMIT 300', fetch=True)
+            base_products = {'base-master': (233, 235, 236), 'base-categories': (237,), 'base-nav': (245, 246),
+                             'base-dividends': (256,), 'base-splits': (257,), 'base-holdings': (258, 261),
+                             'base-tenures': (232, 239, 250), 'base-returns': (249,)}
+            for item in base:
+                products.extend({'product_id': number, 'scope_kind': item['scope_id'], 'scopes': 1,
+                                 'observed_at': item['observed_at'], 'valid_until': item['valid_until'],
+                                 'attested_rows': item['row_count'], 'stage': 'read_cache',
+                                 'window_start': item['window_start'], 'window_end': item['window_end']}
+                                for number in base_products.get(item['kind'], ()) if item['row_count'] > 0
+                                and (item['kind'] != 'base-holdings' or
+                                     (number == 258 and item['scope_id'].endswith(':stock')) or
+                                     (number == 261 and item['scope_id'].endswith(':bond'))))
+            current = [row for row in products
+                       if row["valid_until"] > time.time() and row['stage'] == 'read_cache']
+        return jsonify({"service": "ifund-open-data", "schemaVersion": 6, "database": "ok",
+                        "ready": bool(current), "status": "ready" if current else "not_ready", "products": products,
+                        "fresh_product_count": len({row["product_id"] for row in current}),
+                        "coverage": "cached_verified_windows_only"}), (
+                            200 if current else 503)
+    except Exception:  # pylint: disable=broad-exception-caught
+        return jsonify({"service": "ifund-open-data", "schemaVersion": 6, "ready": False, "status": "not_ready",
+                        "database": "migration_or_connection_unavailable"}), 503
 
 
 def _arguments(extra=(), *, require_code=True):
@@ -105,6 +226,7 @@ def _jsonable(value):
 
 
 def _page(table, filters, fields, order, page, page_size):
+    require_base(table)
     params = [*filters, ("select", ",".join(fields)), ("order", order),
               ("limit", page_size), ("offset", (page - 1) * page_size)]
     with database.get_db().transaction(read_only=True):
@@ -157,6 +279,8 @@ def nav_history():
                        ("fund_code", "trade_date", "nav", "acc_nav", "daily_return", "adj_nav", "adj_src"),
                        "trade_date.asc,fund_code.asc", page, size)
         _add_names(result)
+    if os.getenv('IFUND_OPEN_REQUIRE_BASE_WATERMARK', '0') == '1' and result['total'] == 0:
+        return jsonify({'error': 'product_window_incomplete', 'reason': 'nav_window_not_observed'}), 503
     return jsonify(result)
 
 
@@ -260,7 +384,8 @@ def fund_holdings():
     if start or end:
         raise ValueError("Holdings use a report quarter, not a date window")
     if quarter is None and "," in code:
-        raise ValueError("Batch holdings require an explicit quarter")
+        body, status = _batch_latest_holdings(code, kind, page, size)
+        return jsonify(body), status
     if quarter is None:
         latest = database.select_one("fund_holdings", {"fund_code": f"eq.{code}",
                                                       "holding_type": f"eq.{kind}", "order": "quarter.desc"})
@@ -274,6 +399,34 @@ def fund_holdings():
     result["units"] = {"hold_ratio": "percent", "hold_amount": "10k_shares", "hold_market_value": "10k_CNY"}
     result["quarter"] = quarter or None
     return jsonify(result)
+
+
+def _batch_latest_holdings(codes, kind, page, size):
+    """Each member keeps its latest disclosed quarter; globally count and page."""
+    require_base("fund_holdings")
+    from .product_store import _sql  # pylint: disable=import-outside-toplevel,protected-access
+    fields = ("fund_code", "quarter", "holding_type", "asset_code", "asset_name",
+              "hold_ratio", "hold_amount", "hold_market_value")
+    selected = codes.split(",")
+    placeholders = ",".join("?" for _ in selected)
+    with database.get_db().transaction(read_only=True) as conn:
+        latest = _sql(conn, "SELECT fund_code,MAX(quarter) AS quarter FROM fund_holdings "
+                      "WHERE fund_code IN ("+placeholders+") AND holding_type=? GROUP BY fund_code",
+                      (*selected, kind), fetch=True)
+        if {row["fund_code"] for row in latest} != set(selected):
+            return {"error": "product_window_incomplete", "reason": "batch_member_uncovered"}, 503
+        cte = ("WITH latest AS (SELECT fund_code,MAX(quarter) AS quarter FROM fund_holdings WHERE "
+               "fund_code IN ("+placeholders+") AND holding_type=? GROUP BY fund_code) ")
+        where = " FROM fund_holdings h JOIN latest l ON h.fund_code=l.fund_code AND h.quarter=l.quarter "
+        where += "WHERE h.holding_type=?"
+        params = (*selected, kind, kind)
+        total = _sql(conn, cte+"SELECT COUNT(*) AS total"+where, params, fetch=True)[0]["total"]
+        rows = _sql(conn, cte+"SELECT "+",".join("h."+field for field in fields)+where+
+                    " ORDER BY h.hold_ratio DESC,h.asset_code,h.fund_code LIMIT ? OFFSET ?",
+                    (*params, size, (page-1)*size), fetch=True)
+    return {"items": _jsonable(rows), "total": total, "page": page, "page_size": size, "source": "ifund",
+            "coverage": "each_fund_latest_disclosed_holdings", "quarters": latest,
+            "units": {"hold_ratio": "percent", "hold_amount": "10k_shares", "hold_market_value": "10k_CNY"}}, 200
 
 
 @bp.get("/fund/manager-tenure")
@@ -329,6 +482,7 @@ def reference_fees():
     code, start, end, page, size = _arguments()
     if start or end:
         raise ValueError("Current fee snapshots have no verified publication date")
+    require_base("fund_basic_ext")
     with database.get_db().transaction(read_only=True):
         masters = database.select("fund_basic_ext", _filters(code))
         rows = []
@@ -357,6 +511,7 @@ def reference_listings():
         raise ValueError("Issue snapshots have no verified first publication date")
     fields = ("fund_code", "issue_date", "par_value", "purchase_start_date", "redemption_start_date",
               "management_fee", "custodian_fee")
+    require_base("fund_basic_ext")
     with database.get_db().transaction(read_only=True):
         masters = database.select("fund_basic_ext", [*_filters(code), ("select", ",".join(fields)),
                                                    ("order", "fund_code.asc")])

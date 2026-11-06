@@ -1,0 +1,7162 @@
+{
+  "responses": [
+    {
+      "source": "open_market_products",
+      "product": "concept_memberships",
+      "conceptSource": "THS",
+      "requestedSymbols": [
+        "600519.SH",
+        "600809.SH",
+        "000858.SZ",
+        "000568.SZ",
+        "002027.SZ",
+        "002371.SZ",
+        "300502.SZ",
+        "300832.SZ",
+        "601138.SH",
+        "300666.SZ",
+        "002080.SZ",
+        "600176.SH",
+        "688019.SH",
+        "600183.SH",
+        "603986.SH",
+        "300475.SZ",
+        "688519.SH",
+        "688617.SH",
+        "301611.SZ",
+        "002916.SZ"
+      ],
+      "coveredSymbols": [
+        "600519.SH",
+        "600809.SH",
+        "000858.SZ",
+        "000568.SZ",
+        "002027.SZ",
+        "002371.SZ",
+        "300502.SZ",
+        "300832.SZ",
+        "601138.SH",
+        "300666.SZ",
+        "002080.SZ",
+        "600176.SH",
+        "688019.SH",
+        "600183.SH",
+        "603986.SH",
+        "300475.SZ",
+        "688519.SH",
+        "688617.SH",
+        "301611.SZ",
+        "002916.SZ"
+      ],
+      "completeSubjectSnapshots": true,
+      "subjectSnapshots": [
+        {
+          "symbol": "600519.SH",
+          "snapshotId": "62568d8cd1914e21af31e64b09423ead",
+          "observedAt": "2026-11-06T00:00:58.493437+00:00",
+          "rowCount": 73,
+          "conceptRowCount": 12,
+          "excludedNonCurrentNCount": 61
+        },
+        {
+          "symbol": "600809.SH",
+          "snapshotId": "25267061699a4f848f3172e04e97dc12",
+          "observedAt": "2026-11-06T00:00:58.856795+00:00",
+          "rowCount": 66,
+          "conceptRowCount": 8,
+          "excludedNonCurrentNCount": 58
+        },
+        {
+          "symbol": "000858.SZ",
+          "snapshotId": "c58643fb21314a32a1dfaeb41689436d",
+          "observedAt": "2026-11-06T00:00:59.200273+00:00",
+          "rowCount": 71,
+          "conceptRowCount": 12,
+          "excludedNonCurrentNCount": 59
+        },
+        {
+          "symbol": "000568.SZ",
+          "snapshotId": "a0126669a0c14ff9a32bef4719cc8d3a",
+          "observedAt": "2026-11-06T00:00:59.577908+00:00",
+          "rowCount": 82,
+          "conceptRowCount": 12,
+          "excludedNonCurrentNCount": 70
+        },
+        {
+          "symbol": "002027.SZ",
+          "snapshotId": "01ca3841b94044eda409c880eca74e13",
+          "observedAt": "2026-11-06T00:01:00.022757+00:00",
+          "rowCount": 68,
+          "conceptRowCount": 11,
+          "excludedNonCurrentNCount": 57
+        },
+        {
+          "symbol": "002371.SZ",
+          "snapshotId": "59a81a5dbf3b4ac2ba59fe6bb9358b62",
+          "observedAt": "2026-11-06T00:01:00.264203+00:00",
+          "rowCount": 100,
+          "conceptRowCount": 17,
+          "excludedNonCurrentNCount": 83
+        },
+        {
+          "symbol": "300502.SZ",
+          "snapshotId": "9066eba7e4b84cd58233531b07428da9",
+          "observedAt": "2026-11-06T00:01:00.628946+00:00",
+          "rowCount": 91,
+          "conceptRowCount": 11,
+          "excludedNonCurrentNCount": 80
+        },
+        {
+          "symbol": "300832.SZ",
+          "snapshotId": "db87ee420af14abf892ab04818b96de5",
+          "observedAt": "2026-11-06T00:01:00.983838+00:00",
+          "rowCount": 60,
+          "conceptRowCount": 9,
+          "excludedNonCurrentNCount": 51
+        },
+        {
+          "symbol": "601138.SH",
+          "snapshotId": "0f514d8020d743f0a3d406f55c34bfde",
+          "observedAt": "2026-11-06T00:01:01.341880+00:00",
+          "rowCount": 101,
+          "conceptRowCount": 32,
+          "excludedNonCurrentNCount": 69
+        },
+        {
+          "symbol": "300666.SZ",
+          "snapshotId": "59224c02e5aa4e379691a6e0750c6157",
+          "observedAt": "2026-11-06T00:01:01.694217+00:00",
+          "rowCount": 93,
+          "conceptRowCount": 15,
+          "excludedNonCurrentNCount": 78
+        },
+        {
+          "symbol": "002080.SZ",
+          "snapshotId": "3045821083c640b8afa8a928ef1aec79",
+          "observedAt": "2026-11-06T00:01:02.189336+00:00",
+          "rowCount": 105,
+          "conceptRowCount": 22,
+          "excludedNonCurrentNCount": 83
+        },
+        {
+          "symbol": "600176.SH",
+          "snapshotId": "ca33f22cd1984d5e91ecf19d5d2beaa7",
+          "observedAt": "2026-11-06T00:01:02.466975+00:00",
+          "rowCount": 101,
+          "conceptRowCount": 17,
+          "excludedNonCurrentNCount": 84
+        },
+        {
+          "symbol": "688019.SH",
+          "snapshotId": "59b8fb3254c34ad7834557648160d28b",
+          "observedAt": "2026-11-06T00:01:02.838288+00:00",
+          "rowCount": 72,
+          "conceptRowCount": 12,
+          "excludedNonCurrentNCount": 60
+        },
+        {
+          "symbol": "600183.SH",
+          "snapshotId": "08ba5758cdb64ebe9412d20614a212c1",
+          "observedAt": "2026-11-06T00:01:03.181627+00:00",
+          "rowCount": 109,
+          "conceptRowCount": 19,
+          "excludedNonCurrentNCount": 90
+        },
+        {
+          "symbol": "603986.SH",
+          "snapshotId": "5ff15799e0d74d54bd413eb2d4d0af4c",
+          "observedAt": "2026-11-06T00:01:03.479631+00:00",
+          "rowCount": 108,
+          "conceptRowCount": 19,
+          "excludedNonCurrentNCount": 89
+        },
+        {
+          "symbol": "300475.SZ",
+          "snapshotId": "83d724695b1e404a9100cf8fd32e9439",
+          "observedAt": "2026-11-06T00:01:03.839125+00:00",
+          "rowCount": 91,
+          "conceptRowCount": 15,
+          "excludedNonCurrentNCount": 76
+        },
+        {
+          "symbol": "688519.SH",
+          "snapshotId": "04c3397b526a4c0f8a2eaa5240c786ea",
+          "observedAt": "2026-11-06T00:01:04.190539+00:00",
+          "rowCount": 79,
+          "conceptRowCount": 11,
+          "excludedNonCurrentNCount": 68
+        },
+        {
+          "symbol": "688617.SH",
+          "snapshotId": "b8720fe94bdf4921a4f5cdc9c0119a85",
+          "observedAt": "2026-11-06T00:01:04.547652+00:00",
+          "rowCount": 58,
+          "conceptRowCount": 6,
+          "excludedNonCurrentNCount": 52
+        },
+        {
+          "symbol": "301611.SZ",
+          "snapshotId": "7416965076304c9fa8eb5da3ec586a50",
+          "observedAt": "2026-11-06T00:01:04.899825+00:00",
+          "rowCount": 67,
+          "conceptRowCount": 12,
+          "excludedNonCurrentNCount": 55
+        },
+        {
+          "symbol": "002916.SZ",
+          "snapshotId": "2aa9edad7b724e81a95438b8bb4e044c",
+          "observedAt": "2026-11-06T00:01:05.271110+00:00",
+          "rowCount": 102,
+          "conceptRowCount": 19,
+          "excludedNonCurrentNCount": 83
+        }
+      ],
+      "items": [
+        {
+          "stockCode": "600519",
+          "stockName": "贵州茅台",
+          "conceptCode": "885705.TI",
+          "conceptName": "乡村振兴"
+        },
+        {
+          "stockCode": "600519",
+          "stockName": "贵州茅台",
+          "conceptCode": "885663.TI",
+          "conceptName": "证金持股"
+        },
+        {
+          "stockCode": "600519",
+          "stockName": "贵州茅台",
+          "conceptCode": "885916.TI",
+          "conceptName": "同花顺漂亮100"
+        },
+        {
+          "stockCode": "600519",
+          "stockName": "贵州茅台",
+          "conceptCode": "885761.TI",
+          "conceptName": "超级品牌"
+        },
+        {
+          "stockCode": "600519",
+          "stockName": "贵州茅台",
+          "conceptCode": "885525.TI",
+          "conceptName": "白酒概念"
+        },
+        {
+          "stockCode": "600519",
+          "stockName": "贵州茅台",
+          "conceptCode": "886086.TI",
+          "conceptName": "西部大开发"
+        },
+        {
+          "stockCode": "600519",
+          "stockName": "贵州茅台",
+          "conceptCode": "883302.TI",
+          "conceptName": "上证180成份股"
+        },
+        {
+          "stockCode": "600519",
+          "stockName": "贵州茅台",
+          "conceptCode": "886021.TI",
+          "conceptName": "国企改革"
+        },
+        {
+          "stockCode": "600519",
+          "stockName": "贵州茅台",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "600519",
+          "stockName": "贵州茅台",
+          "conceptCode": "883300.TI",
+          "conceptName": "沪深300样本股"
+        },
+        {
+          "stockCode": "600519",
+          "stockName": "贵州茅台",
+          "conceptCode": "885520.TI",
+          "conceptName": "沪股通"
+        },
+        {
+          "stockCode": "600519",
+          "stockName": "贵州茅台",
+          "conceptCode": "883301.TI",
+          "conceptName": "上证50样本股"
+        },
+        {
+          "stockCode": "600809",
+          "stockName": "山西汾酒",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "600809",
+          "stockName": "山西汾酒",
+          "conceptCode": "886021.TI",
+          "conceptName": "国企改革"
+        },
+        {
+          "stockCode": "600809",
+          "stockName": "山西汾酒",
+          "conceptCode": "885520.TI",
+          "conceptName": "沪股通"
+        },
+        {
+          "stockCode": "600809",
+          "stockName": "山西汾酒",
+          "conceptCode": "883300.TI",
+          "conceptName": "沪深300样本股"
+        },
+        {
+          "stockCode": "600809",
+          "stockName": "山西汾酒",
+          "conceptCode": "885916.TI",
+          "conceptName": "同花顺漂亮100"
+        },
+        {
+          "stockCode": "600809",
+          "stockName": "山西汾酒",
+          "conceptCode": "883301.TI",
+          "conceptName": "上证50样本股"
+        },
+        {
+          "stockCode": "600809",
+          "stockName": "山西汾酒",
+          "conceptCode": "883302.TI",
+          "conceptName": "上证180成份股"
+        },
+        {
+          "stockCode": "600809",
+          "stockName": "山西汾酒",
+          "conceptCode": "885525.TI",
+          "conceptName": "白酒概念"
+        },
+        {
+          "stockCode": "000858",
+          "stockName": "五粮液",
+          "conceptCode": "886086.TI",
+          "conceptName": "西部大开发"
+        },
+        {
+          "stockCode": "000858",
+          "stockName": "五粮液",
+          "conceptCode": "886110.TI",
+          "conceptName": "2026中报预增"
+        },
+        {
+          "stockCode": "000858",
+          "stockName": "五粮液",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "000858",
+          "stockName": "五粮液",
+          "conceptCode": "885761.TI",
+          "conceptName": "超级品牌"
+        },
+        {
+          "stockCode": "000858",
+          "stockName": "五粮液",
+          "conceptCode": "885916.TI",
+          "conceptName": "同花顺漂亮100"
+        },
+        {
+          "stockCode": "000858",
+          "stockName": "五粮液",
+          "conceptCode": "886072.TI",
+          "conceptName": "高股息精选"
+        },
+        {
+          "stockCode": "000858",
+          "stockName": "五粮液",
+          "conceptCode": "883300.TI",
+          "conceptName": "沪深300样本股"
+        },
+        {
+          "stockCode": "000858",
+          "stockName": "五粮液",
+          "conceptCode": "885620.TI",
+          "conceptName": "参股券商"
+        },
+        {
+          "stockCode": "000858",
+          "stockName": "五粮液",
+          "conceptCode": "885663.TI",
+          "conceptName": "证金持股"
+        },
+        {
+          "stockCode": "000858",
+          "stockName": "五粮液",
+          "conceptCode": "886021.TI",
+          "conceptName": "国企改革"
+        },
+        {
+          "stockCode": "000858",
+          "stockName": "五粮液",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "000858",
+          "stockName": "五粮液",
+          "conceptCode": "885525.TI",
+          "conceptName": "白酒概念"
+        },
+        {
+          "stockCode": "000568",
+          "stockName": "泸州老窖",
+          "conceptCode": "885620.TI",
+          "conceptName": "参股券商"
+        },
+        {
+          "stockCode": "000568",
+          "stockName": "泸州老窖",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "000568",
+          "stockName": "泸州老窖",
+          "conceptCode": "885663.TI",
+          "conceptName": "证金持股"
+        },
+        {
+          "stockCode": "000568",
+          "stockName": "泸州老窖",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "000568",
+          "stockName": "泸州老窖",
+          "conceptCode": "886021.TI",
+          "conceptName": "国企改革"
+        },
+        {
+          "stockCode": "000568",
+          "stockName": "泸州老窖",
+          "conceptCode": "885761.TI",
+          "conceptName": "超级品牌"
+        },
+        {
+          "stockCode": "000568",
+          "stockName": "泸州老窖",
+          "conceptCode": "885916.TI",
+          "conceptName": "同花顺漂亮100"
+        },
+        {
+          "stockCode": "000568",
+          "stockName": "泸州老窖",
+          "conceptCode": "883300.TI",
+          "conceptName": "沪深300样本股"
+        },
+        {
+          "stockCode": "000568",
+          "stockName": "泸州老窖",
+          "conceptCode": "886086.TI",
+          "conceptName": "西部大开发"
+        },
+        {
+          "stockCode": "000568",
+          "stockName": "泸州老窖",
+          "conceptCode": "886072.TI",
+          "conceptName": "高股息精选"
+        },
+        {
+          "stockCode": "000568",
+          "stockName": "泸州老窖",
+          "conceptCode": "885525.TI",
+          "conceptName": "白酒概念"
+        },
+        {
+          "stockCode": "000568",
+          "stockName": "泸州老窖",
+          "conceptCode": "885780.TI",
+          "conceptName": "啤酒概念"
+        },
+        {
+          "stockCode": "002027",
+          "stockName": "分众传媒",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "002027",
+          "stockName": "分众传媒",
+          "conceptCode": "885615.TI",
+          "conceptName": "体育产业"
+        },
+        {
+          "stockCode": "002027",
+          "stockName": "分众传媒",
+          "conceptCode": "886108.TI",
+          "conceptName": "AI应用"
+        },
+        {
+          "stockCode": "002027",
+          "stockName": "分众传媒",
+          "conceptCode": "883300.TI",
+          "conceptName": "沪深300样本股"
+        },
+        {
+          "stockCode": "002027",
+          "stockName": "分众传媒",
+          "conceptCode": "886099.TI",
+          "conceptName": "AI智能体"
+        },
+        {
+          "stockCode": "002027",
+          "stockName": "分众传媒",
+          "conceptCode": "885418.TI",
+          "conceptName": "文化传媒概念"
+        },
+        {
+          "stockCode": "002027",
+          "stockName": "分众传媒",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "002027",
+          "stockName": "分众传媒",
+          "conceptCode": "886072.TI",
+          "conceptName": "高股息精选"
+        },
+        {
+          "stockCode": "002027",
+          "stockName": "分众传媒",
+          "conceptCode": "885916.TI",
+          "conceptName": "同花顺漂亮100"
+        },
+        {
+          "stockCode": "002027",
+          "stockName": "分众传媒",
+          "conceptCode": "886100.TI",
+          "conceptName": "DeepSeek概念"
+        },
+        {
+          "stockCode": "002027",
+          "stockName": "分众传媒",
+          "conceptCode": "885611.TI",
+          "conceptName": "阿里巴巴概念"
+        },
+        {
+          "stockCode": "002371",
+          "stockName": "北方华创",
+          "conceptCode": "885738.TI",
+          "conceptName": "OLED"
+        },
+        {
+          "stockCode": "002371",
+          "stockName": "北方华创",
+          "conceptCode": "885893.TI",
+          "conceptName": "国家大基金持股"
+        },
+        {
+          "stockCode": "002371",
+          "stockName": "北方华创",
+          "conceptCode": "886009.TI",
+          "conceptName": "先进封装"
+        },
+        {
+          "stockCode": "002371",
+          "stockName": "北方华创",
+          "conceptCode": "885897.TI",
+          "conceptName": "中芯国际概念"
+        },
+        {
+          "stockCode": "002371",
+          "stockName": "北方华创",
+          "conceptCode": "885908.TI",
+          "conceptName": "第三代半导体"
+        },
+        {
+          "stockCode": "002371",
+          "stockName": "北方华创",
+          "conceptCode": "886102.TI",
+          "conceptName": "中国AI 50"
+        },
+        {
+          "stockCode": "002371",
+          "stockName": "北方华创",
+          "conceptCode": "883300.TI",
+          "conceptName": "沪深300样本股"
+        },
+        {
+          "stockCode": "002371",
+          "stockName": "北方华创",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "002371",
+          "stockName": "北方华创",
+          "conceptCode": "885916.TI",
+          "conceptName": "同花顺漂亮100"
+        },
+        {
+          "stockCode": "002371",
+          "stockName": "北方华创",
+          "conceptCode": "885843.TI",
+          "conceptName": "华为海思概念股"
+        },
+        {
+          "stockCode": "002371",
+          "stockName": "北方华创",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "002371",
+          "stockName": "北方华创",
+          "conceptCode": "885710.TI",
+          "conceptName": "锂电池概念"
+        },
+        {
+          "stockCode": "002371",
+          "stockName": "北方华创",
+          "conceptCode": "885531.TI",
+          "conceptName": "光伏概念"
+        },
+        {
+          "stockCode": "002371",
+          "stockName": "北方华创",
+          "conceptCode": "886096.TI",
+          "conceptName": "同花顺新质50"
+        },
+        {
+          "stockCode": "002371",
+          "stockName": "北方华创",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "002371",
+          "stockName": "北方华创",
+          "conceptCode": "886042.TI",
+          "conceptName": "存储芯片"
+        },
+        {
+          "stockCode": "002371",
+          "stockName": "北方华创",
+          "conceptCode": "886021.TI",
+          "conceptName": "国企改革"
+        },
+        {
+          "stockCode": "300502",
+          "stockName": "新易盛",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "300502",
+          "stockName": "新易盛",
+          "conceptCode": "886033.TI",
+          "conceptName": "共封装光学(CPO)"
+        },
+        {
+          "stockCode": "300502",
+          "stockName": "新易盛",
+          "conceptCode": "885887.TI",
+          "conceptName": "数据中心(AIDC)"
+        },
+        {
+          "stockCode": "300502",
+          "stockName": "新易盛",
+          "conceptCode": "886102.TI",
+          "conceptName": "中国AI 50"
+        },
+        {
+          "stockCode": "300502",
+          "stockName": "新易盛",
+          "conceptCode": "886110.TI",
+          "conceptName": "2026中报预增"
+        },
+        {
+          "stockCode": "300502",
+          "stockName": "新易盛",
+          "conceptCode": "883300.TI",
+          "conceptName": "沪深300样本股"
+        },
+        {
+          "stockCode": "300502",
+          "stockName": "新易盛",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "300502",
+          "stockName": "新易盛",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "300502",
+          "stockName": "新易盛",
+          "conceptCode": "885556.TI",
+          "conceptName": "5G"
+        },
+        {
+          "stockCode": "300502",
+          "stockName": "新易盛",
+          "conceptCode": "886086.TI",
+          "conceptName": "西部大开发"
+        },
+        {
+          "stockCode": "300502",
+          "stockName": "新易盛",
+          "conceptCode": "885840.TI",
+          "conceptName": "人民币贬值受益"
+        },
+        {
+          "stockCode": "300832",
+          "stockName": "新产业",
+          "conceptCode": "885994.TI",
+          "conceptName": "猴痘概念"
+        },
+        {
+          "stockCode": "300832",
+          "stockName": "新产业",
+          "conceptCode": "885539.TI",
+          "conceptName": "医疗器械概念"
+        },
+        {
+          "stockCode": "300832",
+          "stockName": "新产业",
+          "conceptCode": "885879.TI",
+          "conceptName": "流感"
+        },
+        {
+          "stockCode": "300832",
+          "stockName": "新产业",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "300832",
+          "stockName": "新产业",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "300832",
+          "stockName": "新产业",
+          "conceptCode": "886100.TI",
+          "conceptName": "DeepSeek概念"
+        },
+        {
+          "stockCode": "300832",
+          "stockName": "新产业",
+          "conceptCode": "885402.TI",
+          "conceptName": "智能医疗"
+        },
+        {
+          "stockCode": "300832",
+          "stockName": "新产业",
+          "conceptCode": "883300.TI",
+          "conceptName": "沪深300样本股"
+        },
+        {
+          "stockCode": "300832",
+          "stockName": "新产业",
+          "conceptCode": "885989.TI",
+          "conceptName": "肝炎概念"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "885887.TI",
+          "conceptName": "数据中心(AIDC)"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "885376.TI",
+          "conceptName": "苹果概念"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "885728.TI",
+          "conceptName": "人工智能"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "885556.TI",
+          "conceptName": "5G"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "885916.TI",
+          "conceptName": "同花顺漂亮100"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "886044.TI",
+          "conceptName": "液冷服务器"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "886096.TI",
+          "conceptName": "同花顺新质50"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "885783.TI",
+          "conceptName": "工业互联网"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "885312.TI",
+          "conceptName": "物联网"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "885611.TI",
+          "conceptName": "阿里巴巴概念"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "885413.TI",
+          "conceptName": "创投"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "885786.TI",
+          "conceptName": "富士康概念"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "885431.TI",
+          "conceptName": "新能源汽车"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "886110.TI",
+          "conceptName": "2026中报预增"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "885539.TI",
+          "conceptName": "医疗器械概念"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "883300.TI",
+          "conceptName": "沪深300样本股"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "886048.TI",
+          "conceptName": "英伟达概念"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "885378.TI",
+          "conceptName": "智慧城市"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "886033.TI",
+          "conceptName": "共封装光学(CPO)"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "885709.TI",
+          "conceptName": "虚拟现实"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "886082.TI",
+          "conceptName": "同花顺果指数"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "885362.TI",
+          "conceptName": "云计算"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "883302.TI",
+          "conceptName": "上证180成份股"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "885517.TI",
+          "conceptName": "机器人概念"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "886069.TI",
+          "conceptName": "人形机器人"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "885939.TI",
+          "conceptName": "海峡两岸"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "886050.TI",
+          "conceptName": "算力租赁"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "885957.TI",
+          "conceptName": "东数西算(算力)"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "885520.TI",
+          "conceptName": "沪股通"
+        },
+        {
+          "stockCode": "601138",
+          "stockName": "工业富联",
+          "conceptCode": "886075.TI",
+          "conceptName": "同花顺出海50"
+        },
+        {
+          "stockCode": "300666",
+          "stockName": "江丰电子",
+          "conceptCode": "886042.TI",
+          "conceptName": "存储芯片"
+        },
+        {
+          "stockCode": "300666",
+          "stockName": "江丰电子",
+          "conceptCode": "883304.TI",
+          "conceptName": "中证500成份股"
+        },
+        {
+          "stockCode": "300666",
+          "stockName": "江丰电子",
+          "conceptCode": "885908.TI",
+          "conceptName": "第三代半导体"
+        },
+        {
+          "stockCode": "300666",
+          "stockName": "江丰电子",
+          "conceptCode": "886110.TI",
+          "conceptName": "2026中报预增"
+        },
+        {
+          "stockCode": "300666",
+          "stockName": "江丰电子",
+          "conceptCode": "885531.TI",
+          "conceptName": "光伏概念"
+        },
+        {
+          "stockCode": "300666",
+          "stockName": "江丰电子",
+          "conceptCode": "885924.TI",
+          "conceptName": "共同富裕示范区"
+        },
+        {
+          "stockCode": "300666",
+          "stockName": "江丰电子",
+          "conceptCode": "885738.TI",
+          "conceptName": "OLED"
+        },
+        {
+          "stockCode": "300666",
+          "stockName": "江丰电子",
+          "conceptCode": "885591.TI",
+          "conceptName": "中韩自贸区"
+        },
+        {
+          "stockCode": "300666",
+          "stockName": "江丰电子",
+          "conceptCode": "886054.TI",
+          "conceptName": "光刻机"
+        },
+        {
+          "stockCode": "300666",
+          "stockName": "江丰电子",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "300666",
+          "stockName": "江丰电子",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "300666",
+          "stockName": "江丰电子",
+          "conceptCode": "885897.TI",
+          "conceptName": "中芯国际概念"
+        },
+        {
+          "stockCode": "300666",
+          "stockName": "江丰电子",
+          "conceptCode": "885650.TI",
+          "conceptName": "碳纤维"
+        },
+        {
+          "stockCode": "300666",
+          "stockName": "江丰电子",
+          "conceptCode": "885939.TI",
+          "conceptName": "海峡两岸"
+        },
+        {
+          "stockCode": "300666",
+          "stockName": "江丰电子",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "002080",
+          "stockName": "中材科技",
+          "conceptCode": "885431.TI",
+          "conceptName": "新能源汽车"
+        },
+        {
+          "stockCode": "002080",
+          "stockName": "中材科技",
+          "conceptCode": "885741.TI",
+          "conceptName": "中字头股票"
+        },
+        {
+          "stockCode": "002080",
+          "stockName": "中材科技",
+          "conceptCode": "885426.TI",
+          "conceptName": "海工装备"
+        },
+        {
+          "stockCode": "002080",
+          "stockName": "中材科技",
+          "conceptCode": "885494.TI",
+          "conceptName": "一带一路"
+        },
+        {
+          "stockCode": "002080",
+          "stockName": "中材科技",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "002080",
+          "stockName": "中材科技",
+          "conceptCode": "885700.TI",
+          "conceptName": "军工"
+        },
+        {
+          "stockCode": "002080",
+          "stockName": "中材科技",
+          "conceptCode": "885556.TI",
+          "conceptName": "5G"
+        },
+        {
+          "stockCode": "002080",
+          "stockName": "中材科技",
+          "conceptCode": "886037.TI",
+          "conceptName": "6G概念"
+        },
+        {
+          "stockCode": "002080",
+          "stockName": "中材科技",
+          "conceptCode": "886032.TI",
+          "conceptName": "固态电池"
+        },
+        {
+          "stockCode": "002080",
+          "stockName": "中材科技",
+          "conceptCode": "886078.TI",
+          "conceptName": "商业航天"
+        },
+        {
+          "stockCode": "002080",
+          "stockName": "中材科技",
+          "conceptCode": "883304.TI",
+          "conceptName": "中证500成份股"
+        },
+        {
+          "stockCode": "002080",
+          "stockName": "中材科技",
+          "conceptCode": "885710.TI",
+          "conceptName": "锂电池概念"
+        },
+        {
+          "stockCode": "002080",
+          "stockName": "中材科技",
+          "conceptCode": "885775.TI",
+          "conceptName": "燃料电池"
+        },
+        {
+          "stockCode": "002080",
+          "stockName": "中材科技",
+          "conceptCode": "885959.TI",
+          "conceptName": "PCB概念"
+        },
+        {
+          "stockCode": "002080",
+          "stockName": "中材科技",
+          "conceptCode": "885595.TI",
+          "conceptName": "央企国企改革"
+        },
+        {
+          "stockCode": "002080",
+          "stockName": "中材科技",
+          "conceptCode": "885412.TI",
+          "conceptName": "污水处理"
+        },
+        {
+          "stockCode": "002080",
+          "stockName": "中材科技",
+          "conceptCode": "885641.TI",
+          "conceptName": "风电"
+        },
+        {
+          "stockCode": "002080",
+          "stockName": "中材科技",
+          "conceptCode": "885823.TI",
+          "conceptName": "氢能源"
+        },
+        {
+          "stockCode": "002080",
+          "stockName": "中材科技",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "002080",
+          "stockName": "中材科技",
+          "conceptCode": "885564.TI",
+          "conceptName": "无人机"
+        },
+        {
+          "stockCode": "002080",
+          "stockName": "中材科技",
+          "conceptCode": "886021.TI",
+          "conceptName": "国企改革"
+        },
+        {
+          "stockCode": "002080",
+          "stockName": "中材科技",
+          "conceptCode": "885789.TI",
+          "conceptName": "宁德时代概念"
+        },
+        {
+          "stockCode": "600176",
+          "stockName": "中国巨石",
+          "conceptCode": "885832.TI",
+          "conceptName": "长三角一体化"
+        },
+        {
+          "stockCode": "600176",
+          "stockName": "中国巨石",
+          "conceptCode": "885494.TI",
+          "conceptName": "一带一路"
+        },
+        {
+          "stockCode": "600176",
+          "stockName": "中国巨石",
+          "conceptCode": "883302.TI",
+          "conceptName": "上证180成份股"
+        },
+        {
+          "stockCode": "600176",
+          "stockName": "中国巨石",
+          "conceptCode": "885520.TI",
+          "conceptName": "沪股通"
+        },
+        {
+          "stockCode": "600176",
+          "stockName": "中国巨石",
+          "conceptCode": "886109.TI",
+          "conceptName": "2026一季报预增"
+        },
+        {
+          "stockCode": "600176",
+          "stockName": "中国巨石",
+          "conceptCode": "886100.TI",
+          "conceptName": "DeepSeek概念"
+        },
+        {
+          "stockCode": "600176",
+          "stockName": "中国巨石",
+          "conceptCode": "885531.TI",
+          "conceptName": "光伏概念"
+        },
+        {
+          "stockCode": "600176",
+          "stockName": "中国巨石",
+          "conceptCode": "886021.TI",
+          "conceptName": "国企改革"
+        },
+        {
+          "stockCode": "600176",
+          "stockName": "中国巨石",
+          "conceptCode": "886045.TI",
+          "conceptName": "同花顺中特估100"
+        },
+        {
+          "stockCode": "600176",
+          "stockName": "中国巨石",
+          "conceptCode": "886110.TI",
+          "conceptName": "2026中报预增"
+        },
+        {
+          "stockCode": "600176",
+          "stockName": "中国巨石",
+          "conceptCode": "885641.TI",
+          "conceptName": "风电"
+        },
+        {
+          "stockCode": "600176",
+          "stockName": "中国巨石",
+          "conceptCode": "885595.TI",
+          "conceptName": "央企国企改革"
+        },
+        {
+          "stockCode": "600176",
+          "stockName": "中国巨石",
+          "conceptCode": "885959.TI",
+          "conceptName": "PCB概念"
+        },
+        {
+          "stockCode": "600176",
+          "stockName": "中国巨石",
+          "conceptCode": "886063.TI",
+          "conceptName": "PEEK材料"
+        },
+        {
+          "stockCode": "600176",
+          "stockName": "中国巨石",
+          "conceptCode": "883300.TI",
+          "conceptName": "沪深300样本股"
+        },
+        {
+          "stockCode": "600176",
+          "stockName": "中国巨石",
+          "conceptCode": "885741.TI",
+          "conceptName": "中字头股票"
+        },
+        {
+          "stockCode": "600176",
+          "stockName": "中国巨石",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "688019",
+          "stockName": "安集科技",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "688019",
+          "stockName": "安集科技",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "688019",
+          "stockName": "安集科技",
+          "conceptCode": "886042.TI",
+          "conceptName": "存储芯片"
+        },
+        {
+          "stockCode": "688019",
+          "stockName": "安集科技",
+          "conceptCode": "883303.TI",
+          "conceptName": "上证380成份股"
+        },
+        {
+          "stockCode": "688019",
+          "stockName": "安集科技",
+          "conceptCode": "885929.TI",
+          "conceptName": "专精特新"
+        },
+        {
+          "stockCode": "688019",
+          "stockName": "安集科技",
+          "conceptCode": "885472.TI",
+          "conceptName": "上海自贸区"
+        },
+        {
+          "stockCode": "688019",
+          "stockName": "安集科技",
+          "conceptCode": "885908.TI",
+          "conceptName": "第三代半导体"
+        },
+        {
+          "stockCode": "688019",
+          "stockName": "安集科技",
+          "conceptCode": "885897.TI",
+          "conceptName": "中芯国际概念"
+        },
+        {
+          "stockCode": "688019",
+          "stockName": "安集科技",
+          "conceptCode": "886009.TI",
+          "conceptName": "先进封装"
+        },
+        {
+          "stockCode": "688019",
+          "stockName": "安集科技",
+          "conceptCode": "885864.TI",
+          "conceptName": "光刻胶"
+        },
+        {
+          "stockCode": "688019",
+          "stockName": "安集科技",
+          "conceptCode": "885520.TI",
+          "conceptName": "沪股通"
+        },
+        {
+          "stockCode": "688019",
+          "stockName": "安集科技",
+          "conceptCode": "883304.TI",
+          "conceptName": "中证500成份股"
+        },
+        {
+          "stockCode": "600183",
+          "stockName": "生益科技",
+          "conceptCode": "886078.TI",
+          "conceptName": "商业航天"
+        },
+        {
+          "stockCode": "600183",
+          "stockName": "生益科技",
+          "conceptCode": "886033.TI",
+          "conceptName": "共封装光学(CPO)"
+        },
+        {
+          "stockCode": "600183",
+          "stockName": "生益科技",
+          "conceptCode": "885959.TI",
+          "conceptName": "PCB概念"
+        },
+        {
+          "stockCode": "600183",
+          "stockName": "生益科技",
+          "conceptCode": "883301.TI",
+          "conceptName": "上证50样本股"
+        },
+        {
+          "stockCode": "600183",
+          "stockName": "生益科技",
+          "conceptCode": "886110.TI",
+          "conceptName": "2026中报预增"
+        },
+        {
+          "stockCode": "600183",
+          "stockName": "生益科技",
+          "conceptCode": "886035.TI",
+          "conceptName": "毫米波雷达"
+        },
+        {
+          "stockCode": "600183",
+          "stockName": "生益科技",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "600183",
+          "stockName": "生益科技",
+          "conceptCode": "885545.TI",
+          "conceptName": "汽车电子"
+        },
+        {
+          "stockCode": "600183",
+          "stockName": "生益科技",
+          "conceptCode": "886042.TI",
+          "conceptName": "存储芯片"
+        },
+        {
+          "stockCode": "600183",
+          "stockName": "生益科技",
+          "conceptCode": "885806.TI",
+          "conceptName": "华为概念"
+        },
+        {
+          "stockCode": "600183",
+          "stockName": "生益科技",
+          "conceptCode": "883303.TI",
+          "conceptName": "上证380成份股"
+        },
+        {
+          "stockCode": "600183",
+          "stockName": "生益科技",
+          "conceptCode": "883300.TI",
+          "conceptName": "沪深300样本股"
+        },
+        {
+          "stockCode": "600183",
+          "stockName": "生益科技",
+          "conceptCode": "885431.TI",
+          "conceptName": "新能源汽车"
+        },
+        {
+          "stockCode": "600183",
+          "stockName": "生益科技",
+          "conceptCode": "886009.TI",
+          "conceptName": "先进封装"
+        },
+        {
+          "stockCode": "600183",
+          "stockName": "生益科技",
+          "conceptCode": "885875.TI",
+          "conceptName": "MiniLED"
+        },
+        {
+          "stockCode": "600183",
+          "stockName": "生益科技",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "600183",
+          "stockName": "生益科技",
+          "conceptCode": "883302.TI",
+          "conceptName": "上证180成份股"
+        },
+        {
+          "stockCode": "600183",
+          "stockName": "生益科技",
+          "conceptCode": "885520.TI",
+          "conceptName": "沪股通"
+        },
+        {
+          "stockCode": "600183",
+          "stockName": "生益科技",
+          "conceptCode": "885556.TI",
+          "conceptName": "5G"
+        },
+        {
+          "stockCode": "603986",
+          "stockName": "兆易创新",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "603986",
+          "stockName": "兆易创新",
+          "conceptCode": "885868.TI",
+          "conceptName": "无线耳机"
+        },
+        {
+          "stockCode": "603986",
+          "stockName": "兆易创新",
+          "conceptCode": "885710.TI",
+          "conceptName": "锂电池概念"
+        },
+        {
+          "stockCode": "603986",
+          "stockName": "兆易创新",
+          "conceptCode": "885945.TI",
+          "conceptName": "汽车芯片"
+        },
+        {
+          "stockCode": "603986",
+          "stockName": "兆易创新",
+          "conceptCode": "886042.TI",
+          "conceptName": "存储芯片"
+        },
+        {
+          "stockCode": "603986",
+          "stockName": "兆易创新",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "603986",
+          "stockName": "兆易创新",
+          "conceptCode": "886110.TI",
+          "conceptName": "2026中报预增"
+        },
+        {
+          "stockCode": "603986",
+          "stockName": "兆易创新",
+          "conceptCode": "886069.TI",
+          "conceptName": "人形机器人"
+        },
+        {
+          "stockCode": "603986",
+          "stockName": "兆易创新",
+          "conceptCode": "885531.TI",
+          "conceptName": "光伏概念"
+        },
+        {
+          "stockCode": "603986",
+          "stockName": "兆易创新",
+          "conceptCode": "883300.TI",
+          "conceptName": "沪深300样本股"
+        },
+        {
+          "stockCode": "603986",
+          "stockName": "兆易创新",
+          "conceptCode": "885545.TI",
+          "conceptName": "汽车电子"
+        },
+        {
+          "stockCode": "603986",
+          "stockName": "兆易创新",
+          "conceptCode": "885840.TI",
+          "conceptName": "人民币贬值受益"
+        },
+        {
+          "stockCode": "603986",
+          "stockName": "兆易创新",
+          "conceptCode": "885520.TI",
+          "conceptName": "沪股通"
+        },
+        {
+          "stockCode": "603986",
+          "stockName": "兆易创新",
+          "conceptCode": "885312.TI",
+          "conceptName": "物联网"
+        },
+        {
+          "stockCode": "603986",
+          "stockName": "兆易创新",
+          "conceptCode": "885925.TI",
+          "conceptName": "MCU芯片"
+        },
+        {
+          "stockCode": "603986",
+          "stockName": "兆易创新",
+          "conceptCode": "883302.TI",
+          "conceptName": "上证180成份股"
+        },
+        {
+          "stockCode": "603986",
+          "stockName": "兆易创新",
+          "conceptCode": "883301.TI",
+          "conceptName": "上证50样本股"
+        },
+        {
+          "stockCode": "603986",
+          "stockName": "兆易创新",
+          "conceptCode": "885946.TI",
+          "conceptName": "传感器"
+        },
+        {
+          "stockCode": "603986",
+          "stockName": "兆易创新",
+          "conceptCode": "885785.TI",
+          "conceptName": "小米概念"
+        },
+        {
+          "stockCode": "300475",
+          "stockName": "香农芯创",
+          "conceptCode": "885890.TI",
+          "conceptName": "抖音概念(字节概念)"
+        },
+        {
+          "stockCode": "300475",
+          "stockName": "香农芯创",
+          "conceptCode": "886109.TI",
+          "conceptName": "2026一季报预增"
+        },
+        {
+          "stockCode": "300475",
+          "stockName": "香农芯创",
+          "conceptCode": "885840.TI",
+          "conceptName": "人民币贬值受益"
+        },
+        {
+          "stockCode": "300475",
+          "stockName": "香农芯创",
+          "conceptCode": "886042.TI",
+          "conceptName": "存储芯片"
+        },
+        {
+          "stockCode": "300475",
+          "stockName": "香农芯创",
+          "conceptCode": "885779.TI",
+          "conceptName": "腾讯概念"
+        },
+        {
+          "stockCode": "300475",
+          "stockName": "香农芯创",
+          "conceptCode": "886110.TI",
+          "conceptName": "2026中报预增"
+        },
+        {
+          "stockCode": "300475",
+          "stockName": "香农芯创",
+          "conceptCode": "885521.TI",
+          "conceptName": "粤港澳大湾区"
+        },
+        {
+          "stockCode": "300475",
+          "stockName": "香农芯创",
+          "conceptCode": "885957.TI",
+          "conceptName": "东数西算(算力)"
+        },
+        {
+          "stockCode": "300475",
+          "stockName": "香农芯创",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "300475",
+          "stockName": "香农芯创",
+          "conceptCode": "885887.TI",
+          "conceptName": "数据中心(AIDC)"
+        },
+        {
+          "stockCode": "300475",
+          "stockName": "香农芯创",
+          "conceptCode": "885611.TI",
+          "conceptName": "阿里巴巴概念"
+        },
+        {
+          "stockCode": "300475",
+          "stockName": "香农芯创",
+          "conceptCode": "885543.TI",
+          "conceptName": "家用电器"
+        },
+        {
+          "stockCode": "300475",
+          "stockName": "香农芯创",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "300475",
+          "stockName": "香农芯创",
+          "conceptCode": "883304.TI",
+          "conceptName": "中证500成份股"
+        },
+        {
+          "stockCode": "300475",
+          "stockName": "香农芯创",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "688519",
+          "stockName": "南亚新材",
+          "conceptCode": "886110.TI",
+          "conceptName": "2026中报预增"
+        },
+        {
+          "stockCode": "688519",
+          "stockName": "南亚新材",
+          "conceptCode": "886042.TI",
+          "conceptName": "存储芯片"
+        },
+        {
+          "stockCode": "688519",
+          "stockName": "南亚新材",
+          "conceptCode": "886033.TI",
+          "conceptName": "共封装光学(CPO)"
+        },
+        {
+          "stockCode": "688519",
+          "stockName": "南亚新材",
+          "conceptCode": "885875.TI",
+          "conceptName": "MiniLED"
+        },
+        {
+          "stockCode": "688519",
+          "stockName": "南亚新材",
+          "conceptCode": "885556.TI",
+          "conceptName": "5G"
+        },
+        {
+          "stockCode": "688519",
+          "stockName": "南亚新材",
+          "conceptCode": "885806.TI",
+          "conceptName": "华为概念"
+        },
+        {
+          "stockCode": "688519",
+          "stockName": "南亚新材",
+          "conceptCode": "885929.TI",
+          "conceptName": "专精特新"
+        },
+        {
+          "stockCode": "688519",
+          "stockName": "南亚新材",
+          "conceptCode": "885520.TI",
+          "conceptName": "沪股通"
+        },
+        {
+          "stockCode": "688519",
+          "stockName": "南亚新材",
+          "conceptCode": "885431.TI",
+          "conceptName": "新能源汽车"
+        },
+        {
+          "stockCode": "688519",
+          "stockName": "南亚新材",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "688519",
+          "stockName": "南亚新材",
+          "conceptCode": "885959.TI",
+          "conceptName": "PCB概念"
+        },
+        {
+          "stockCode": "688617",
+          "stockName": "惠泰医疗",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "688617",
+          "stockName": "惠泰医疗",
+          "conceptCode": "885520.TI",
+          "conceptName": "沪股通"
+        },
+        {
+          "stockCode": "688617",
+          "stockName": "惠泰医疗",
+          "conceptCode": "885539.TI",
+          "conceptName": "医疗器械概念"
+        },
+        {
+          "stockCode": "688617",
+          "stockName": "惠泰医疗",
+          "conceptCode": "883303.TI",
+          "conceptName": "上证380成份股"
+        },
+        {
+          "stockCode": "688617",
+          "stockName": "惠泰医疗",
+          "conceptCode": "885929.TI",
+          "conceptName": "专精特新"
+        },
+        {
+          "stockCode": "688617",
+          "stockName": "惠泰医疗",
+          "conceptCode": "883304.TI",
+          "conceptName": "中证500成份股"
+        },
+        {
+          "stockCode": "301611",
+          "stockName": "珂玛科技",
+          "conceptCode": "886054.TI",
+          "conceptName": "光刻机"
+        },
+        {
+          "stockCode": "301611",
+          "stockName": "珂玛科技",
+          "conceptCode": "886042.TI",
+          "conceptName": "存储芯片"
+        },
+        {
+          "stockCode": "301611",
+          "stockName": "珂玛科技",
+          "conceptCode": "885929.TI",
+          "conceptName": "专精特新"
+        },
+        {
+          "stockCode": "301611",
+          "stockName": "珂玛科技",
+          "conceptCode": "885908.TI",
+          "conceptName": "第三代半导体"
+        },
+        {
+          "stockCode": "301611",
+          "stockName": "珂玛科技",
+          "conceptCode": "885710.TI",
+          "conceptName": "锂电池概念"
+        },
+        {
+          "stockCode": "301611",
+          "stockName": "珂玛科技",
+          "conceptCode": "883304.TI",
+          "conceptName": "中证500成份股"
+        },
+        {
+          "stockCode": "301611",
+          "stockName": "珂玛科技",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "301611",
+          "stockName": "珂玛科技",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "301611",
+          "stockName": "珂玛科技",
+          "conceptCode": "885539.TI",
+          "conceptName": "医疗器械概念"
+        },
+        {
+          "stockCode": "301611",
+          "stockName": "珂玛科技",
+          "conceptCode": "885775.TI",
+          "conceptName": "燃料电池"
+        },
+        {
+          "stockCode": "301611",
+          "stockName": "珂玛科技",
+          "conceptCode": "885738.TI",
+          "conceptName": "OLED"
+        },
+        {
+          "stockCode": "301611",
+          "stockName": "珂玛科技",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "002916",
+          "stockName": "深南电路",
+          "conceptCode": "883300.TI",
+          "conceptName": "沪深300样本股"
+        },
+        {
+          "stockCode": "002916",
+          "stockName": "深南电路",
+          "conceptCode": "885556.TI",
+          "conceptName": "5G"
+        },
+        {
+          "stockCode": "002916",
+          "stockName": "深南电路",
+          "conceptCode": "886009.TI",
+          "conceptName": "先进封装"
+        },
+        {
+          "stockCode": "002916",
+          "stockName": "深南电路",
+          "conceptCode": "885893.TI",
+          "conceptName": "国家大基金持股"
+        },
+        {
+          "stockCode": "002916",
+          "stockName": "深南电路",
+          "conceptCode": "885521.TI",
+          "conceptName": "粤港澳大湾区"
+        },
+        {
+          "stockCode": "002916",
+          "stockName": "深南电路",
+          "conceptCode": "885545.TI",
+          "conceptName": "汽车电子"
+        },
+        {
+          "stockCode": "002916",
+          "stockName": "深南电路",
+          "conceptCode": "885376.TI",
+          "conceptName": "苹果概念"
+        },
+        {
+          "stockCode": "002916",
+          "stockName": "深南电路",
+          "conceptCode": "886042.TI",
+          "conceptName": "存储芯片"
+        },
+        {
+          "stockCode": "002916",
+          "stockName": "深南电路",
+          "conceptCode": "886110.TI",
+          "conceptName": "2026中报预增"
+        },
+        {
+          "stockCode": "002916",
+          "stockName": "深南电路",
+          "conceptCode": "885887.TI",
+          "conceptName": "数据中心(AIDC)"
+        },
+        {
+          "stockCode": "002916",
+          "stockName": "深南电路",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "002916",
+          "stockName": "深南电路",
+          "conceptCode": "885786.TI",
+          "conceptName": "富士康概念"
+        },
+        {
+          "stockCode": "002916",
+          "stockName": "深南电路",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "002916",
+          "stockName": "深南电路",
+          "conceptCode": "885959.TI",
+          "conceptName": "PCB概念"
+        },
+        {
+          "stockCode": "002916",
+          "stockName": "深南电路",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "002916",
+          "stockName": "深南电路",
+          "conceptCode": "885806.TI",
+          "conceptName": "华为概念"
+        },
+        {
+          "stockCode": "002916",
+          "stockName": "深南电路",
+          "conceptCode": "885595.TI",
+          "conceptName": "央企国企改革"
+        },
+        {
+          "stockCode": "002916",
+          "stockName": "深南电路",
+          "conceptCode": "885431.TI",
+          "conceptName": "新能源汽车"
+        },
+        {
+          "stockCode": "002916",
+          "stockName": "深南电路",
+          "conceptCode": "886021.TI",
+          "conceptName": "国企改革"
+        }
+      ],
+      "total": 291,
+      "dictionarySnapshotId": "7b69a7d1930249639e6f1cb76b15ea74",
+      "dictionaryRowCount": 395,
+      "conceptType": "N",
+      "methodology": "current-ths-membership-v1",
+      "historicalPointInTime": false
+    },
+    {
+      "source": "open_market_products",
+      "product": "concept_memberships",
+      "conceptSource": "THS",
+      "requestedSymbols": [
+        "688087.SH",
+        "688795.SH",
+        "688802.SH",
+        "688783.SH",
+        "301666.SZ",
+        "688759.SH",
+        "688820.SH",
+        "688790.SH",
+        "688781.SH",
+        "688808.SH",
+        "001399.SZ",
+        "688818.SH",
+        "301682.SZ",
+        "688797.SH",
+        "688712.SH",
+        "688785.SH",
+        "688813.SH",
+        "688635.SH",
+        "001257.SZ",
+        "603459.SH"
+      ],
+      "coveredSymbols": [
+        "688087.SH",
+        "688795.SH",
+        "688802.SH",
+        "688783.SH",
+        "301666.SZ",
+        "688759.SH",
+        "688820.SH",
+        "688790.SH",
+        "688781.SH",
+        "688808.SH",
+        "001399.SZ",
+        "688818.SH",
+        "301682.SZ",
+        "688797.SH",
+        "688712.SH",
+        "688785.SH",
+        "688813.SH",
+        "688635.SH",
+        "001257.SZ",
+        "603459.SH"
+      ],
+      "completeSubjectSnapshots": true,
+      "subjectSnapshots": [
+        {
+          "symbol": "688087.SH",
+          "snapshotId": "92b846a9d6c64c22be229735c391bd2c",
+          "observedAt": "2026-11-06T00:01:05.604659+00:00",
+          "rowCount": 48,
+          "conceptRowCount": 6,
+          "excludedNonCurrentNCount": 42
+        },
+        {
+          "symbol": "688795.SH",
+          "snapshotId": "bfe4fd09bb014dd5861ad14df61e5c24",
+          "observedAt": "2026-11-06T00:01:05.973556+00:00",
+          "rowCount": 56,
+          "conceptRowCount": 7,
+          "excludedNonCurrentNCount": 49
+        },
+        {
+          "symbol": "688802.SH",
+          "snapshotId": "08104b380c7b4bb6aba3f469dbc52490",
+          "observedAt": "2026-11-06T00:01:06.325742+00:00",
+          "rowCount": 67,
+          "conceptRowCount": 12,
+          "excludedNonCurrentNCount": 55
+        },
+        {
+          "symbol": "688783.SH",
+          "snapshotId": "420093e66117450babce20bae061de0e",
+          "observedAt": "2026-11-06T00:01:06.682869+00:00",
+          "rowCount": 68,
+          "conceptRowCount": 9,
+          "excludedNonCurrentNCount": 59
+        },
+        {
+          "symbol": "301666.SZ",
+          "snapshotId": "deb2783f66fc44d483afc49d228724e3",
+          "observedAt": "2026-11-06T00:01:07.043271+00:00",
+          "rowCount": 66,
+          "conceptRowCount": 16,
+          "excludedNonCurrentNCount": 50
+        },
+        {
+          "symbol": "688759.SH",
+          "snapshotId": "32f4564292a24c6bad2ee1957111da5c",
+          "observedAt": "2026-11-06T00:01:07.433297+00:00",
+          "rowCount": 47,
+          "conceptRowCount": 7,
+          "excludedNonCurrentNCount": 40
+        },
+        {
+          "symbol": "688820.SH",
+          "snapshotId": "a328cf1777774d3e9789f7252c8afba9",
+          "observedAt": "2026-11-06T00:01:07.760336+00:00",
+          "rowCount": 51,
+          "conceptRowCount": 7,
+          "excludedNonCurrentNCount": 44
+        },
+        {
+          "symbol": "688790.SH",
+          "snapshotId": "e801e817585f408f86de73493d5d9ecf",
+          "observedAt": "2026-11-06T00:01:08.121713+00:00",
+          "rowCount": 52,
+          "conceptRowCount": 15,
+          "excludedNonCurrentNCount": 37
+        },
+        {
+          "symbol": "688781.SH",
+          "snapshotId": "969aba257c0142f6b421a6def0b87200",
+          "observedAt": "2026-11-06T00:01:08.480396+00:00",
+          "rowCount": 50,
+          "conceptRowCount": 9,
+          "excludedNonCurrentNCount": 41
+        },
+        {
+          "symbol": "688808.SH",
+          "snapshotId": "1faf4d4285044c508d37a19e87ceadda",
+          "observedAt": "2026-11-06T00:01:08.841659+00:00",
+          "rowCount": 80,
+          "conceptRowCount": 11,
+          "excludedNonCurrentNCount": 69
+        },
+        {
+          "symbol": "001399.SZ",
+          "snapshotId": "bc224cec4d894554b70e5689f16be03c",
+          "observedAt": "2026-11-06T00:01:09.240481+00:00",
+          "rowCount": 74,
+          "conceptRowCount": 16,
+          "excludedNonCurrentNCount": 58
+        },
+        {
+          "symbol": "688818.SH",
+          "snapshotId": "fd0e9e3216124d17bb4127c3966c955d",
+          "observedAt": "2026-11-06T00:01:09.555392+00:00",
+          "rowCount": 71,
+          "conceptRowCount": 18,
+          "excludedNonCurrentNCount": 53
+        },
+        {
+          "symbol": "301682.SZ",
+          "snapshotId": "859dabaf3d814caa9ff3e64431b7670b",
+          "observedAt": "2026-11-06T00:01:09.908205+00:00",
+          "rowCount": 94,
+          "conceptRowCount": 32,
+          "excludedNonCurrentNCount": 62
+        },
+        {
+          "symbol": "688797.SH",
+          "snapshotId": "eb047cc2b19e45059280232a31f8051d",
+          "observedAt": "2026-11-06T00:01:10.278411+00:00",
+          "rowCount": 64,
+          "conceptRowCount": 12,
+          "excludedNonCurrentNCount": 52
+        },
+        {
+          "symbol": "688712.SH",
+          "snapshotId": "5b85268079924b82ab8af508532f8c83",
+          "observedAt": "2026-11-06T00:01:10.643208+00:00",
+          "rowCount": 42,
+          "conceptRowCount": 6,
+          "excludedNonCurrentNCount": 36
+        },
+        {
+          "symbol": "688785.SH",
+          "snapshotId": "d33791ffa3164756b46a05fa41c1ee35",
+          "observedAt": "2026-11-06T00:01:11.439528+00:00",
+          "rowCount": 57,
+          "conceptRowCount": 6,
+          "excludedNonCurrentNCount": 51
+        },
+        {
+          "symbol": "688813.SH",
+          "snapshotId": "44c1f2eb0de942dbb5dff69b5f17409a",
+          "observedAt": "2026-11-06T00:01:11.683016+00:00",
+          "rowCount": 80,
+          "conceptRowCount": 17,
+          "excludedNonCurrentNCount": 63
+        },
+        {
+          "symbol": "688635.SH",
+          "snapshotId": "f4ca54026c7b4ad99560d4894a3d8956",
+          "observedAt": "2026-11-06T00:01:11.855861+00:00",
+          "rowCount": 70,
+          "conceptRowCount": 11,
+          "excludedNonCurrentNCount": 59
+        },
+        {
+          "symbol": "001257.SZ",
+          "snapshotId": "0a2f1f3eac334634afb9a95c030b1f78",
+          "observedAt": "2026-11-06T00:01:12.205134+00:00",
+          "rowCount": 75,
+          "conceptRowCount": 9,
+          "excludedNonCurrentNCount": 66
+        },
+        {
+          "symbol": "603459.SH",
+          "snapshotId": "4c11cf1989ff44f5afce9149796d0e99",
+          "observedAt": "2026-11-06T00:01:12.582222+00:00",
+          "rowCount": 89,
+          "conceptRowCount": 26,
+          "excludedNonCurrentNCount": 63
+        }
+      ],
+      "items": [
+        {
+          "stockCode": "688087",
+          "stockName": "英科再生",
+          "conceptCode": "885520.TI",
+          "conceptName": "沪股通"
+        },
+        {
+          "stockCode": "688087",
+          "stockName": "英科再生",
+          "conceptCode": "885410.TI",
+          "conceptName": "固废处理"
+        },
+        {
+          "stockCode": "688087",
+          "stockName": "英科再生",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "688087",
+          "stockName": "英科再生",
+          "conceptCode": "885840.TI",
+          "conceptName": "人民币贬值受益"
+        },
+        {
+          "stockCode": "688087",
+          "stockName": "英科再生",
+          "conceptCode": "885919.TI",
+          "conceptName": "碳中和"
+        },
+        {
+          "stockCode": "688087",
+          "stockName": "英科再生",
+          "conceptCode": "885901.TI",
+          "conceptName": "可降解塑料"
+        },
+        {
+          "stockCode": "688795",
+          "stockName": "摩尔线程",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "688795",
+          "stockName": "摩尔线程",
+          "conceptCode": "885728.TI",
+          "conceptName": "人工智能"
+        },
+        {
+          "stockCode": "688795",
+          "stockName": "摩尔线程",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "688795",
+          "stockName": "摩尔线程",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "688795",
+          "stockName": "摩尔线程",
+          "conceptCode": "885907.TI",
+          "conceptName": "科创次新股"
+        },
+        {
+          "stockCode": "688795",
+          "stockName": "摩尔线程",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "688795",
+          "stockName": "摩尔线程",
+          "conceptCode": "886069.TI",
+          "conceptName": "人形机器人"
+        },
+        {
+          "stockCode": "688802",
+          "stockName": "沐曦股份",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "688802",
+          "stockName": "沐曦股份",
+          "conceptCode": "885728.TI",
+          "conceptName": "人工智能"
+        },
+        {
+          "stockCode": "688802",
+          "stockName": "沐曦股份",
+          "conceptCode": "886100.TI",
+          "conceptName": "DeepSeek概念"
+        },
+        {
+          "stockCode": "688802",
+          "stockName": "沐曦股份",
+          "conceptCode": "886090.TI",
+          "conceptName": "智谱AI"
+        },
+        {
+          "stockCode": "688802",
+          "stockName": "沐曦股份",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "688802",
+          "stockName": "沐曦股份",
+          "conceptCode": "885957.TI",
+          "conceptName": "东数西算(算力)"
+        },
+        {
+          "stockCode": "688802",
+          "stockName": "沐曦股份",
+          "conceptCode": "886009.TI",
+          "conceptName": "先进封装"
+        },
+        {
+          "stockCode": "688802",
+          "stockName": "沐曦股份",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "688802",
+          "stockName": "沐曦股份",
+          "conceptCode": "886069.TI",
+          "conceptName": "人形机器人"
+        },
+        {
+          "stockCode": "688802",
+          "stockName": "沐曦股份",
+          "conceptCode": "885907.TI",
+          "conceptName": "科创次新股"
+        },
+        {
+          "stockCode": "688802",
+          "stockName": "沐曦股份",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "688802",
+          "stockName": "沐曦股份",
+          "conceptCode": "886013.TI",
+          "conceptName": "信创"
+        },
+        {
+          "stockCode": "688783",
+          "stockName": "西安奕材",
+          "conceptCode": "886042.TI",
+          "conceptName": "存储芯片"
+        },
+        {
+          "stockCode": "688783",
+          "stockName": "西安奕材",
+          "conceptCode": "885925.TI",
+          "conceptName": "MCU芯片"
+        },
+        {
+          "stockCode": "688783",
+          "stockName": "西安奕材",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "688783",
+          "stockName": "西安奕材",
+          "conceptCode": "885907.TI",
+          "conceptName": "科创次新股"
+        },
+        {
+          "stockCode": "688783",
+          "stockName": "西安奕材",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "688783",
+          "stockName": "西安奕材",
+          "conceptCode": "886086.TI",
+          "conceptName": "西部大开发"
+        },
+        {
+          "stockCode": "688783",
+          "stockName": "西安奕材",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "688783",
+          "stockName": "西安奕材",
+          "conceptCode": "885893.TI",
+          "conceptName": "国家大基金持股"
+        },
+        {
+          "stockCode": "688783",
+          "stockName": "西安奕材",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "301666",
+          "stockName": "大普微",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "301666",
+          "stockName": "大普微",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "301666",
+          "stockName": "大普微",
+          "conceptCode": "886098.TI",
+          "conceptName": "小红书概念"
+        },
+        {
+          "stockCode": "301666",
+          "stockName": "大普微",
+          "conceptCode": "885887.TI",
+          "conceptName": "数据中心(AIDC)"
+        },
+        {
+          "stockCode": "301666",
+          "stockName": "大普微",
+          "conceptCode": "885611.TI",
+          "conceptName": "阿里巴巴概念"
+        },
+        {
+          "stockCode": "301666",
+          "stockName": "大普微",
+          "conceptCode": "885942.TI",
+          "conceptName": "数据安全"
+        },
+        {
+          "stockCode": "301666",
+          "stockName": "大普微",
+          "conceptCode": "886048.TI",
+          "conceptName": "英伟达概念"
+        },
+        {
+          "stockCode": "301666",
+          "stockName": "大普微",
+          "conceptCode": "885929.TI",
+          "conceptName": "专精特新"
+        },
+        {
+          "stockCode": "301666",
+          "stockName": "大普微",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "301666",
+          "stockName": "大普微",
+          "conceptCode": "885918.TI",
+          "conceptName": "快手概念"
+        },
+        {
+          "stockCode": "301666",
+          "stockName": "大普微",
+          "conceptCode": "886100.TI",
+          "conceptName": "DeepSeek概念"
+        },
+        {
+          "stockCode": "301666",
+          "stockName": "大普微",
+          "conceptCode": "885797.TI",
+          "conceptName": "百度概念"
+        },
+        {
+          "stockCode": "301666",
+          "stockName": "大普微",
+          "conceptCode": "886042.TI",
+          "conceptName": "存储芯片"
+        },
+        {
+          "stockCode": "301666",
+          "stockName": "大普微",
+          "conceptCode": "885890.TI",
+          "conceptName": "抖音概念(字节概念)"
+        },
+        {
+          "stockCode": "301666",
+          "stockName": "大普微",
+          "conceptCode": "885779.TI",
+          "conceptName": "腾讯概念"
+        },
+        {
+          "stockCode": "301666",
+          "stockName": "大普微",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "688759",
+          "stockName": "必贝特",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "688759",
+          "stockName": "必贝特",
+          "conceptCode": "885907.TI",
+          "conceptName": "科创次新股"
+        },
+        {
+          "stockCode": "688759",
+          "stockName": "必贝特",
+          "conceptCode": "886015.TI",
+          "conceptName": "创新药"
+        },
+        {
+          "stockCode": "688759",
+          "stockName": "必贝特",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "688759",
+          "stockName": "必贝特",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "688759",
+          "stockName": "必贝特",
+          "conceptCode": "885769.TI",
+          "conceptName": "细胞免疫治疗"
+        },
+        {
+          "stockCode": "688759",
+          "stockName": "必贝特",
+          "conceptCode": "886051.TI",
+          "conceptName": "减肥药"
+        },
+        {
+          "stockCode": "688820",
+          "stockName": "盛合晶微",
+          "conceptCode": "886042.TI",
+          "conceptName": "存储芯片"
+        },
+        {
+          "stockCode": "688820",
+          "stockName": "盛合晶微",
+          "conceptCode": "885907.TI",
+          "conceptName": "科创次新股"
+        },
+        {
+          "stockCode": "688820",
+          "stockName": "盛合晶微",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "688820",
+          "stockName": "盛合晶微",
+          "conceptCode": "886009.TI",
+          "conceptName": "先进封装"
+        },
+        {
+          "stockCode": "688820",
+          "stockName": "盛合晶微",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "688820",
+          "stockName": "盛合晶微",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "688820",
+          "stockName": "盛合晶微",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "688790",
+          "stockName": "昂瑞微",
+          "conceptCode": "885574.TI",
+          "conceptName": "卫星导航"
+        },
+        {
+          "stockCode": "688790",
+          "stockName": "昂瑞微",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "688790",
+          "stockName": "昂瑞微",
+          "conceptCode": "885785.TI",
+          "conceptName": "小米概念"
+        },
+        {
+          "stockCode": "688790",
+          "stockName": "昂瑞微",
+          "conceptCode": "885940.TI",
+          "conceptName": "WiFi6"
+        },
+        {
+          "stockCode": "688790",
+          "stockName": "昂瑞微",
+          "conceptCode": "886085.TI",
+          "conceptName": "AI眼镜"
+        },
+        {
+          "stockCode": "688790",
+          "stockName": "昂瑞微",
+          "conceptCode": "885945.TI",
+          "conceptName": "汽车芯片"
+        },
+        {
+          "stockCode": "688790",
+          "stockName": "昂瑞微",
+          "conceptCode": "885907.TI",
+          "conceptName": "科创次新股"
+        },
+        {
+          "stockCode": "688790",
+          "stockName": "昂瑞微",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "688790",
+          "stockName": "昂瑞微",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "688790",
+          "stockName": "昂瑞微",
+          "conceptCode": "885454.TI",
+          "conceptName": "智能穿戴"
+        },
+        {
+          "stockCode": "688790",
+          "stockName": "昂瑞微",
+          "conceptCode": "885806.TI",
+          "conceptName": "华为概念"
+        },
+        {
+          "stockCode": "688790",
+          "stockName": "昂瑞微",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "688790",
+          "stockName": "昂瑞微",
+          "conceptCode": "886078.TI",
+          "conceptName": "商业航天"
+        },
+        {
+          "stockCode": "688790",
+          "stockName": "昂瑞微",
+          "conceptCode": "885556.TI",
+          "conceptName": "5G"
+        },
+        {
+          "stockCode": "688790",
+          "stockName": "昂瑞微",
+          "conceptCode": "886037.TI",
+          "conceptName": "6G概念"
+        },
+        {
+          "stockCode": "688781",
+          "stockName": "视涯科技",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "688781",
+          "stockName": "视涯科技",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "688781",
+          "stockName": "视涯科技",
+          "conceptCode": "885907.TI",
+          "conceptName": "科创次新股"
+        },
+        {
+          "stockCode": "688781",
+          "stockName": "视涯科技",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "688781",
+          "stockName": "视涯科技",
+          "conceptCode": "885454.TI",
+          "conceptName": "智能穿戴"
+        },
+        {
+          "stockCode": "688781",
+          "stockName": "视涯科技",
+          "conceptCode": "885738.TI",
+          "conceptName": "OLED"
+        },
+        {
+          "stockCode": "688781",
+          "stockName": "视涯科技",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "688781",
+          "stockName": "视涯科技",
+          "conceptCode": "886085.TI",
+          "conceptName": "AI眼镜"
+        },
+        {
+          "stockCode": "688781",
+          "stockName": "视涯科技",
+          "conceptCode": "885890.TI",
+          "conceptName": "抖音概念(字节概念)"
+        },
+        {
+          "stockCode": "688808",
+          "stockName": "联讯仪器",
+          "conceptCode": "885907.TI",
+          "conceptName": "科创次新股"
+        },
+        {
+          "stockCode": "688808",
+          "stockName": "联讯仪器",
+          "conceptCode": "885427.TI",
+          "conceptName": "高端装备"
+        },
+        {
+          "stockCode": "688808",
+          "stockName": "联讯仪器",
+          "conceptCode": "886042.TI",
+          "conceptName": "存储芯片"
+        },
+        {
+          "stockCode": "688808",
+          "stockName": "联讯仪器",
+          "conceptCode": "886110.TI",
+          "conceptName": "2026中报预增"
+        },
+        {
+          "stockCode": "688808",
+          "stockName": "联讯仪器",
+          "conceptCode": "886033.TI",
+          "conceptName": "共封装光学(CPO)"
+        },
+        {
+          "stockCode": "688808",
+          "stockName": "联讯仪器",
+          "conceptCode": "886109.TI",
+          "conceptName": "2026一季报预增"
+        },
+        {
+          "stockCode": "688808",
+          "stockName": "联讯仪器",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "688808",
+          "stockName": "联讯仪器",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "688808",
+          "stockName": "联讯仪器",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "688808",
+          "stockName": "联讯仪器",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "688808",
+          "stockName": "联讯仪器",
+          "conceptCode": "885929.TI",
+          "conceptName": "专精特新"
+        },
+        {
+          "stockCode": "001399",
+          "stockName": "惠科股份",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "001399",
+          "stockName": "惠科股份",
+          "conceptCode": "885785.TI",
+          "conceptName": "小米概念"
+        },
+        {
+          "stockCode": "001399",
+          "stockName": "惠科股份",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "001399",
+          "stockName": "惠科股份",
+          "conceptCode": "886071.TI",
+          "conceptName": "AI PC"
+        },
+        {
+          "stockCode": "001399",
+          "stockName": "惠科股份",
+          "conceptCode": "885875.TI",
+          "conceptName": "MiniLED"
+        },
+        {
+          "stockCode": "001399",
+          "stockName": "惠科股份",
+          "conceptCode": "885987.TI",
+          "conceptName": "MicroLED概念"
+        },
+        {
+          "stockCode": "001399",
+          "stockName": "惠科股份",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "001399",
+          "stockName": "惠科股份",
+          "conceptCode": "885783.TI",
+          "conceptName": "工业互联网"
+        },
+        {
+          "stockCode": "001399",
+          "stockName": "惠科股份",
+          "conceptCode": "885800.TI",
+          "conceptName": "消费电子概念"
+        },
+        {
+          "stockCode": "001399",
+          "stockName": "惠科股份",
+          "conceptCode": "885738.TI",
+          "conceptName": "OLED"
+        },
+        {
+          "stockCode": "001399",
+          "stockName": "惠科股份",
+          "conceptCode": "886009.TI",
+          "conceptName": "先进封装"
+        },
+        {
+          "stockCode": "001399",
+          "stockName": "惠科股份",
+          "conceptCode": "885454.TI",
+          "conceptName": "智能穿戴"
+        },
+        {
+          "stockCode": "001399",
+          "stockName": "惠科股份",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "001399",
+          "stockName": "惠科股份",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "001399",
+          "stockName": "惠科股份",
+          "conceptCode": "885521.TI",
+          "conceptName": "粤港澳大湾区"
+        },
+        {
+          "stockCode": "001399",
+          "stockName": "惠科股份",
+          "conceptCode": "885953.TI",
+          "conceptName": "电子纸"
+        },
+        {
+          "stockCode": "688818",
+          "stockName": "电科蓝天",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "688818",
+          "stockName": "电科蓝天",
+          "conceptCode": "885564.TI",
+          "conceptName": "无人机"
+        },
+        {
+          "stockCode": "688818",
+          "stockName": "电科蓝天",
+          "conceptCode": "885921.TI",
+          "conceptName": "储能"
+        },
+        {
+          "stockCode": "688818",
+          "stockName": "电科蓝天",
+          "conceptCode": "886078.TI",
+          "conceptName": "商业航天"
+        },
+        {
+          "stockCode": "688818",
+          "stockName": "电科蓝天",
+          "conceptCode": "885907.TI",
+          "conceptName": "科创次新股"
+        },
+        {
+          "stockCode": "688818",
+          "stockName": "电科蓝天",
+          "conceptCode": "885574.TI",
+          "conceptName": "卫星导航"
+        },
+        {
+          "stockCode": "688818",
+          "stockName": "电科蓝天",
+          "conceptCode": "886032.TI",
+          "conceptName": "固态电池"
+        },
+        {
+          "stockCode": "688818",
+          "stockName": "电科蓝天",
+          "conceptCode": "886021.TI",
+          "conceptName": "国企改革"
+        },
+        {
+          "stockCode": "688818",
+          "stockName": "电科蓝天",
+          "conceptCode": "885517.TI",
+          "conceptName": "机器人概念"
+        },
+        {
+          "stockCode": "688818",
+          "stockName": "电科蓝天",
+          "conceptCode": "885710.TI",
+          "conceptName": "锂电池概念"
+        },
+        {
+          "stockCode": "688818",
+          "stockName": "电科蓝天",
+          "conceptCode": "885700.TI",
+          "conceptName": "军工"
+        },
+        {
+          "stockCode": "688818",
+          "stockName": "电科蓝天",
+          "conceptCode": "885775.TI",
+          "conceptName": "燃料电池"
+        },
+        {
+          "stockCode": "688818",
+          "stockName": "电科蓝天",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "688818",
+          "stockName": "电科蓝天",
+          "conceptCode": "885595.TI",
+          "conceptName": "央企国企改革"
+        },
+        {
+          "stockCode": "688818",
+          "stockName": "电科蓝天",
+          "conceptCode": "885531.TI",
+          "conceptName": "光伏概念"
+        },
+        {
+          "stockCode": "688818",
+          "stockName": "电科蓝天",
+          "conceptCode": "885311.TI",
+          "conceptName": "智能电网"
+        },
+        {
+          "stockCode": "688818",
+          "stockName": "电科蓝天",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "688818",
+          "stockName": "电科蓝天",
+          "conceptCode": "885928.TI",
+          "conceptName": "钠离子电池"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885566.TI",
+          "conceptName": "大飞机"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "886078.TI",
+          "conceptName": "商业航天"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885710.TI",
+          "conceptName": "锂电池概念"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "886021.TI",
+          "conceptName": "国企改革"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "886069.TI",
+          "conceptName": "人形机器人"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885571.TI",
+          "conceptName": "核电"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885887.TI",
+          "conceptName": "数据中心(AIDC)"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885997.TI",
+          "conceptName": "比亚迪概念"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885376.TI",
+          "conceptName": "苹果概念"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885545.TI",
+          "conceptName": "汽车电子"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "886065.TI",
+          "conceptName": "可控核聚变"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885957.TI",
+          "conceptName": "东数西算(算力)"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "886112.TI",
+          "conceptName": "MLCC概念"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885431.TI",
+          "conceptName": "新能源汽车"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885800.TI",
+          "conceptName": "消费电子概念"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885921.TI",
+          "conceptName": "储能"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885564.TI",
+          "conceptName": "无人机"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885427.TI",
+          "conceptName": "高端装备"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885806.TI",
+          "conceptName": "华为概念"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "886009.TI",
+          "conceptName": "先进封装"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885574.TI",
+          "conceptName": "卫星导航"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885700.TI",
+          "conceptName": "军工"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885948.TI",
+          "conceptName": "柔性直流输电"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "886086.TI",
+          "conceptName": "西部大开发"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885946.TI",
+          "conceptName": "传感器"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885517.TI",
+          "conceptName": "机器人概念"
+        },
+        {
+          "stockCode": "301682",
+          "stockName": "宏明电子",
+          "conceptCode": "885886.TI",
+          "conceptName": "超级电容"
+        },
+        {
+          "stockCode": "688797",
+          "stockName": "臻宝科技",
+          "conceptCode": "886086.TI",
+          "conceptName": "西部大开发"
+        },
+        {
+          "stockCode": "688797",
+          "stockName": "臻宝科技",
+          "conceptCode": "886009.TI",
+          "conceptName": "先进封装"
+        },
+        {
+          "stockCode": "688797",
+          "stockName": "臻宝科技",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "688797",
+          "stockName": "臻宝科技",
+          "conceptCode": "885427.TI",
+          "conceptName": "高端装备"
+        },
+        {
+          "stockCode": "688797",
+          "stockName": "臻宝科技",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "688797",
+          "stockName": "臻宝科技",
+          "conceptCode": "885738.TI",
+          "conceptName": "OLED"
+        },
+        {
+          "stockCode": "688797",
+          "stockName": "臻宝科技",
+          "conceptCode": "885907.TI",
+          "conceptName": "科创次新股"
+        },
+        {
+          "stockCode": "688797",
+          "stockName": "臻宝科技",
+          "conceptCode": "885929.TI",
+          "conceptName": "专精特新"
+        },
+        {
+          "stockCode": "688797",
+          "stockName": "臻宝科技",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "688797",
+          "stockName": "臻宝科技",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "688797",
+          "stockName": "臻宝科技",
+          "conceptCode": "885893.TI",
+          "conceptName": "国家大基金持股"
+        },
+        {
+          "stockCode": "688797",
+          "stockName": "臻宝科技",
+          "conceptCode": "886042.TI",
+          "conceptName": "存储芯片"
+        },
+        {
+          "stockCode": "688712",
+          "stockName": "北芯生命",
+          "conceptCode": "885907.TI",
+          "conceptName": "科创次新股"
+        },
+        {
+          "stockCode": "688712",
+          "stockName": "北芯生命",
+          "conceptCode": "885929.TI",
+          "conceptName": "专精特新"
+        },
+        {
+          "stockCode": "688712",
+          "stockName": "北芯生命",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "688712",
+          "stockName": "北芯生命",
+          "conceptCode": "885539.TI",
+          "conceptName": "医疗器械概念"
+        },
+        {
+          "stockCode": "688712",
+          "stockName": "北芯生命",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "688712",
+          "stockName": "北芯生命",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "688785",
+          "stockName": "恒运昌",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "688785",
+          "stockName": "恒运昌",
+          "conceptCode": "885907.TI",
+          "conceptName": "科创次新股"
+        },
+        {
+          "stockCode": "688785",
+          "stockName": "恒运昌",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "688785",
+          "stockName": "恒运昌",
+          "conceptCode": "885897.TI",
+          "conceptName": "中芯国际概念"
+        },
+        {
+          "stockCode": "688785",
+          "stockName": "恒运昌",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "688785",
+          "stockName": "恒运昌",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "688813",
+          "stockName": "泰金新能",
+          "conceptCode": "886020.TI",
+          "conceptName": "PET铜箔"
+        },
+        {
+          "stockCode": "688813",
+          "stockName": "泰金新能",
+          "conceptCode": "885789.TI",
+          "conceptName": "宁德时代概念"
+        },
+        {
+          "stockCode": "688813",
+          "stockName": "泰金新能",
+          "conceptCode": "885710.TI",
+          "conceptName": "锂电池概念"
+        },
+        {
+          "stockCode": "688813",
+          "stockName": "泰金新能",
+          "conceptCode": "885959.TI",
+          "conceptName": "PCB概念"
+        },
+        {
+          "stockCode": "688813",
+          "stockName": "泰金新能",
+          "conceptCode": "886021.TI",
+          "conceptName": "国企改革"
+        },
+        {
+          "stockCode": "688813",
+          "stockName": "泰金新能",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "688813",
+          "stockName": "泰金新能",
+          "conceptCode": "886033.TI",
+          "conceptName": "共封装光学(CPO)"
+        },
+        {
+          "stockCode": "688813",
+          "stockName": "泰金新能",
+          "conceptCode": "885700.TI",
+          "conceptName": "军工"
+        },
+        {
+          "stockCode": "688813",
+          "stockName": "泰金新能",
+          "conceptCode": "886032.TI",
+          "conceptName": "固态电池"
+        },
+        {
+          "stockCode": "688813",
+          "stockName": "泰金新能",
+          "conceptCode": "885997.TI",
+          "conceptName": "比亚迪概念"
+        },
+        {
+          "stockCode": "688813",
+          "stockName": "泰金新能",
+          "conceptCode": "886086.TI",
+          "conceptName": "西部大开发"
+        },
+        {
+          "stockCode": "688813",
+          "stockName": "泰金新能",
+          "conceptCode": "885571.TI",
+          "conceptName": "核电"
+        },
+        {
+          "stockCode": "688813",
+          "stockName": "泰金新能",
+          "conceptCode": "885806.TI",
+          "conceptName": "华为概念"
+        },
+        {
+          "stockCode": "688813",
+          "stockName": "泰金新能",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "688813",
+          "stockName": "泰金新能",
+          "conceptCode": "885907.TI",
+          "conceptName": "科创次新股"
+        },
+        {
+          "stockCode": "688813",
+          "stockName": "泰金新能",
+          "conceptCode": "885823.TI",
+          "conceptName": "氢能源"
+        },
+        {
+          "stockCode": "688813",
+          "stockName": "泰金新能",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "688635",
+          "stockName": "长进光子",
+          "conceptCode": "886084.TI",
+          "conceptName": "光纤概念"
+        },
+        {
+          "stockCode": "688635",
+          "stockName": "长进光子",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "688635",
+          "stockName": "长进光子",
+          "conceptCode": "885907.TI",
+          "conceptName": "科创次新股"
+        },
+        {
+          "stockCode": "688635",
+          "stockName": "长进光子",
+          "conceptCode": "885700.TI",
+          "conceptName": "军工"
+        },
+        {
+          "stockCode": "688635",
+          "stockName": "长进光子",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "688635",
+          "stockName": "长进光子",
+          "conceptCode": "885806.TI",
+          "conceptName": "华为概念"
+        },
+        {
+          "stockCode": "688635",
+          "stockName": "长进光子",
+          "conceptCode": "886078.TI",
+          "conceptName": "商业航天"
+        },
+        {
+          "stockCode": "688635",
+          "stockName": "长进光子",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "688635",
+          "stockName": "长进光子",
+          "conceptCode": "885929.TI",
+          "conceptName": "专精特新"
+        },
+        {
+          "stockCode": "688635",
+          "stockName": "长进光子",
+          "conceptCode": "885957.TI",
+          "conceptName": "东数西算(算力)"
+        },
+        {
+          "stockCode": "688635",
+          "stockName": "长进光子",
+          "conceptCode": "885887.TI",
+          "conceptName": "数据中心(AIDC)"
+        },
+        {
+          "stockCode": "001257",
+          "stockName": "盛龙股份",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "001257",
+          "stockName": "盛龙股份",
+          "conceptCode": "885552.TI",
+          "conceptName": "小金属概念"
+        },
+        {
+          "stockCode": "001257",
+          "stockName": "盛龙股份",
+          "conceptCode": "886021.TI",
+          "conceptName": "国企改革"
+        },
+        {
+          "stockCode": "001257",
+          "stockName": "盛龙股份",
+          "conceptCode": "885973.TI",
+          "conceptName": "金属铜"
+        },
+        {
+          "stockCode": "001257",
+          "stockName": "盛龙股份",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "001257",
+          "stockName": "盛龙股份",
+          "conceptCode": "885971.TI",
+          "conceptName": "金属铅"
+        },
+        {
+          "stockCode": "001257",
+          "stockName": "盛龙股份",
+          "conceptCode": "885970.TI",
+          "conceptName": "金属锌"
+        },
+        {
+          "stockCode": "001257",
+          "stockName": "盛龙股份",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "001257",
+          "stockName": "盛龙股份",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "885959.TI",
+          "conceptName": "PCB概念"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "885997.TI",
+          "conceptName": "比亚迪概念"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "885786.TI",
+          "conceptName": "富士康概念"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "885736.TI",
+          "conceptName": "无人驾驶"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "885454.TI",
+          "conceptName": "智能穿戴"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "885545.TI",
+          "conceptName": "汽车电子"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "885957.TI",
+          "conceptName": "东数西算(算力)"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "885806.TI",
+          "conceptName": "华为概念"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "885574.TI",
+          "conceptName": "卫星导航"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "886059.TI",
+          "conceptName": "智能座舱"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "885800.TI",
+          "conceptName": "消费电子概念"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "886033.TI",
+          "conceptName": "共封装光学(CPO)"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "885875.TI",
+          "conceptName": "MiniLED"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "886091.TI",
+          "conceptName": "华为手机"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "886042.TI",
+          "conceptName": "存储芯片"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "885710.TI",
+          "conceptName": "锂电池概念"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "885709.TI",
+          "conceptName": "虚拟现实"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "886078.TI",
+          "conceptName": "商业航天"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "885785.TI",
+          "conceptName": "小米概念"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "885494.TI",
+          "conceptName": "一带一路"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "885517.TI",
+          "conceptName": "机器人概念"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "886110.TI",
+          "conceptName": "2026中报预增"
+        },
+        {
+          "stockCode": "603459",
+          "stockName": "红板科技",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        }
+      ],
+      "total": 252,
+      "dictionarySnapshotId": "7b69a7d1930249639e6f1cb76b15ea74",
+      "dictionaryRowCount": 395,
+      "conceptType": "N",
+      "methodology": "current-ths-membership-v1",
+      "historicalPointInTime": false
+    },
+    {
+      "source": "open_market_products",
+      "product": "concept_memberships",
+      "conceptSource": "THS",
+      "requestedSymbols": [
+        "001365.SZ",
+        "688811.SH",
+        "301696.SZ",
+        "001237.SZ",
+        "301669.SZ",
+        "301687.SZ",
+        "001393.SZ",
+        "301531.SZ",
+        "301599.SZ",
+        "601112.SH",
+        "301680.SZ",
+        "301683.SZ",
+        "001248.SZ",
+        "688816.SH",
+        "301513.SZ",
+        "920136.BJ",
+        "603435.SH",
+        "603352.SH",
+        "920193.BJ",
+        "603293.SH"
+      ],
+      "coveredSymbols": [
+        "001365.SZ",
+        "688811.SH",
+        "301696.SZ",
+        "001237.SZ",
+        "301669.SZ",
+        "301687.SZ",
+        "001393.SZ",
+        "301531.SZ",
+        "301599.SZ",
+        "601112.SH",
+        "301680.SZ",
+        "301683.SZ",
+        "001248.SZ",
+        "688816.SH",
+        "301513.SZ",
+        "920136.BJ",
+        "603435.SH",
+        "603352.SH",
+        "920193.BJ",
+        "603293.SH"
+      ],
+      "completeSubjectSnapshots": true,
+      "subjectSnapshots": [
+        {
+          "symbol": "001365.SZ",
+          "snapshotId": "222db826bd3d41de88a01d373d666fc8",
+          "observedAt": "2026-11-06T00:01:12.925160+00:00",
+          "rowCount": 80,
+          "conceptRowCount": 22,
+          "excludedNonCurrentNCount": 58
+        },
+        {
+          "symbol": "688811.SH",
+          "snapshotId": "fa16bf85315f4a039e20b6a3ea34e7bb",
+          "observedAt": "2026-11-06T00:01:13.294507+00:00",
+          "rowCount": 55,
+          "conceptRowCount": 16,
+          "excludedNonCurrentNCount": 39
+        },
+        {
+          "symbol": "301696.SZ",
+          "snapshotId": "7ab7667abf9c468e92f81efe47de0355",
+          "observedAt": "2026-11-06T00:01:13.822700+00:00",
+          "rowCount": 63,
+          "conceptRowCount": 14,
+          "excludedNonCurrentNCount": 49
+        },
+        {
+          "symbol": "001237.SZ",
+          "snapshotId": "3e87c86d0cdc4fe2a011d7a16d50c949",
+          "observedAt": "2026-11-06T00:01:13.984478+00:00",
+          "rowCount": 70,
+          "conceptRowCount": 10,
+          "excludedNonCurrentNCount": 60
+        },
+        {
+          "symbol": "301669.SZ",
+          "snapshotId": "cdb86b75b09f4dd5ad3666abb845610a",
+          "observedAt": "2026-11-06T00:01:14.341641+00:00",
+          "rowCount": 58,
+          "conceptRowCount": 11,
+          "excludedNonCurrentNCount": 47
+        },
+        {
+          "symbol": "301687.SZ",
+          "snapshotId": "ddfdc49010b04e1f91f249db302192a7",
+          "observedAt": "2026-11-06T00:01:14.701166+00:00",
+          "rowCount": 73,
+          "conceptRowCount": 15,
+          "excludedNonCurrentNCount": 58
+        },
+        {
+          "symbol": "001393.SZ",
+          "snapshotId": "21a3bd24ec104d619587582291245b4f",
+          "observedAt": "2026-11-06T00:01:15.059802+00:00",
+          "rowCount": 62,
+          "conceptRowCount": 14,
+          "excludedNonCurrentNCount": 48
+        },
+        {
+          "symbol": "301531.SZ",
+          "snapshotId": "2a2f36442f684ac3adb36aed08d48bdc",
+          "observedAt": "2026-11-06T00:01:15.416999+00:00",
+          "rowCount": 53,
+          "conceptRowCount": 7,
+          "excludedNonCurrentNCount": 46
+        },
+        {
+          "symbol": "301599.SZ",
+          "snapshotId": "1750a0818d1f4f7ab85fbaa5298d08bb",
+          "observedAt": "2026-11-06T00:01:15.768674+00:00",
+          "rowCount": 61,
+          "conceptRowCount": 15,
+          "excludedNonCurrentNCount": 46
+        },
+        {
+          "symbol": "601112.SH",
+          "snapshotId": "f0a19275a1934a11a9ccbebda525670d",
+          "observedAt": "2026-11-06T00:01:16.125432+00:00",
+          "rowCount": 47,
+          "conceptRowCount": 9,
+          "excludedNonCurrentNCount": 38
+        },
+        {
+          "symbol": "301680.SZ",
+          "snapshotId": "45fef0c9a31e4765bc0dd4633504dcf5",
+          "observedAt": "2026-11-06T00:01:16.485487+00:00",
+          "rowCount": 58,
+          "conceptRowCount": 14,
+          "excludedNonCurrentNCount": 44
+        },
+        {
+          "symbol": "301683.SZ",
+          "snapshotId": "b6909bcbf4634d41a47ed0b0e85f3857",
+          "observedAt": "2026-11-06T00:01:16.839865+00:00",
+          "rowCount": 55,
+          "conceptRowCount": 13,
+          "excludedNonCurrentNCount": 42
+        },
+        {
+          "symbol": "001248.SZ",
+          "snapshotId": "9fdf0706d0904738ac2903929409cac4",
+          "observedAt": "2026-11-06T00:01:17.202007+00:00",
+          "rowCount": 58,
+          "conceptRowCount": 8,
+          "excludedNonCurrentNCount": 50
+        },
+        {
+          "symbol": "688816.SH",
+          "snapshotId": "ffc98545c27146d9a43ce074fd9d750f",
+          "observedAt": "2026-11-06T00:01:17.552783+00:00",
+          "rowCount": 41,
+          "conceptRowCount": 6,
+          "excludedNonCurrentNCount": 35
+        },
+        {
+          "symbol": "301513.SZ",
+          "snapshotId": "138fca2d70e6432baa1d0aaf4f1146f5",
+          "observedAt": "2026-11-06T00:01:17.910469+00:00",
+          "rowCount": 66,
+          "conceptRowCount": 11,
+          "excludedNonCurrentNCount": 55
+        },
+        {
+          "symbol": "920136.BJ",
+          "snapshotId": "dbda3fc1a07540fd8b16ed0e41c8c87a",
+          "observedAt": "2026-11-06T00:01:18.271876+00:00",
+          "rowCount": 57,
+          "conceptRowCount": 6,
+          "excludedNonCurrentNCount": 51
+        },
+        {
+          "symbol": "603435.SH",
+          "snapshotId": "81ff1969bc914102a3e7e7d856fc670e",
+          "observedAt": "2026-11-06T00:01:18.630913+00:00",
+          "rowCount": 70,
+          "conceptRowCount": 11,
+          "excludedNonCurrentNCount": 59
+        },
+        {
+          "symbol": "603352.SH",
+          "snapshotId": "f26279b8f544442bbd32b65af410c291",
+          "observedAt": "2026-11-06T00:01:18.998995+00:00",
+          "rowCount": 49,
+          "conceptRowCount": 10,
+          "excludedNonCurrentNCount": 39
+        },
+        {
+          "symbol": "920193.BJ",
+          "snapshotId": "23860b671ef3484f9065e3f17737236a",
+          "observedAt": "2026-11-06T00:01:19.341997+00:00",
+          "rowCount": 54,
+          "conceptRowCount": 11,
+          "excludedNonCurrentNCount": 43
+        },
+        {
+          "symbol": "603293.SH",
+          "snapshotId": "25a79f6185354ccdaebf573fca3ef01b",
+          "observedAt": "2026-11-06T00:01:19.692257+00:00",
+          "rowCount": 52,
+          "conceptRowCount": 13,
+          "excludedNonCurrentNCount": 39
+        }
+      ],
+      "items": [
+        {
+          "stockCode": "001365",
+          "stockName": "天海电子",
+          "conceptCode": "885494.TI",
+          "conceptName": "一带一路"
+        },
+        {
+          "stockCode": "001365",
+          "stockName": "天海电子",
+          "conceptCode": "885974.TI",
+          "conceptName": "两轮车"
+        },
+        {
+          "stockCode": "001365",
+          "stockName": "天海电子",
+          "conceptCode": "885431.TI",
+          "conceptName": "新能源汽车"
+        },
+        {
+          "stockCode": "001365",
+          "stockName": "天海电子",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "001365",
+          "stockName": "天海电子",
+          "conceptCode": "885959.TI",
+          "conceptName": "PCB概念"
+        },
+        {
+          "stockCode": "001365",
+          "stockName": "天海电子",
+          "conceptCode": "886067.TI",
+          "conceptName": "低空经济"
+        },
+        {
+          "stockCode": "001365",
+          "stockName": "天海电子",
+          "conceptCode": "885997.TI",
+          "conceptName": "比亚迪概念"
+        },
+        {
+          "stockCode": "001365",
+          "stockName": "天海电子",
+          "conceptCode": "885736.TI",
+          "conceptName": "无人驾驶"
+        },
+        {
+          "stockCode": "001365",
+          "stockName": "天海电子",
+          "conceptCode": "886021.TI",
+          "conceptName": "国企改革"
+        },
+        {
+          "stockCode": "001365",
+          "stockName": "天海电子",
+          "conceptCode": "885783.TI",
+          "conceptName": "工业互联网"
+        },
+        {
+          "stockCode": "001365",
+          "stockName": "天海电子",
+          "conceptCode": "885774.TI",
+          "conceptName": "无线充电"
+        },
+        {
+          "stockCode": "001365",
+          "stockName": "天海电子",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "001365",
+          "stockName": "天海电子",
+          "conceptCode": "885789.TI",
+          "conceptName": "宁德时代概念"
+        },
+        {
+          "stockCode": "001365",
+          "stockName": "天海电子",
+          "conceptCode": "886061.TI",
+          "conceptName": "长安汽车概念"
+        },
+        {
+          "stockCode": "001365",
+          "stockName": "天海电子",
+          "conceptCode": "885921.TI",
+          "conceptName": "储能"
+        },
+        {
+          "stockCode": "001365",
+          "stockName": "天海电子",
+          "conceptCode": "886069.TI",
+          "conceptName": "人形机器人"
+        },
+        {
+          "stockCode": "001365",
+          "stockName": "天海电子",
+          "conceptCode": "885545.TI",
+          "conceptName": "汽车电子"
+        },
+        {
+          "stockCode": "001365",
+          "stockName": "天海电子",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "001365",
+          "stockName": "天海电子",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "001365",
+          "stockName": "天海电子",
+          "conceptCode": "886059.TI",
+          "conceptName": "智能座舱"
+        },
+        {
+          "stockCode": "001365",
+          "stockName": "天海电子",
+          "conceptCode": "886057.TI",
+          "conceptName": "新型工业化"
+        },
+        {
+          "stockCode": "001365",
+          "stockName": "天海电子",
+          "conceptCode": "885517.TI",
+          "conceptName": "机器人概念"
+        },
+        {
+          "stockCode": "688811",
+          "stockName": "有研复材",
+          "conceptCode": "885311.TI",
+          "conceptName": "智能电网"
+        },
+        {
+          "stockCode": "688811",
+          "stockName": "有研复材",
+          "conceptCode": "885543.TI",
+          "conceptName": "家用电器"
+        },
+        {
+          "stockCode": "688811",
+          "stockName": "有研复材",
+          "conceptCode": "885595.TI",
+          "conceptName": "央企国企改革"
+        },
+        {
+          "stockCode": "688811",
+          "stockName": "有研复材",
+          "conceptCode": "886021.TI",
+          "conceptName": "国企改革"
+        },
+        {
+          "stockCode": "688811",
+          "stockName": "有研复材",
+          "conceptCode": "886078.TI",
+          "conceptName": "商业航天"
+        },
+        {
+          "stockCode": "688811",
+          "stockName": "有研复材",
+          "conceptCode": "885431.TI",
+          "conceptName": "新能源汽车"
+        },
+        {
+          "stockCode": "688811",
+          "stockName": "有研复材",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "688811",
+          "stockName": "有研复材",
+          "conceptCode": "885907.TI",
+          "conceptName": "科创次新股"
+        },
+        {
+          "stockCode": "688811",
+          "stockName": "有研复材",
+          "conceptCode": "885537.TI",
+          "conceptName": "3D打印"
+        },
+        {
+          "stockCode": "688811",
+          "stockName": "有研复材",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "688811",
+          "stockName": "有研复材",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "688811",
+          "stockName": "有研复材",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "688811",
+          "stockName": "有研复材",
+          "conceptCode": "885800.TI",
+          "conceptName": "消费电子概念"
+        },
+        {
+          "stockCode": "688811",
+          "stockName": "有研复材",
+          "conceptCode": "885571.TI",
+          "conceptName": "核电"
+        },
+        {
+          "stockCode": "688811",
+          "stockName": "有研复材",
+          "conceptCode": "885700.TI",
+          "conceptName": "军工"
+        },
+        {
+          "stockCode": "688811",
+          "stockName": "有研复材",
+          "conceptCode": "885574.TI",
+          "conceptName": "卫星导航"
+        },
+        {
+          "stockCode": "301696",
+          "stockName": "三瑞智能",
+          "conceptCode": "886069.TI",
+          "conceptName": "人形机器人"
+        },
+        {
+          "stockCode": "301696",
+          "stockName": "三瑞智能",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "301696",
+          "stockName": "三瑞智能",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "301696",
+          "stockName": "三瑞智能",
+          "conceptCode": "886066.TI",
+          "conceptName": "飞行汽车(eVTOL)"
+        },
+        {
+          "stockCode": "301696",
+          "stockName": "三瑞智能",
+          "conceptCode": "885650.TI",
+          "conceptName": "碳纤维"
+        },
+        {
+          "stockCode": "301696",
+          "stockName": "三瑞智能",
+          "conceptCode": "885564.TI",
+          "conceptName": "无人机"
+        },
+        {
+          "stockCode": "301696",
+          "stockName": "三瑞智能",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "301696",
+          "stockName": "三瑞智能",
+          "conceptCode": "885517.TI",
+          "conceptName": "机器人概念"
+        },
+        {
+          "stockCode": "301696",
+          "stockName": "三瑞智能",
+          "conceptCode": "886008.TI",
+          "conceptName": "减速器"
+        },
+        {
+          "stockCode": "301696",
+          "stockName": "三瑞智能",
+          "conceptCode": "885840.TI",
+          "conceptName": "人民币贬值受益"
+        },
+        {
+          "stockCode": "301696",
+          "stockName": "三瑞智能",
+          "conceptCode": "885700.TI",
+          "conceptName": "军工"
+        },
+        {
+          "stockCode": "301696",
+          "stockName": "三瑞智能",
+          "conceptCode": "886067.TI",
+          "conceptName": "低空经济"
+        },
+        {
+          "stockCode": "301696",
+          "stockName": "三瑞智能",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "301696",
+          "stockName": "三瑞智能",
+          "conceptCode": "886110.TI",
+          "conceptName": "2026中报预增"
+        },
+        {
+          "stockCode": "001237",
+          "stockName": "惠康科技",
+          "conceptCode": "885494.TI",
+          "conceptName": "一带一路"
+        },
+        {
+          "stockCode": "001237",
+          "stockName": "惠康科技",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "001237",
+          "stockName": "惠康科技",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "001237",
+          "stockName": "惠康科技",
+          "conceptCode": "885427.TI",
+          "conceptName": "高端装备"
+        },
+        {
+          "stockCode": "001237",
+          "stockName": "惠康科技",
+          "conceptCode": "885539.TI",
+          "conceptName": "医疗器械概念"
+        },
+        {
+          "stockCode": "001237",
+          "stockName": "惠康科技",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "001237",
+          "stockName": "惠康科技",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "001237",
+          "stockName": "惠康科技",
+          "conceptCode": "885642.TI",
+          "conceptName": "跨境电商"
+        },
+        {
+          "stockCode": "001237",
+          "stockName": "惠康科技",
+          "conceptCode": "885840.TI",
+          "conceptName": "人民币贬值受益"
+        },
+        {
+          "stockCode": "001237",
+          "stockName": "惠康科技",
+          "conceptCode": "885543.TI",
+          "conceptName": "家用电器"
+        },
+        {
+          "stockCode": "301669",
+          "stockName": "高特电子",
+          "conceptCode": "885929.TI",
+          "conceptName": "专精特新"
+        },
+        {
+          "stockCode": "301669",
+          "stockName": "高特电子",
+          "conceptCode": "885431.TI",
+          "conceptName": "新能源汽车"
+        },
+        {
+          "stockCode": "301669",
+          "stockName": "高特电子",
+          "conceptCode": "886004.TI",
+          "conceptName": "虚拟电厂"
+        },
+        {
+          "stockCode": "301669",
+          "stockName": "高特电子",
+          "conceptCode": "885494.TI",
+          "conceptName": "一带一路"
+        },
+        {
+          "stockCode": "301669",
+          "stockName": "高特电子",
+          "conceptCode": "885921.TI",
+          "conceptName": "储能"
+        },
+        {
+          "stockCode": "301669",
+          "stockName": "高特电子",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "301669",
+          "stockName": "高特电子",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "301669",
+          "stockName": "高特电子",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "301669",
+          "stockName": "高特电子",
+          "conceptCode": "885928.TI",
+          "conceptName": "钠离子电池"
+        },
+        {
+          "stockCode": "301669",
+          "stockName": "高特电子",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "301669",
+          "stockName": "高特电子",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "301687",
+          "stockName": "新广益",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "301687",
+          "stockName": "新广益",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "301687",
+          "stockName": "新广益",
+          "conceptCode": "885929.TI",
+          "conceptName": "专精特新"
+        },
+        {
+          "stockCode": "301687",
+          "stockName": "新广益",
+          "conceptCode": "885939.TI",
+          "conceptName": "海峡两岸"
+        },
+        {
+          "stockCode": "301687",
+          "stockName": "新广益",
+          "conceptCode": "885997.TI",
+          "conceptName": "比亚迪概念"
+        },
+        {
+          "stockCode": "301687",
+          "stockName": "新广益",
+          "conceptCode": "885959.TI",
+          "conceptName": "PCB概念"
+        },
+        {
+          "stockCode": "301687",
+          "stockName": "新广益",
+          "conceptCode": "885710.TI",
+          "conceptName": "锂电池概念"
+        },
+        {
+          "stockCode": "301687",
+          "stockName": "新广益",
+          "conceptCode": "885431.TI",
+          "conceptName": "新能源汽车"
+        },
+        {
+          "stockCode": "301687",
+          "stockName": "新广益",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "301687",
+          "stockName": "新广益",
+          "conceptCode": "885800.TI",
+          "conceptName": "消费电子概念"
+        },
+        {
+          "stockCode": "301687",
+          "stockName": "新广益",
+          "conceptCode": "885832.TI",
+          "conceptName": "长三角一体化"
+        },
+        {
+          "stockCode": "301687",
+          "stockName": "新广益",
+          "conceptCode": "885376.TI",
+          "conceptName": "苹果概念"
+        },
+        {
+          "stockCode": "301687",
+          "stockName": "新广益",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "301687",
+          "stockName": "新广益",
+          "conceptCode": "885531.TI",
+          "conceptName": "光伏概念"
+        },
+        {
+          "stockCode": "301687",
+          "stockName": "新广益",
+          "conceptCode": "886026.TI",
+          "conceptName": "POE胶膜"
+        },
+        {
+          "stockCode": "001393",
+          "stockName": "维通利",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "001393",
+          "stockName": "维通利",
+          "conceptCode": "885997.TI",
+          "conceptName": "比亚迪概念"
+        },
+        {
+          "stockCode": "001393",
+          "stockName": "维通利",
+          "conceptCode": "885929.TI",
+          "conceptName": "专精特新"
+        },
+        {
+          "stockCode": "001393",
+          "stockName": "维通利",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "001393",
+          "stockName": "维通利",
+          "conceptCode": "885957.TI",
+          "conceptName": "东数西算(算力)"
+        },
+        {
+          "stockCode": "001393",
+          "stockName": "维通利",
+          "conceptCode": "885921.TI",
+          "conceptName": "储能"
+        },
+        {
+          "stockCode": "001393",
+          "stockName": "维通利",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "001393",
+          "stockName": "维通利",
+          "conceptCode": "885936.TI",
+          "conceptName": "绿色电力"
+        },
+        {
+          "stockCode": "001393",
+          "stockName": "维通利",
+          "conceptCode": "885887.TI",
+          "conceptName": "数据中心(AIDC)"
+        },
+        {
+          "stockCode": "001393",
+          "stockName": "维通利",
+          "conceptCode": "885806.TI",
+          "conceptName": "华为概念"
+        },
+        {
+          "stockCode": "001393",
+          "stockName": "维通利",
+          "conceptCode": "885641.TI",
+          "conceptName": "风电"
+        },
+        {
+          "stockCode": "001393",
+          "stockName": "维通利",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "001393",
+          "stockName": "维通利",
+          "conceptCode": "885531.TI",
+          "conceptName": "光伏概念"
+        },
+        {
+          "stockCode": "001393",
+          "stockName": "维通利",
+          "conceptCode": "885431.TI",
+          "conceptName": "新能源汽车"
+        },
+        {
+          "stockCode": "301531",
+          "stockName": "春光集团",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "301531",
+          "stockName": "春光集团",
+          "conceptCode": "885431.TI",
+          "conceptName": "新能源汽车"
+        },
+        {
+          "stockCode": "301531",
+          "stockName": "春光集团",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "301531",
+          "stockName": "春光集团",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "301531",
+          "stockName": "春光集团",
+          "conceptCode": "885929.TI",
+          "conceptName": "专精特新"
+        },
+        {
+          "stockCode": "301531",
+          "stockName": "春光集团",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "301531",
+          "stockName": "春光集团",
+          "conceptCode": "886112.TI",
+          "conceptName": "MLCC概念"
+        },
+        {
+          "stockCode": "301599",
+          "stockName": "理奇智能",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "301599",
+          "stockName": "理奇智能",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "301599",
+          "stockName": "理奇智能",
+          "conceptCode": "885864.TI",
+          "conceptName": "光刻胶"
+        },
+        {
+          "stockCode": "301599",
+          "stockName": "理奇智能",
+          "conceptCode": "885728.TI",
+          "conceptName": "人工智能"
+        },
+        {
+          "stockCode": "301599",
+          "stockName": "理奇智能",
+          "conceptCode": "885789.TI",
+          "conceptName": "宁德时代概念"
+        },
+        {
+          "stockCode": "301599",
+          "stockName": "理奇智能",
+          "conceptCode": "885783.TI",
+          "conceptName": "工业互联网"
+        },
+        {
+          "stockCode": "301599",
+          "stockName": "理奇智能",
+          "conceptCode": "885427.TI",
+          "conceptName": "高端装备"
+        },
+        {
+          "stockCode": "301599",
+          "stockName": "理奇智能",
+          "conceptCode": "885710.TI",
+          "conceptName": "锂电池概念"
+        },
+        {
+          "stockCode": "301599",
+          "stockName": "理奇智能",
+          "conceptCode": "885929.TI",
+          "conceptName": "专精特新"
+        },
+        {
+          "stockCode": "301599",
+          "stockName": "理奇智能",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "301599",
+          "stockName": "理奇智能",
+          "conceptCode": "885886.TI",
+          "conceptName": "超级电容"
+        },
+        {
+          "stockCode": "301599",
+          "stockName": "理奇智能",
+          "conceptCode": "886032.TI",
+          "conceptName": "固态电池"
+        },
+        {
+          "stockCode": "301599",
+          "stockName": "理奇智能",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "301599",
+          "stockName": "理奇智能",
+          "conceptCode": "885997.TI",
+          "conceptName": "比亚迪概念"
+        },
+        {
+          "stockCode": "301599",
+          "stockName": "理奇智能",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "601112",
+          "stockName": "振石股份",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "601112",
+          "stockName": "振石股份",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "601112",
+          "stockName": "振石股份",
+          "conceptCode": "885650.TI",
+          "conceptName": "碳纤维"
+        },
+        {
+          "stockCode": "601112",
+          "stockName": "振石股份",
+          "conceptCode": "885997.TI",
+          "conceptName": "比亚迪概念"
+        },
+        {
+          "stockCode": "601112",
+          "stockName": "振石股份",
+          "conceptCode": "885531.TI",
+          "conceptName": "光伏概念"
+        },
+        {
+          "stockCode": "601112",
+          "stockName": "振石股份",
+          "conceptCode": "885431.TI",
+          "conceptName": "新能源汽车"
+        },
+        {
+          "stockCode": "601112",
+          "stockName": "振石股份",
+          "conceptCode": "883304.TI",
+          "conceptName": "中证500成份股"
+        },
+        {
+          "stockCode": "601112",
+          "stockName": "振石股份",
+          "conceptCode": "885641.TI",
+          "conceptName": "风电"
+        },
+        {
+          "stockCode": "601112",
+          "stockName": "振石股份",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "301680",
+          "stockName": "固德电材",
+          "conceptCode": "885710.TI",
+          "conceptName": "锂电池概念"
+        },
+        {
+          "stockCode": "301680",
+          "stockName": "固德电材",
+          "conceptCode": "885929.TI",
+          "conceptName": "专精特新"
+        },
+        {
+          "stockCode": "301680",
+          "stockName": "固德电材",
+          "conceptCode": "885311.TI",
+          "conceptName": "智能电网"
+        },
+        {
+          "stockCode": "301680",
+          "stockName": "固德电材",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "301680",
+          "stockName": "固德电材",
+          "conceptCode": "885789.TI",
+          "conceptName": "宁德时代概念"
+        },
+        {
+          "stockCode": "301680",
+          "stockName": "固德电材",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "301680",
+          "stockName": "固德电材",
+          "conceptCode": "885571.TI",
+          "conceptName": "核电"
+        },
+        {
+          "stockCode": "301680",
+          "stockName": "固德电材",
+          "conceptCode": "885948.TI",
+          "conceptName": "柔性直流输电"
+        },
+        {
+          "stockCode": "301680",
+          "stockName": "固德电材",
+          "conceptCode": "885921.TI",
+          "conceptName": "储能"
+        },
+        {
+          "stockCode": "301680",
+          "stockName": "固德电材",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "301680",
+          "stockName": "固德电材",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "301680",
+          "stockName": "固德电材",
+          "conceptCode": "885431.TI",
+          "conceptName": "新能源汽车"
+        },
+        {
+          "stockCode": "301680",
+          "stockName": "固德电材",
+          "conceptCode": "885999.TI",
+          "conceptName": "汽车热管理"
+        },
+        {
+          "stockCode": "301680",
+          "stockName": "固德电材",
+          "conceptCode": "885425.TI",
+          "conceptName": "特高压"
+        },
+        {
+          "stockCode": "301683",
+          "stockName": "慧谷新材",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "301683",
+          "stockName": "慧谷新材",
+          "conceptCode": "885886.TI",
+          "conceptName": "超级电容"
+        },
+        {
+          "stockCode": "301683",
+          "stockName": "慧谷新材",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "301683",
+          "stockName": "慧谷新材",
+          "conceptCode": "885875.TI",
+          "conceptName": "MiniLED"
+        },
+        {
+          "stockCode": "301683",
+          "stockName": "慧谷新材",
+          "conceptCode": "886111.TI",
+          "conceptName": "玻璃基板"
+        },
+        {
+          "stockCode": "301683",
+          "stockName": "慧谷新材",
+          "conceptCode": "886032.TI",
+          "conceptName": "固态电池"
+        },
+        {
+          "stockCode": "301683",
+          "stockName": "慧谷新材",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "301683",
+          "stockName": "慧谷新材",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "301683",
+          "stockName": "慧谷新材",
+          "conceptCode": "885521.TI",
+          "conceptName": "粤港澳大湾区"
+        },
+        {
+          "stockCode": "301683",
+          "stockName": "慧谷新材",
+          "conceptCode": "885929.TI",
+          "conceptName": "专精特新"
+        },
+        {
+          "stockCode": "301683",
+          "stockName": "慧谷新材",
+          "conceptCode": "886078.TI",
+          "conceptName": "商业航天"
+        },
+        {
+          "stockCode": "301683",
+          "stockName": "慧谷新材",
+          "conceptCode": "885710.TI",
+          "conceptName": "锂电池概念"
+        },
+        {
+          "stockCode": "301683",
+          "stockName": "慧谷新材",
+          "conceptCode": "885987.TI",
+          "conceptName": "MicroLED概念"
+        },
+        {
+          "stockCode": "001248",
+          "stockName": "华润新能源",
+          "conceptCode": "885595.TI",
+          "conceptName": "央企国企改革"
+        },
+        {
+          "stockCode": "001248",
+          "stockName": "华润新能源",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "001248",
+          "stockName": "华润新能源",
+          "conceptCode": "885521.TI",
+          "conceptName": "粤港澳大湾区"
+        },
+        {
+          "stockCode": "001248",
+          "stockName": "华润新能源",
+          "conceptCode": "885641.TI",
+          "conceptName": "风电"
+        },
+        {
+          "stockCode": "001248",
+          "stockName": "华润新能源",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "001248",
+          "stockName": "华润新能源",
+          "conceptCode": "885936.TI",
+          "conceptName": "绿色电力"
+        },
+        {
+          "stockCode": "001248",
+          "stockName": "华润新能源",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "001248",
+          "stockName": "华润新能源",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "688816",
+          "stockName": "易思维",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "688816",
+          "stockName": "易思维",
+          "conceptCode": "886002.TI",
+          "conceptName": "机器视觉"
+        },
+        {
+          "stockCode": "688816",
+          "stockName": "易思维",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "688816",
+          "stockName": "易思维",
+          "conceptCode": "885427.TI",
+          "conceptName": "高端装备"
+        },
+        {
+          "stockCode": "688816",
+          "stockName": "易思维",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "688816",
+          "stockName": "易思维",
+          "conceptCode": "885907.TI",
+          "conceptName": "科创次新股"
+        },
+        {
+          "stockCode": "301513",
+          "stockName": "尚水智能",
+          "conceptCode": "886006.TI",
+          "conceptName": "钙钛矿电池"
+        },
+        {
+          "stockCode": "301513",
+          "stockName": "尚水智能",
+          "conceptCode": "885997.TI",
+          "conceptName": "比亚迪概念"
+        },
+        {
+          "stockCode": "301513",
+          "stockName": "尚水智能",
+          "conceptCode": "885427.TI",
+          "conceptName": "高端装备"
+        },
+        {
+          "stockCode": "301513",
+          "stockName": "尚水智能",
+          "conceptCode": "885710.TI",
+          "conceptName": "锂电池概念"
+        },
+        {
+          "stockCode": "301513",
+          "stockName": "尚水智能",
+          "conceptCode": "886032.TI",
+          "conceptName": "固态电池"
+        },
+        {
+          "stockCode": "301513",
+          "stockName": "尚水智能",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "301513",
+          "stockName": "尚水智能",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "301513",
+          "stockName": "尚水智能",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "301513",
+          "stockName": "尚水智能",
+          "conceptCode": "885789.TI",
+          "conceptName": "宁德时代概念"
+        },
+        {
+          "stockCode": "301513",
+          "stockName": "尚水智能",
+          "conceptCode": "885928.TI",
+          "conceptName": "钠离子电池"
+        },
+        {
+          "stockCode": "301513",
+          "stockName": "尚水智能",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "920136",
+          "stockName": "永励精密",
+          "conceptCode": "885929.TI",
+          "conceptName": "专精特新"
+        },
+        {
+          "stockCode": "920136",
+          "stockName": "永励精密",
+          "conceptCode": "886110.TI",
+          "conceptName": "2026中报预增"
+        },
+        {
+          "stockCode": "920136",
+          "stockName": "永励精密",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "920136",
+          "stockName": "永励精密",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "920136",
+          "stockName": "永励精密",
+          "conceptCode": "885997.TI",
+          "conceptName": "比亚迪概念"
+        },
+        {
+          "stockCode": "920136",
+          "stockName": "永励精密",
+          "conceptCode": "885431.TI",
+          "conceptName": "新能源汽车"
+        },
+        {
+          "stockCode": "603435",
+          "stockName": "嘉德利",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "603435",
+          "stockName": "嘉德利",
+          "conceptCode": "885921.TI",
+          "conceptName": "储能"
+        },
+        {
+          "stockCode": "603435",
+          "stockName": "嘉德利",
+          "conceptCode": "885948.TI",
+          "conceptName": "柔性直流输电"
+        },
+        {
+          "stockCode": "603435",
+          "stockName": "嘉德利",
+          "conceptCode": "885939.TI",
+          "conceptName": "海峡两岸"
+        },
+        {
+          "stockCode": "603435",
+          "stockName": "嘉德利",
+          "conceptCode": "885425.TI",
+          "conceptName": "特高压"
+        },
+        {
+          "stockCode": "603435",
+          "stockName": "嘉德利",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "603435",
+          "stockName": "嘉德利",
+          "conceptCode": "885710.TI",
+          "conceptName": "锂电池概念"
+        },
+        {
+          "stockCode": "603435",
+          "stockName": "嘉德利",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "603435",
+          "stockName": "嘉德利",
+          "conceptCode": "886020.TI",
+          "conceptName": "PET铜箔"
+        },
+        {
+          "stockCode": "603435",
+          "stockName": "嘉德利",
+          "conceptCode": "885929.TI",
+          "conceptName": "专精特新"
+        },
+        {
+          "stockCode": "603435",
+          "stockName": "嘉德利",
+          "conceptCode": "885431.TI",
+          "conceptName": "新能源汽车"
+        },
+        {
+          "stockCode": "603352",
+          "stockName": "至信股份",
+          "conceptCode": "885431.TI",
+          "conceptName": "新能源汽车"
+        },
+        {
+          "stockCode": "603352",
+          "stockName": "至信股份",
+          "conceptCode": "885929.TI",
+          "conceptName": "专精特新"
+        },
+        {
+          "stockCode": "603352",
+          "stockName": "至信股份",
+          "conceptCode": "886059.TI",
+          "conceptName": "智能座舱"
+        },
+        {
+          "stockCode": "603352",
+          "stockName": "至信股份",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "603352",
+          "stockName": "至信股份",
+          "conceptCode": "886086.TI",
+          "conceptName": "西部大开发"
+        },
+        {
+          "stockCode": "603352",
+          "stockName": "至信股份",
+          "conceptCode": "885789.TI",
+          "conceptName": "宁德时代概念"
+        },
+        {
+          "stockCode": "603352",
+          "stockName": "至信股份",
+          "conceptCode": "885997.TI",
+          "conceptName": "比亚迪概念"
+        },
+        {
+          "stockCode": "603352",
+          "stockName": "至信股份",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "603352",
+          "stockName": "至信股份",
+          "conceptCode": "886061.TI",
+          "conceptName": "长安汽车概念"
+        },
+        {
+          "stockCode": "603352",
+          "stockName": "至信股份",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "920193",
+          "stockName": "吉和昌",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "920193",
+          "stockName": "吉和昌",
+          "conceptCode": "886110.TI",
+          "conceptName": "2026中报预增"
+        },
+        {
+          "stockCode": "920193",
+          "stockName": "吉和昌",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "920193",
+          "stockName": "吉和昌",
+          "conceptCode": "885710.TI",
+          "conceptName": "锂电池概念"
+        },
+        {
+          "stockCode": "920193",
+          "stockName": "吉和昌",
+          "conceptCode": "885543.TI",
+          "conceptName": "家用电器"
+        },
+        {
+          "stockCode": "920193",
+          "stockName": "吉和昌",
+          "conceptCode": "885431.TI",
+          "conceptName": "新能源汽车"
+        },
+        {
+          "stockCode": "920193",
+          "stockName": "吉和昌",
+          "conceptCode": "885929.TI",
+          "conceptName": "专精特新"
+        },
+        {
+          "stockCode": "920193",
+          "stockName": "吉和昌",
+          "conceptCode": "885864.TI",
+          "conceptName": "光刻胶"
+        },
+        {
+          "stockCode": "920193",
+          "stockName": "吉和昌",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "920193",
+          "stockName": "吉和昌",
+          "conceptCode": "885959.TI",
+          "conceptName": "PCB概念"
+        },
+        {
+          "stockCode": "920193",
+          "stockName": "吉和昌",
+          "conceptCode": "885531.TI",
+          "conceptName": "光伏概念"
+        },
+        {
+          "stockCode": "603293",
+          "stockName": "埃泰克",
+          "conceptCode": "885999.TI",
+          "conceptName": "汽车热管理"
+        },
+        {
+          "stockCode": "603293",
+          "stockName": "埃泰克",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "603293",
+          "stockName": "埃泰克",
+          "conceptCode": "885945.TI",
+          "conceptName": "汽车芯片"
+        },
+        {
+          "stockCode": "603293",
+          "stockName": "埃泰克",
+          "conceptCode": "885431.TI",
+          "conceptName": "新能源汽车"
+        },
+        {
+          "stockCode": "603293",
+          "stockName": "埃泰克",
+          "conceptCode": "886035.TI",
+          "conceptName": "毫米波雷达"
+        },
+        {
+          "stockCode": "603293",
+          "stockName": "埃泰克",
+          "conceptCode": "885545.TI",
+          "conceptName": "汽车电子"
+        },
+        {
+          "stockCode": "603293",
+          "stockName": "埃泰克",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "603293",
+          "stockName": "埃泰克",
+          "conceptCode": "885736.TI",
+          "conceptName": "无人驾驶"
+        },
+        {
+          "stockCode": "603293",
+          "stockName": "埃泰克",
+          "conceptCode": "885925.TI",
+          "conceptName": "MCU芯片"
+        },
+        {
+          "stockCode": "603293",
+          "stockName": "埃泰克",
+          "conceptCode": "886064.TI",
+          "conceptName": "小米汽车"
+        },
+        {
+          "stockCode": "603293",
+          "stockName": "埃泰克",
+          "conceptCode": "885929.TI",
+          "conceptName": "专精特新"
+        },
+        {
+          "stockCode": "603293",
+          "stockName": "埃泰克",
+          "conceptCode": "886059.TI",
+          "conceptName": "智能座舱"
+        },
+        {
+          "stockCode": "603293",
+          "stockName": "埃泰克",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        }
+      ],
+      "total": 236,
+      "dictionarySnapshotId": "7b69a7d1930249639e6f1cb76b15ea74",
+      "dictionaryRowCount": 395,
+      "conceptType": "N",
+      "methodology": "current-ths-membership-v1",
+      "historicalPointInTime": false
+    },
+    {
+      "source": "open_market_products",
+      "product": "concept_memberships",
+      "conceptSource": "THS",
+      "requestedSymbols": [
+        "001312.SZ",
+        "920189.BJ",
+        "603284.SH",
+        "001220.SZ"
+      ],
+      "coveredSymbols": [
+        "001312.SZ",
+        "920189.BJ",
+        "603284.SH",
+        "001220.SZ"
+      ],
+      "completeSubjectSnapshots": true,
+      "subjectSnapshots": [
+        {
+          "symbol": "001312.SZ",
+          "snapshotId": "ac58ba7d1236411cbbba44a303b9413b",
+          "observedAt": "2026-11-06T00:01:20.059989+00:00",
+          "rowCount": 49,
+          "conceptRowCount": 6,
+          "excludedNonCurrentNCount": 43
+        },
+        {
+          "symbol": "920189.BJ",
+          "snapshotId": "28425a3fd4954f5c8f8db84f7a0d99cd",
+          "observedAt": "2026-11-06T00:01:20.505377+00:00",
+          "rowCount": 51,
+          "conceptRowCount": 12,
+          "excludedNonCurrentNCount": 39
+        },
+        {
+          "symbol": "603284.SH",
+          "snapshotId": "54eaaf5918e642fa997539e0c03dfd93",
+          "observedAt": "2026-11-06T00:01:20.771928+00:00",
+          "rowCount": 67,
+          "conceptRowCount": 6,
+          "excludedNonCurrentNCount": 61
+        },
+        {
+          "symbol": "001220.SZ",
+          "snapshotId": "caf1d90557744ec18bcdece236e12fec",
+          "observedAt": "2026-11-06T00:01:21.129404+00:00",
+          "rowCount": 58,
+          "conceptRowCount": 5,
+          "excludedNonCurrentNCount": 53
+        }
+      ],
+      "items": [
+        {
+          "stockCode": "001312",
+          "stockName": "福恩股份",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "001312",
+          "stockName": "福恩股份",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "001312",
+          "stockName": "福恩股份",
+          "conceptCode": "885840.TI",
+          "conceptName": "人民币贬值受益"
+        },
+        {
+          "stockCode": "001312",
+          "stockName": "福恩股份",
+          "conceptCode": "885494.TI",
+          "conceptName": "一带一路"
+        },
+        {
+          "stockCode": "001312",
+          "stockName": "福恩股份",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "001312",
+          "stockName": "福恩股份",
+          "conceptCode": "885694.TI",
+          "conceptName": "深股通"
+        },
+        {
+          "stockCode": "920189",
+          "stockName": "康美特",
+          "conceptCode": "885756.TI",
+          "conceptName": "芯片概念"
+        },
+        {
+          "stockCode": "920189",
+          "stockName": "康美特",
+          "conceptCode": "885987.TI",
+          "conceptName": "MicroLED概念"
+        },
+        {
+          "stockCode": "920189",
+          "stockName": "康美特",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "920189",
+          "stockName": "康美特",
+          "conceptCode": "885875.TI",
+          "conceptName": "MiniLED"
+        },
+        {
+          "stockCode": "920189",
+          "stockName": "康美特",
+          "conceptCode": "885710.TI",
+          "conceptName": "锂电池概念"
+        },
+        {
+          "stockCode": "920189",
+          "stockName": "康美特",
+          "conceptCode": "886009.TI",
+          "conceptName": "先进封装"
+        },
+        {
+          "stockCode": "920189",
+          "stockName": "康美特",
+          "conceptCode": "885908.TI",
+          "conceptName": "第三代半导体"
+        },
+        {
+          "stockCode": "920189",
+          "stockName": "康美特",
+          "conceptCode": "885650.TI",
+          "conceptName": "碳纤维"
+        },
+        {
+          "stockCode": "920189",
+          "stockName": "康美特",
+          "conceptCode": "885386.TI",
+          "conceptName": "建筑节能"
+        },
+        {
+          "stockCode": "920189",
+          "stockName": "康美特",
+          "conceptCode": "885929.TI",
+          "conceptName": "专精特新"
+        },
+        {
+          "stockCode": "920189",
+          "stockName": "康美特",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "920189",
+          "stockName": "康美特",
+          "conceptCode": "885912.TI",
+          "conceptName": "有机硅概念"
+        },
+        {
+          "stockCode": "603284",
+          "stockName": "林平发展",
+          "conceptCode": "885835.TI",
+          "conceptName": "参股银行"
+        },
+        {
+          "stockCode": "603284",
+          "stockName": "林平发展",
+          "conceptCode": "885929.TI",
+          "conceptName": "专精特新"
+        },
+        {
+          "stockCode": "603284",
+          "stockName": "林平发展",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "603284",
+          "stockName": "林平发展",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        },
+        {
+          "stockCode": "603284",
+          "stockName": "林平发展",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "603284",
+          "stockName": "林平发展",
+          "conceptCode": "885705.TI",
+          "conceptName": "乡村振兴"
+        },
+        {
+          "stockCode": "001220",
+          "stockName": "世盟股份",
+          "conceptCode": "885514.TI",
+          "conceptName": "京津冀一体化"
+        },
+        {
+          "stockCode": "001220",
+          "stockName": "世盟股份",
+          "conceptCode": "885598.TI",
+          "conceptName": "新股与次新股"
+        },
+        {
+          "stockCode": "001220",
+          "stockName": "世盟股份",
+          "conceptCode": "885770.TI",
+          "conceptName": "智能物流"
+        },
+        {
+          "stockCode": "001220",
+          "stockName": "世盟股份",
+          "conceptCode": "885905.TI",
+          "conceptName": "注册制次新股"
+        },
+        {
+          "stockCode": "001220",
+          "stockName": "世盟股份",
+          "conceptCode": "885338.TI",
+          "conceptName": "融资融券"
+        }
+      ],
+      "total": 29,
+      "dictionarySnapshotId": "7b69a7d1930249639e6f1cb76b15ea74",
+      "dictionaryRowCount": 395,
+      "conceptType": "N",
+      "methodology": "current-ths-membership-v1",
+      "historicalPointInTime": false
+    }
+  ],
+  "directory": {
+    "source": "open_market_products",
+    "product": "concepts",
+    "methodology": "audited-provider-facts-v1",
+    "items": [
+      {
+        "conceptCode": "883300.TI",
+        "conceptName": "沪深300样本股"
+      },
+      {
+        "conceptCode": "883301.TI",
+        "conceptName": "上证50样本股"
+      },
+      {
+        "conceptCode": "883302.TI",
+        "conceptName": "上证180成份股"
+      },
+      {
+        "conceptCode": "883303.TI",
+        "conceptName": "上证380成份股"
+      },
+      {
+        "conceptCode": "883304.TI",
+        "conceptName": "中证500成份股"
+      },
+      {
+        "conceptCode": "885311.TI",
+        "conceptName": "智能电网"
+      },
+      {
+        "conceptCode": "885312.TI",
+        "conceptName": "物联网"
+      },
+      {
+        "conceptCode": "885333.TI",
+        "conceptName": "移动支付"
+      },
+      {
+        "conceptCode": "885338.TI",
+        "conceptName": "融资融券"
+      },
+      {
+        "conceptCode": "885343.TI",
+        "conceptName": "稀土永磁"
+      },
+      {
+        "conceptCode": "885345.TI",
+        "conceptName": "新疆振兴"
+      },
+      {
+        "conceptCode": "885355.TI",
+        "conceptName": "石墨烯"
+      },
+      {
+        "conceptCode": "885362.TI",
+        "conceptName": "云计算"
+      },
+      {
+        "conceptCode": "885372.TI",
+        "conceptName": "页岩气"
+      },
+      {
+        "conceptCode": "885376.TI",
+        "conceptName": "苹果概念"
+      },
+      {
+        "conceptCode": "885378.TI",
+        "conceptName": "智慧城市"
+      },
+      {
+        "conceptCode": "885386.TI",
+        "conceptName": "建筑节能"
+      },
+      {
+        "conceptCode": "885398.TI",
+        "conceptName": "煤化工概念"
+      },
+      {
+        "conceptCode": "885402.TI",
+        "conceptName": "智能医疗"
+      },
+      {
+        "conceptCode": "885406.TI",
+        "conceptName": "食品安全"
+      },
+      {
+        "conceptCode": "885410.TI",
+        "conceptName": "固废处理"
+      },
+      {
+        "conceptCode": "885412.TI",
+        "conceptName": "污水处理"
+      },
+      {
+        "conceptCode": "885413.TI",
+        "conceptName": "创投"
+      },
+      {
+        "conceptCode": "885418.TI",
+        "conceptName": "文化传媒概念"
+      },
+      {
+        "conceptCode": "885423.TI",
+        "conceptName": "安防"
+      },
+      {
+        "conceptCode": "885425.TI",
+        "conceptName": "特高压"
+      },
+      {
+        "conceptCode": "885426.TI",
+        "conceptName": "海工装备"
+      },
+      {
+        "conceptCode": "885427.TI",
+        "conceptName": "高端装备"
+      },
+      {
+        "conceptCode": "885428.TI",
+        "conceptName": "特钢概念"
+      },
+      {
+        "conceptCode": "885430.TI",
+        "conceptName": "天然气"
+      },
+      {
+        "conceptCode": "885431.TI",
+        "conceptName": "新能源汽车"
+      },
+      {
+        "conceptCode": "885439.TI",
+        "conceptName": "土地流转"
+      },
+      {
+        "conceptCode": "885454.TI",
+        "conceptName": "智能穿戴"
+      },
+      {
+        "conceptCode": "885456.TI",
+        "conceptName": "互联网金融"
+      },
+      {
+        "conceptCode": "885457.TI",
+        "conceptName": "手机游戏"
+      },
+      {
+        "conceptCode": "885459.TI",
+        "conceptName": "网络安全"
+      },
+      {
+        "conceptCode": "885461.TI",
+        "conceptName": "充电桩"
+      },
+      {
+        "conceptCode": "885462.TI",
+        "conceptName": "乳业"
+      },
+      {
+        "conceptCode": "885467.TI",
+        "conceptName": "特斯拉概念"
+      },
+      {
+        "conceptCode": "885472.TI",
+        "conceptName": "上海自贸区"
+      },
+      {
+        "conceptCode": "885478.TI",
+        "conceptName": "智能家居"
+      },
+      {
+        "conceptCode": "885480.TI",
+        "conceptName": "在线教育"
+      },
+      {
+        "conceptCode": "885487.TI",
+        "conceptName": "天津自贸区"
+      },
+      {
+        "conceptCode": "885490.TI",
+        "conceptName": "民营医院"
+      },
+      {
+        "conceptCode": "885493.TI",
+        "conceptName": "上海国企改革"
+      },
+      {
+        "conceptCode": "885494.TI",
+        "conceptName": "一带一路"
+      },
+      {
+        "conceptCode": "885497.TI",
+        "conceptName": "旅游概念"
+      },
+      {
+        "conceptCode": "885502.TI",
+        "conceptName": "冷链物流"
+      },
+      {
+        "conceptCode": "885505.TI",
+        "conceptName": "生态农业"
+      },
+      {
+        "conceptCode": "885508.TI",
+        "conceptName": "禽流感"
+      },
+      {
+        "conceptCode": "885514.TI",
+        "conceptName": "京津冀一体化"
+      },
+      {
+        "conceptCode": "885517.TI",
+        "conceptName": "机器人概念"
+      },
+      {
+        "conceptCode": "885520.TI",
+        "conceptName": "沪股通"
+      },
+      {
+        "conceptCode": "885521.TI",
+        "conceptName": "粤港澳大湾区"
+      },
+      {
+        "conceptCode": "885522.TI",
+        "conceptName": "养老概念"
+      },
+      {
+        "conceptCode": "885525.TI",
+        "conceptName": "白酒概念"
+      },
+      {
+        "conceptCode": "885530.TI",
+        "conceptName": "黄金概念"
+      },
+      {
+        "conceptCode": "885531.TI",
+        "conceptName": "光伏概念"
+      },
+      {
+        "conceptCode": "885537.TI",
+        "conceptName": "3D打印"
+      },
+      {
+        "conceptCode": "885539.TI",
+        "conceptName": "医疗器械概念"
+      },
+      {
+        "conceptCode": "885540.TI",
+        "conceptName": "三胎概念"
+      },
+      {
+        "conceptCode": "885543.TI",
+        "conceptName": "家用电器"
+      },
+      {
+        "conceptCode": "885545.TI",
+        "conceptName": "汽车电子"
+      },
+      {
+        "conceptCode": "885551.TI",
+        "conceptName": "氟化工概念"
+      },
+      {
+        "conceptCode": "885552.TI",
+        "conceptName": "小金属概念"
+      },
+      {
+        "conceptCode": "885555.TI",
+        "conceptName": "PM2.5"
+      },
+      {
+        "conceptCode": "885556.TI",
+        "conceptName": "5G"
+      },
+      {
+        "conceptCode": "885562.TI",
+        "conceptName": "高铁"
+      },
+      {
+        "conceptCode": "885564.TI",
+        "conceptName": "无人机"
+      },
+      {
+        "conceptCode": "885566.TI",
+        "conceptName": "大飞机"
+      },
+      {
+        "conceptCode": "885570.TI",
+        "conceptName": "期货概念"
+      },
+      {
+        "conceptCode": "885571.TI",
+        "conceptName": "核电"
+      },
+      {
+        "conceptCode": "885572.TI",
+        "conceptName": "水利"
+      },
+      {
+        "conceptCode": "885573.TI",
+        "conceptName": "猪肉"
+      },
+      {
+        "conceptCode": "885574.TI",
+        "conceptName": "卫星导航"
+      },
+      {
+        "conceptCode": "885578.TI",
+        "conceptName": "基因测序"
+      },
+      {
+        "conceptCode": "885580.TI",
+        "conceptName": "足球概念"
+      },
+      {
+        "conceptCode": "885586.TI",
+        "conceptName": "职业教育"
+      },
+      {
+        "conceptCode": "885587.TI",
+        "conceptName": "举牌"
+      },
+      {
+        "conceptCode": "885591.TI",
+        "conceptName": "中韩自贸区"
+      },
+      {
+        "conceptCode": "885595.TI",
+        "conceptName": "央企国企改革"
+      },
+      {
+        "conceptCode": "885598.TI",
+        "conceptName": "新股与次新股"
+      },
+      {
+        "conceptCode": "885603.TI",
+        "conceptName": "网络游戏"
+      },
+      {
+        "conceptCode": "885611.TI",
+        "conceptName": "阿里巴巴概念"
+      },
+      {
+        "conceptCode": "885615.TI",
+        "conceptName": "体育产业"
+      },
+      {
+        "conceptCode": "885617.TI",
+        "conceptName": "福建自贸区"
+      },
+      {
+        "conceptCode": "885620.TI",
+        "conceptName": "参股券商"
+      },
+      {
+        "conceptCode": "885623.TI",
+        "conceptName": "参股保险"
+      },
+      {
+        "conceptCode": "885629.TI",
+        "conceptName": "农村电商"
+      },
+      {
+        "conceptCode": "885633.TI",
+        "conceptName": "染料"
+      },
+      {
+        "conceptCode": "885640.TI",
+        "conceptName": "草甘膦"
+      },
+      {
+        "conceptCode": "885641.TI",
+        "conceptName": "风电"
+      },
+      {
+        "conceptCode": "885642.TI",
+        "conceptName": "跨境电商"
+      },
+      {
+        "conceptCode": "885650.TI",
+        "conceptName": "碳纤维"
+      },
+      {
+        "conceptCode": "885652.TI",
+        "conceptName": "钛白粉概念"
+      },
+      {
+        "conceptCode": "885661.TI",
+        "conceptName": "医药电商"
+      },
+      {
+        "conceptCode": "885662.TI",
+        "conceptName": "车联网(车路协同)"
+      },
+      {
+        "conceptCode": "885663.TI",
+        "conceptName": "证金持股"
+      },
+      {
+        "conceptCode": "885690.TI",
+        "conceptName": "PPP概念"
+      },
+      {
+        "conceptCode": "885692.TI",
+        "conceptName": "地下管网"
+      },
+      {
+        "conceptCode": "885694.TI",
+        "conceptName": "深股通"
+      },
+      {
+        "conceptCode": "885697.TI",
+        "conceptName": "深圳国企改革"
+      },
+      {
+        "conceptCode": "885699.TI",
+        "conceptName": "ST板块"
+      },
+      {
+        "conceptCode": "885700.TI",
+        "conceptName": "军工"
+      },
+      {
+        "conceptCode": "885705.TI",
+        "conceptName": "乡村振兴"
+      },
+      {
+        "conceptCode": "885706.TI",
+        "conceptName": "农机"
+      },
+      {
+        "conceptCode": "885709.TI",
+        "conceptName": "虚拟现实"
+      },
+      {
+        "conceptCode": "885710.TI",
+        "conceptName": "锂电池概念"
+      },
+      {
+        "conceptCode": "885728.TI",
+        "conceptName": "人工智能"
+      },
+      {
+        "conceptCode": "885730.TI",
+        "conceptName": "量子科技"
+      },
+      {
+        "conceptCode": "885733.TI",
+        "conceptName": "航运概念"
+      },
+      {
+        "conceptCode": "885734.TI",
+        "conceptName": "广东自贸区"
+      },
+      {
+        "conceptCode": "885736.TI",
+        "conceptName": "无人驾驶"
+      },
+      {
+        "conceptCode": "885737.TI",
+        "conceptName": "电子竞技"
+      },
+      {
+        "conceptCode": "885738.TI",
+        "conceptName": "OLED"
+      },
+      {
+        "conceptCode": "885739.TI",
+        "conceptName": "股权转让(并购重组)"
+      },
+      {
+        "conceptCode": "885740.TI",
+        "conceptName": "化债概念(AMC概念)"
+      },
+      {
+        "conceptCode": "885741.TI",
+        "conceptName": "中字头股票"
+      },
+      {
+        "conceptCode": "885742.TI",
+        "conceptName": "摘帽"
+      },
+      {
+        "conceptCode": "885743.TI",
+        "conceptName": "军民融合"
+      },
+      {
+        "conceptCode": "885744.TI",
+        "conceptName": "雄安新区"
+      },
+      {
+        "conceptCode": "885747.TI",
+        "conceptName": "共享单车"
+      },
+      {
+        "conceptCode": "885748.TI",
+        "conceptName": "可燃冰"
+      },
+      {
+        "conceptCode": "885749.TI",
+        "conceptName": "蚂蚁集团概念"
+      },
+      {
+        "conceptCode": "885750.TI",
+        "conceptName": "特色小镇"
+      },
+      {
+        "conceptCode": "885753.TI",
+        "conceptName": "网约车"
+      },
+      {
+        "conceptCode": "885756.TI",
+        "conceptName": "芯片概念"
+      },
+      {
+        "conceptCode": "885757.TI",
+        "conceptName": "区块链"
+      },
+      {
+        "conceptCode": "885758.TI",
+        "conceptName": "租售同权"
+      },
+      {
+        "conceptCode": "885759.TI",
+        "conceptName": "人脸识别"
+      },
+      {
+        "conceptCode": "885760.TI",
+        "conceptName": "装配式建筑"
+      },
+      {
+        "conceptCode": "885761.TI",
+        "conceptName": "超级品牌"
+      },
+      {
+        "conceptCode": "885764.TI",
+        "conceptName": "自由贸易港"
+      },
+      {
+        "conceptCode": "885767.TI",
+        "conceptName": "互联网保险"
+      },
+      {
+        "conceptCode": "885768.TI",
+        "conceptName": "无人零售"
+      },
+      {
+        "conceptCode": "885769.TI",
+        "conceptName": "细胞免疫治疗"
+      },
+      {
+        "conceptCode": "885770.TI",
+        "conceptName": "智能物流"
+      },
+      {
+        "conceptCode": "885771.TI",
+        "conceptName": "智能音箱"
+      },
+      {
+        "conceptCode": "885772.TI",
+        "conceptName": "语音技术"
+      },
+      {
+        "conceptCode": "885774.TI",
+        "conceptName": "无线充电"
+      },
+      {
+        "conceptCode": "885775.TI",
+        "conceptName": "燃料电池"
+      },
+      {
+        "conceptCode": "885779.TI",
+        "conceptName": "腾讯概念"
+      },
+      {
+        "conceptCode": "885780.TI",
+        "conceptName": "啤酒概念"
+      },
+      {
+        "conceptCode": "885781.TI",
+        "conceptName": "石墨电极"
+      },
+      {
+        "conceptCode": "885782.TI",
+        "conceptName": "水泥概念"
+      },
+      {
+        "conceptCode": "885783.TI",
+        "conceptName": "工业互联网"
+      },
+      {
+        "conceptCode": "885785.TI",
+        "conceptName": "小米概念"
+      },
+      {
+        "conceptCode": "885786.TI",
+        "conceptName": "富士康概念"
+      },
+      {
+        "conceptCode": "885787.TI",
+        "conceptName": "独角兽概念"
+      },
+      {
+        "conceptCode": "885789.TI",
+        "conceptName": "宁德时代概念"
+      },
+      {
+        "conceptCode": "885791.TI",
+        "conceptName": "知识产权保护"
+      },
+      {
+        "conceptCode": "885792.TI",
+        "conceptName": "赛马概念"
+      },
+      {
+        "conceptCode": "885795.TI",
+        "conceptName": "国产航母"
+      },
+      {
+        "conceptCode": "885797.TI",
+        "conceptName": "百度概念"
+      },
+      {
+        "conceptCode": "885800.TI",
+        "conceptName": "消费电子概念"
+      },
+      {
+        "conceptCode": "885805.TI",
+        "conceptName": "芬太尼"
+      },
+      {
+        "conceptCode": "885806.TI",
+        "conceptName": "华为概念"
+      },
+      {
+        "conceptCode": "885808.TI",
+        "conceptName": "养鸡"
+      },
+      {
+        "conceptCode": "885809.TI",
+        "conceptName": "柔性屏(折叠屏)"
+      },
+      {
+        "conceptCode": "885810.TI",
+        "conceptName": "大豆"
+      },
+      {
+        "conceptCode": "885811.TI",
+        "conceptName": "玉米"
+      },
+      {
+        "conceptCode": "885812.TI",
+        "conceptName": "农业种植"
+      },
+      {
+        "conceptCode": "885814.TI",
+        "conceptName": "信托概念"
+      },
+      {
+        "conceptCode": "885818.TI",
+        "conceptName": "工业大麻"
+      },
+      {
+        "conceptCode": "885819.TI",
+        "conceptName": "电力物联网"
+      },
+      {
+        "conceptCode": "885820.TI",
+        "conceptName": "数字孪生"
+      },
+      {
+        "conceptCode": "885823.TI",
+        "conceptName": "氢能源"
+      },
+      {
+        "conceptCode": "885825.TI",
+        "conceptName": "冰雪产业"
+      },
+      {
+        "conceptCode": "885827.TI",
+        "conceptName": "横琴新区"
+      },
+      {
+        "conceptCode": "885829.TI",
+        "conceptName": "丙烯酸"
+      },
+      {
+        "conceptCode": "885832.TI",
+        "conceptName": "长三角一体化"
+      },
+      {
+        "conceptCode": "885834.TI",
+        "conceptName": "华为汽车"
+      },
+      {
+        "conceptCode": "885835.TI",
+        "conceptName": "参股银行"
+      },
+      {
+        "conceptCode": "885838.TI",
+        "conceptName": "眼科医疗"
+      },
+      {
+        "conceptCode": "885839.TI",
+        "conceptName": "人造肉"
+      },
+      {
+        "conceptCode": "885840.TI",
+        "conceptName": "人民币贬值受益"
+      },
+      {
+        "conceptCode": "885842.TI",
+        "conceptName": "数字乡村"
+      },
+      {
+        "conceptCode": "885843.TI",
+        "conceptName": "华为海思概念股"
+      },
+      {
+        "conceptCode": "885844.TI",
+        "conceptName": "国产操作系统"
+      },
+      {
+        "conceptCode": "885845.TI",
+        "conceptName": "生物疫苗"
+      },
+      {
+        "conceptCode": "885846.TI",
+        "conceptName": "动物疫苗"
+      },
+      {
+        "conceptCode": "885849.TI",
+        "conceptName": "黑龙江自贸区"
+      },
+      {
+        "conceptCode": "885851.TI",
+        "conceptName": "烟草"
+      },
+      {
+        "conceptCode": "885852.TI",
+        "conceptName": "青蒿素"
+      },
+      {
+        "conceptCode": "885854.TI",
+        "conceptName": "垃圾分类"
+      },
+      {
+        "conceptCode": "885856.TI",
+        "conceptName": "仿制药一致性评价"
+      },
+      {
+        "conceptCode": "885860.TI",
+        "conceptName": "中船系"
+      },
+      {
+        "conceptCode": "885861.TI",
+        "conceptName": "ETC"
+      },
+      {
+        "conceptCode": "885863.TI",
+        "conceptName": "磷化工"
+      },
+      {
+        "conceptCode": "885864.TI",
+        "conceptName": "光刻胶"
+      },
+      {
+        "conceptCode": "885865.TI",
+        "conceptName": "金属钴"
+      },
+      {
+        "conceptCode": "885866.TI",
+        "conceptName": "数字货币"
+      },
+      {
+        "conceptCode": "885868.TI",
+        "conceptName": "无线耳机"
+      },
+      {
+        "conceptCode": "885874.TI",
+        "conceptName": "云游戏"
+      },
+      {
+        "conceptCode": "885875.TI",
+        "conceptName": "MiniLED"
+      },
+      {
+        "conceptCode": "885876.TI",
+        "conceptName": "网红经济"
+      },
+      {
+        "conceptCode": "885877.TI",
+        "conceptName": "转基因"
+      },
+      {
+        "conceptCode": "885878.TI",
+        "conceptName": "HJT电池"
+      },
+      {
+        "conceptCode": "885879.TI",
+        "conceptName": "流感"
+      },
+      {
+        "conceptCode": "885881.TI",
+        "conceptName": "云办公"
+      },
+      {
+        "conceptCode": "885882.TI",
+        "conceptName": "消毒剂"
+      },
+      {
+        "conceptCode": "885884.TI",
+        "conceptName": "航空发动机"
+      },
+      {
+        "conceptCode": "885886.TI",
+        "conceptName": "超级电容"
+      },
+      {
+        "conceptCode": "885887.TI",
+        "conceptName": "数据中心(AIDC)"
+      },
+      {
+        "conceptCode": "885888.TI",
+        "conceptName": "C2M概念"
+      },
+      {
+        "conceptCode": "885890.TI",
+        "conceptName": "抖音概念(字节概念)"
+      },
+      {
+        "conceptCode": "885893.TI",
+        "conceptName": "国家大基金持股"
+      },
+      {
+        "conceptCode": "885894.TI",
+        "conceptName": "海南自贸区"
+      },
+      {
+        "conceptCode": "885897.TI",
+        "conceptName": "中芯国际概念"
+      },
+      {
+        "conceptCode": "885898.TI",
+        "conceptName": "免税店"
+      },
+      {
+        "conceptCode": "885899.TI",
+        "conceptName": "新型烟草(电子烟)"
+      },
+      {
+        "conceptCode": "885900.TI",
+        "conceptName": "NMN概念"
+      },
+      {
+        "conceptCode": "885901.TI",
+        "conceptName": "可降解塑料"
+      },
+      {
+        "conceptCode": "885902.TI",
+        "conceptName": "汽车拆解概念"
+      },
+      {
+        "conceptCode": "885903.TI",
+        "conceptName": "环氧丙烷"
+      },
+      {
+        "conceptCode": "885904.TI",
+        "conceptName": "代糖概念"
+      },
+      {
+        "conceptCode": "885905.TI",
+        "conceptName": "注册制次新股"
+      },
+      {
+        "conceptCode": "885907.TI",
+        "conceptName": "科创次新股"
+      },
+      {
+        "conceptCode": "885908.TI",
+        "conceptName": "第三代半导体"
+      },
+      {
+        "conceptCode": "885909.TI",
+        "conceptName": "辅助生殖"
+      },
+      {
+        "conceptCode": "885910.TI",
+        "conceptName": "拼多多概念"
+      },
+      {
+        "conceptCode": "885912.TI",
+        "conceptName": "有机硅概念"
+      },
+      {
+        "conceptCode": "885913.TI",
+        "conceptName": "医美概念"
+      },
+      {
+        "conceptCode": "885914.TI",
+        "conceptName": "煤炭概念"
+      },
+      {
+        "conceptCode": "885915.TI",
+        "conceptName": "物业管理"
+      },
+      {
+        "conceptCode": "885916.TI",
+        "conceptName": "同花顺漂亮100"
+      },
+      {
+        "conceptCode": "885918.TI",
+        "conceptName": "快手概念"
+      },
+      {
+        "conceptCode": "885919.TI",
+        "conceptName": "碳中和"
+      },
+      {
+        "conceptCode": "885920.TI",
+        "conceptName": "光伏建筑一体化"
+      },
+      {
+        "conceptCode": "885921.TI",
+        "conceptName": "储能"
+      },
+      {
+        "conceptCode": "885922.TI",
+        "conceptName": "盐湖提锂"
+      },
+      {
+        "conceptCode": "885923.TI",
+        "conceptName": "鸿蒙概念"
+      },
+      {
+        "conceptCode": "885924.TI",
+        "conceptName": "共同富裕示范区"
+      },
+      {
+        "conceptCode": "885925.TI",
+        "conceptName": "MCU芯片"
+      },
+      {
+        "conceptCode": "885926.TI",
+        "conceptName": "牙科医疗"
+      },
+      {
+        "conceptCode": "885927.TI",
+        "conceptName": "CRO概念"
+      },
+      {
+        "conceptCode": "885928.TI",
+        "conceptName": "钠离子电池"
+      },
+      {
+        "conceptCode": "885929.TI",
+        "conceptName": "专精特新"
+      },
+      {
+        "conceptCode": "885930.TI",
+        "conceptName": "工业母机"
+      },
+      {
+        "conceptCode": "885931.TI",
+        "conceptName": "PVDF概念"
+      },
+      {
+        "conceptCode": "885933.TI",
+        "conceptName": "NFT概念"
+      },
+      {
+        "conceptCode": "885934.TI",
+        "conceptName": "元宇宙"
+      },
+      {
+        "conceptCode": "885935.TI",
+        "conceptName": "抽水蓄能"
+      },
+      {
+        "conceptCode": "885936.TI",
+        "conceptName": "绿色电力"
+      },
+      {
+        "conceptCode": "885937.TI",
+        "conceptName": "培育钻石"
+      },
+      {
+        "conceptCode": "885938.TI",
+        "conceptName": "换电概念"
+      },
+      {
+        "conceptCode": "885939.TI",
+        "conceptName": "海峡两岸"
+      },
+      {
+        "conceptCode": "885940.TI",
+        "conceptName": "WiFi6"
+      },
+      {
+        "conceptCode": "885942.TI",
+        "conceptName": "数据安全"
+      },
+      {
+        "conceptCode": "885943.TI",
+        "conceptName": "EDR概念"
+      },
+      {
+        "conceptCode": "885944.TI",
+        "conceptName": "动力电池回收"
+      },
+      {
+        "conceptCode": "885945.TI",
+        "conceptName": "汽车芯片"
+      },
+      {
+        "conceptCode": "885946.TI",
+        "conceptName": "传感器"
+      },
+      {
+        "conceptCode": "885947.TI",
+        "conceptName": "DRG/DIP"
+      },
+      {
+        "conceptCode": "885948.TI",
+        "conceptName": "柔性直流输电"
+      },
+      {
+        "conceptCode": "885950.TI",
+        "conceptName": "虚拟数字人"
+      },
+      {
+        "conceptCode": "885951.TI",
+        "conceptName": "预制菜"
+      },
+      {
+        "conceptCode": "885952.TI",
+        "conceptName": "幽门螺杆菌概念"
+      },
+      {
+        "conceptCode": "885953.TI",
+        "conceptName": "电子纸"
+      },
+      {
+        "conceptCode": "885955.TI",
+        "conceptName": "重组蛋白"
+      },
+      {
+        "conceptCode": "885956.TI",
+        "conceptName": "智慧政务"
+      },
+      {
+        "conceptCode": "885957.TI",
+        "conceptName": "东数西算(算力)"
+      },
+      {
+        "conceptCode": "885958.TI",
+        "conceptName": "硅能源"
+      },
+      {
+        "conceptCode": "885959.TI",
+        "conceptName": "PCB概念"
+      },
+      {
+        "conceptCode": "885960.TI",
+        "conceptName": "民爆概念"
+      },
+      {
+        "conceptCode": "885961.TI",
+        "conceptName": "净水概念"
+      },
+      {
+        "conceptCode": "885962.TI",
+        "conceptName": "土壤修复"
+      },
+      {
+        "conceptCode": "885963.TI",
+        "conceptName": "智慧灯杆"
+      },
+      {
+        "conceptCode": "885964.TI",
+        "conceptName": "俄乌冲突概念"
+      },
+      {
+        "conceptCode": "885965.TI",
+        "conceptName": "中俄贸易概念"
+      },
+      {
+        "conceptCode": "885966.TI",
+        "conceptName": "跨境支付(CIPS)"
+      },
+      {
+        "conceptCode": "885967.TI",
+        "conceptName": "化肥"
+      },
+      {
+        "conceptCode": "885968.TI",
+        "conceptName": "托育服务"
+      },
+      {
+        "conceptCode": "885969.TI",
+        "conceptName": "金属镍"
+      },
+      {
+        "conceptCode": "885970.TI",
+        "conceptName": "金属锌"
+      },
+      {
+        "conceptCode": "885971.TI",
+        "conceptName": "金属铅"
+      },
+      {
+        "conceptCode": "885972.TI",
+        "conceptName": "金属回收"
+      },
+      {
+        "conceptCode": "885973.TI",
+        "conceptName": "金属铜"
+      },
+      {
+        "conceptCode": "885974.TI",
+        "conceptName": "两轮车"
+      },
+      {
+        "conceptCode": "885975.TI",
+        "conceptName": "电子身份证"
+      },
+      {
+        "conceptCode": "885976.TI",
+        "conceptName": "数字经济"
+      },
+      {
+        "conceptCode": "885977.TI",
+        "conceptName": "国资云"
+      },
+      {
+        "conceptCode": "885980.TI",
+        "conceptName": "华为鲲鹏"
+      },
+      {
+        "conceptCode": "885981.TI",
+        "conceptName": "家庭医生"
+      },
+      {
+        "conceptCode": "885982.TI",
+        "conceptName": "华为欧拉"
+      },
+      {
+        "conceptCode": "885985.TI",
+        "conceptName": "毛发医疗"
+      },
+      {
+        "conceptCode": "885986.TI",
+        "conceptName": "碳交易"
+      },
+      {
+        "conceptCode": "885987.TI",
+        "conceptName": "MicroLED概念"
+      },
+      {
+        "conceptCode": "885988.TI",
+        "conceptName": "统一大市场"
+      },
+      {
+        "conceptCode": "885989.TI",
+        "conceptName": "肝炎概念"
+      },
+      {
+        "conceptCode": "885990.TI",
+        "conceptName": "露营经济"
+      },
+      {
+        "conceptCode": "885991.TI",
+        "conceptName": "新型城镇化"
+      },
+      {
+        "conceptCode": "885994.TI",
+        "conceptName": "猴痘概念"
+      },
+      {
+        "conceptCode": "885995.TI",
+        "conceptName": "粮食概念"
+      },
+      {
+        "conceptCode": "885996.TI",
+        "conceptName": "超超临界发电"
+      },
+      {
+        "conceptCode": "885997.TI",
+        "conceptName": "比亚迪概念"
+      },
+      {
+        "conceptCode": "885998.TI",
+        "conceptName": "F5G概念"
+      },
+      {
+        "conceptCode": "885999.TI",
+        "conceptName": "汽车热管理"
+      },
+      {
+        "conceptCode": "886000.TI",
+        "conceptName": "一体化压铸"
+      },
+      {
+        "conceptCode": "886001.TI",
+        "conceptName": "高压快充"
+      },
+      {
+        "conceptCode": "886002.TI",
+        "conceptName": "机器视觉"
+      },
+      {
+        "conceptCode": "886003.TI",
+        "conceptName": "钒电池"
+      },
+      {
+        "conceptCode": "886004.TI",
+        "conceptName": "虚拟电厂"
+      },
+      {
+        "conceptCode": "886005.TI",
+        "conceptName": "生物质能发电"
+      },
+      {
+        "conceptCode": "886006.TI",
+        "conceptName": "钙钛矿电池"
+      },
+      {
+        "conceptCode": "886007.TI",
+        "conceptName": "TOPCON电池"
+      },
+      {
+        "conceptCode": "886008.TI",
+        "conceptName": "减速器"
+      },
+      {
+        "conceptCode": "886009.TI",
+        "conceptName": "先进封装"
+      },
+      {
+        "conceptCode": "886010.TI",
+        "conceptName": "空气能热泵"
+      },
+      {
+        "conceptCode": "886011.TI",
+        "conceptName": "光热发电"
+      },
+      {
+        "conceptCode": "886012.TI",
+        "conceptName": "宠物经济"
+      },
+      {
+        "conceptCode": "886013.TI",
+        "conceptName": "信创"
+      },
+      {
+        "conceptCode": "886015.TI",
+        "conceptName": "创新药"
+      },
+      {
+        "conceptCode": "886016.TI",
+        "conceptName": "供销社"
+      },
+      {
+        "conceptCode": "886017.TI",
+        "conceptName": "Web3.0"
+      },
+      {
+        "conceptCode": "886018.TI",
+        "conceptName": "高压氧舱"
+      },
+      {
+        "conceptCode": "886019.TI",
+        "conceptName": "AIGC概念"
+      },
+      {
+        "conceptCode": "886020.TI",
+        "conceptName": "PET铜箔"
+      },
+      {
+        "conceptCode": "886021.TI",
+        "conceptName": "国企改革"
+      },
+      {
+        "conceptCode": "886023.TI",
+        "conceptName": "数据确权"
+      },
+      {
+        "conceptCode": "886026.TI",
+        "conceptName": "POE胶膜"
+      },
+      {
+        "conceptCode": "886028.TI",
+        "conceptName": "血氧仪"
+      },
+      {
+        "conceptCode": "886030.TI",
+        "conceptName": "成飞概念"
+      },
+      {
+        "conceptCode": "886031.TI",
+        "conceptName": "ChatGPT概念"
+      },
+      {
+        "conceptCode": "886032.TI",
+        "conceptName": "固态电池"
+      },
+      {
+        "conceptCode": "886033.TI",
+        "conceptName": "共封装光学(CPO)"
+      },
+      {
+        "conceptCode": "886034.TI",
+        "conceptName": "数字水印"
+      },
+      {
+        "conceptCode": "886035.TI",
+        "conceptName": "毫米波雷达"
+      },
+      {
+        "conceptCode": "886036.TI",
+        "conceptName": "时空大数据"
+      },
+      {
+        "conceptCode": "886037.TI",
+        "conceptName": "6G概念"
+      },
+      {
+        "conceptCode": "886038.TI",
+        "conceptName": "超导概念"
+      },
+      {
+        "conceptCode": "886039.TI",
+        "conceptName": "ERP概念"
+      },
+      {
+        "conceptCode": "886040.TI",
+        "conceptName": "MLOps概念"
+      },
+      {
+        "conceptCode": "886041.TI",
+        "conceptName": "数据要素"
+      },
+      {
+        "conceptCode": "886042.TI",
+        "conceptName": "存储芯片"
+      },
+      {
+        "conceptCode": "886043.TI",
+        "conceptName": "太赫兹"
+      },
+      {
+        "conceptCode": "886044.TI",
+        "conceptName": "液冷服务器"
+      },
+      {
+        "conceptCode": "886045.TI",
+        "conceptName": "同花顺中特估100"
+      },
+      {
+        "conceptCode": "886046.TI",
+        "conceptName": "MR(混合现实)"
+      },
+      {
+        "conceptCode": "886047.TI",
+        "conceptName": "脑机接口"
+      },
+      {
+        "conceptCode": "886048.TI",
+        "conceptName": "英伟达概念"
+      },
+      {
+        "conceptCode": "886049.TI",
+        "conceptName": "空间计算"
+      },
+      {
+        "conceptCode": "886050.TI",
+        "conceptName": "算力租赁"
+      },
+      {
+        "conceptCode": "886051.TI",
+        "conceptName": "减肥药"
+      },
+      {
+        "conceptCode": "886052.TI",
+        "conceptName": "核污染防治"
+      },
+      {
+        "conceptCode": "886053.TI",
+        "conceptName": "BC电池"
+      },
+      {
+        "conceptCode": "886054.TI",
+        "conceptName": "光刻机"
+      },
+      {
+        "conceptCode": "886055.TI",
+        "conceptName": "星闪概念"
+      },
+      {
+        "conceptCode": "886056.TI",
+        "conceptName": "阿尔茨海默概念"
+      },
+      {
+        "conceptCode": "886057.TI",
+        "conceptName": "新型工业化"
+      },
+      {
+        "conceptCode": "886058.TI",
+        "conceptName": "华为昇腾"
+      },
+      {
+        "conceptCode": "886059.TI",
+        "conceptName": "智能座舱"
+      },
+      {
+        "conceptCode": "886060.TI",
+        "conceptName": "短剧游戏"
+      },
+      {
+        "conceptCode": "886061.TI",
+        "conceptName": "长安汽车概念"
+      },
+      {
+        "conceptCode": "886062.TI",
+        "conceptName": "多模态AI"
+      },
+      {
+        "conceptCode": "886063.TI",
+        "conceptName": "PEEK材料"
+      },
+      {
+        "conceptCode": "886064.TI",
+        "conceptName": "小米汽车"
+      },
+      {
+        "conceptCode": "886065.TI",
+        "conceptName": "可控核聚变"
+      },
+      {
+        "conceptCode": "886066.TI",
+        "conceptName": "飞行汽车(eVTOL)"
+      },
+      {
+        "conceptCode": "886067.TI",
+        "conceptName": "低空经济"
+      },
+      {
+        "conceptCode": "886068.TI",
+        "conceptName": "AI视频"
+      },
+      {
+        "conceptCode": "886069.TI",
+        "conceptName": "人形机器人"
+      },
+      {
+        "conceptCode": "886070.TI",
+        "conceptName": "AI手机"
+      },
+      {
+        "conceptCode": "886071.TI",
+        "conceptName": "AI PC"
+      },
+      {
+        "conceptCode": "886072.TI",
+        "conceptName": "高股息精选"
+      },
+      {
+        "conceptCode": "886073.TI",
+        "conceptName": "铜缆高速连接"
+      },
+      {
+        "conceptCode": "886074.TI",
+        "conceptName": "AI语料"
+      },
+      {
+        "conceptCode": "886075.TI",
+        "conceptName": "同花顺出海50"
+      },
+      {
+        "conceptCode": "886076.TI",
+        "conceptName": "军工信息化"
+      },
+      {
+        "conceptCode": "886077.TI",
+        "conceptName": "合成生物"
+      },
+      {
+        "conceptCode": "886078.TI",
+        "conceptName": "商业航天"
+      },
+      {
+        "conceptCode": "886080.TI",
+        "conceptName": "财税数字化"
+      },
+      {
+        "conceptCode": "886081.TI",
+        "conceptName": "维生素"
+      },
+      {
+        "conceptCode": "886082.TI",
+        "conceptName": "同花顺果指数"
+      },
+      {
+        "conceptCode": "886084.TI",
+        "conceptName": "光纤概念"
+      },
+      {
+        "conceptCode": "886085.TI",
+        "conceptName": "AI眼镜"
+      },
+      {
+        "conceptCode": "886086.TI",
+        "conceptName": "西部大开发"
+      },
+      {
+        "conceptCode": "886087.TI",
+        "conceptName": "房屋检测"
+      },
+      {
+        "conceptCode": "886090.TI",
+        "conceptName": "智谱AI"
+      },
+      {
+        "conceptCode": "886091.TI",
+        "conceptName": "华为手机"
+      },
+      {
+        "conceptCode": "886093.TI",
+        "conceptName": "华为数字能源"
+      },
+      {
+        "conceptCode": "886094.TI",
+        "conceptName": "华为盘古"
+      },
+      {
+        "conceptCode": "886095.TI",
+        "conceptName": "IP经济(谷子经济)"
+      },
+      {
+        "conceptCode": "886096.TI",
+        "conceptName": "同花顺新质50"
+      },
+      {
+        "conceptCode": "886098.TI",
+        "conceptName": "小红书概念"
+      },
+      {
+        "conceptCode": "886099.TI",
+        "conceptName": "AI智能体"
+      },
+      {
+        "conceptCode": "886100.TI",
+        "conceptName": "DeepSeek概念"
+      },
+      {
+        "conceptCode": "886101.TI",
+        "conceptName": "兵装重组概念"
+      },
+      {
+        "conceptCode": "886102.TI",
+        "conceptName": "中国AI 50"
+      },
+      {
+        "conceptCode": "886105.TI",
+        "conceptName": "雅下水电概念"
+      },
+      {
+        "conceptCode": "886108.TI",
+        "conceptName": "AI应用"
+      },
+      {
+        "conceptCode": "886109.TI",
+        "conceptName": "2026一季报预增"
+      },
+      {
+        "conceptCode": "886110.TI",
+        "conceptName": "2026中报预增"
+      },
+      {
+        "conceptCode": "886111.TI",
+        "conceptName": "玻璃基板"
+      },
+      {
+        "conceptCode": "886112.TI",
+        "conceptName": "MLCC概念"
+      }
+    ],
+    "total": 395,
+    "page": 1,
+    "page_size": 500
+  }
+}

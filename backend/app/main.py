@@ -20,6 +20,9 @@ def create_app() -> Flask:
 
     app = Flask(__name__, static_folder=str(static_dir), static_url_path="")  # pylint: disable=redefined-outer-name
     secret_key = os.getenv("SECRET_KEY", "dev-secret")
+    if os.getenv("IFUND_ENV", "development") == "production" and (
+            len(secret_key) < 32 or secret_key in {"dev-secret", "change-me"}):
+        raise RuntimeError("Production requires a strong SECRET_KEY of at least 32 characters")
     if len(secret_key) < 32:
         logging.warning(
             "SECRET_KEY 过弱（<32 字节）。对外暴露 API / 启用 PAT 前请在 .env 设置"
@@ -61,7 +64,7 @@ def create_app() -> Flask:
         database.init_db(schema_sql)
         # 增量迁移：portfolios 表加 cap 列（已存在则跳过）
         ensure_column("portfolios", "cap", "REAL DEFAULT 0.18")
-    elif db_backend == "mysql":
+    elif db_backend == "mysql" and os.getenv("IFUND_AUTO_MIGRATE", "0") == "1":
         schema_sql = (backend_dir / "schema_sqlite.sql").read_text(encoding="utf-8")
         database.init_db(schema_sql)
 

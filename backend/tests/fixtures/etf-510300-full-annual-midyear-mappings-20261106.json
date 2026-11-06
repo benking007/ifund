@@ -1,0 +1,5845 @@
+{
+  "142": [
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "740000",
+      "industryName": "煤炭",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 1.09804592,
+      "holdingNavAnnual": 1.09
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "430000",
+      "industryName": "房地产",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 0.53675074,
+      "holdingNavAnnual": 0.53
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "650000",
+      "industryName": "国防军工",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 1.90618784,
+      "holdingNavAnnual": 1.92
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "750000",
+      "industryName": "石油石化",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 1.56497074,
+      "holdingNavAnnual": 1.56
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "730000",
+      "industryName": "通信",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 6.5991693,
+      "holdingNavAnnual": 6.61
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "640000",
+      "industryName": "机械设备",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 2.29987857,
+      "holdingNavAnnual": 2.3
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "230000",
+      "industryName": "钢铁",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 0.52955939,
+      "holdingNavAnnual": 0.52
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "270000",
+      "industryName": "电子",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 13.61283222,
+      "holdingNavAnnual": 13.63
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "370000",
+      "industryName": "医药生物",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 4.72795176,
+      "holdingNavAnnual": 4.75
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "410000",
+      "industryName": "公用事业",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 2.82209611,
+      "holdingNavAnnual": 2.85
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "220000",
+      "industryName": "基础化工",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 2.19535143,
+      "holdingNavAnnual": 2.19
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "460000",
+      "industryName": "社会服务",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 5.41e-06,
+      "holdingNavAnnual": 0.0
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "330000",
+      "industryName": "家用电器",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 3.19548785,
+      "holdingNavAnnual": 3.18
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "350000",
+      "industryName": "纺织服饰",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 0.0342747,
+      "holdingNavAnnual": 0.03
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "710000",
+      "industryName": "计算机",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 3.57062802,
+      "holdingNavAnnual": 3.57
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "420000",
+      "industryName": "交通运输",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 2.9043433,
+      "holdingNavAnnual": 2.89
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "280000",
+      "industryName": "汽车",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 3.59984098,
+      "holdingNavAnnual": 3.6
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "770000",
+      "industryName": "美容护理",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 0.08468942,
+      "holdingNavAnnual": 0.08
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "240000",
+      "industryName": "有色金属",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 6.14124318,
+      "holdingNavAnnual": 6.16
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "450000",
+      "industryName": "商贸零售",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 0.53030591,
+      "holdingNavAnnual": 0.53
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "490000",
+      "industryName": "非银金融",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 10.256716,
+      "holdingNavAnnual": 10.27
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "340000",
+      "industryName": "食品饮料",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 6.52085043,
+      "holdingNavAnnual": 6.53
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "630000",
+      "industryName": "电力设备",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 8.20293346,
+      "holdingNavAnnual": 8.22
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "480000",
+      "industryName": "银行",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 11.86826492,
+      "holdingNavAnnual": 11.85
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "720000",
+      "industryName": "传媒",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 0.59973901,
+      "holdingNavAnnual": 0.59
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "110000",
+      "industryName": "农林牧渔",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 1.21945832,
+      "holdingNavAnnual": 1.22
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "360000",
+      "industryName": "轻工制造",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 0.0438101,
+      "holdingNavAnnual": 0.04
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "610000",
+      "industryName": "建筑材料",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 0.46519331,
+      "holdingNavAnnual": 0.47
+    },
+    {
+      "fundCode": "510300",
+      "fundName": "华泰柏瑞沪深300ETF",
+      "publishDate": "2026-03-31",
+      "endDate": "2025-12-31",
+      "industryCode": "620000",
+      "industryName": "建筑装饰",
+      "industryLevel": 1,
+      "holdingAssetAnnual": 1.47303847,
+      "holdingNavAnnual": 1.48
+    }
+  ],
+  "143": [
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80253",
+      "conceptName": "游戏",
+      "holdingWeightAnnual": 0.54,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80418",
+      "conceptName": "光刻机",
+      "holdingWeightAnnual": 0.15,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80395",
+      "conceptName": "眼科",
+      "holdingWeightAnnual": 0.92,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82576",
+      "conceptName": "比亚迪智驾",
+      "holdingWeightAnnual": 1.94,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82252",
+      "conceptName": "光学光电子",
+      "holdingWeightAnnual": 1.48,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81954",
+      "conceptName": "河南",
+      "holdingWeightAnnual": 1.25,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80207",
+      "conceptName": "人工智能",
+      "holdingWeightAnnual": 7.83,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82555",
+      "conceptName": "智谱AI",
+      "holdingWeightAnnual": 0.54,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80480",
+      "conceptName": "原料药",
+      "holdingWeightAnnual": 0.14,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80161",
+      "conceptName": "通用航空",
+      "holdingWeightAnnual": 0.14,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80210",
+      "conceptName": "福建",
+      "holdingWeightAnnual": 7.05,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80053",
+      "conceptName": "核电",
+      "holdingWeightAnnual": 2.74,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82578",
+      "conceptName": "腾讯云",
+      "holdingWeightAnnual": 0.68,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82010",
+      "conceptName": "工业金属",
+      "holdingWeightAnnual": 2.32,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82064",
+      "conceptName": "人形机器人",
+      "holdingWeightAnnual": 2.6,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80229",
+      "conceptName": "手势识别",
+      "holdingWeightAnnual": 0.21,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80501",
+      "conceptName": "军工央企",
+      "holdingWeightAnnual": 2.71,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80339",
+      "conceptName": "腾讯概念",
+      "holdingWeightAnnual": 1.65,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80223",
+      "conceptName": "央企改革",
+      "holdingWeightAnnual": 19.1,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80250",
+      "conceptName": "回购",
+      "holdingWeightAnnual": 46.67,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82245",
+      "conceptName": "半导体",
+      "holdingWeightAnnual": 13.24,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82401",
+      "conceptName": "家用电器",
+      "holdingWeightAnnual": 2.59,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80620",
+      "conceptName": "AIGC",
+      "holdingWeightAnnual": 0.88,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80194",
+      "conceptName": "VR/AR",
+      "holdingWeightAnnual": 4.84,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80280",
+      "conceptName": "固废处理",
+      "holdingWeightAnnual": 0.87,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80545",
+      "conceptName": "电池",
+      "holdingWeightAnnual": 5.3,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80186",
+      "conceptName": "3D打印",
+      "holdingWeightAnnual": 0.72,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80503",
+      "conceptName": "第三代半导体",
+      "holdingWeightAnnual": 1.86,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80349",
+      "conceptName": "中船系",
+      "holdingWeightAnnual": 0.64,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80406",
+      "conceptName": "日化用品",
+      "holdingWeightAnnual": 0.17,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80133",
+      "conceptName": "化工",
+      "holdingWeightAnnual": 2.49,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82545",
+      "conceptName": "AI眼镜",
+      "holdingWeightAnnual": 2.6,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81640",
+      "conceptName": "汽车芯片",
+      "holdingWeightAnnual": 3.32,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80429",
+      "conceptName": "MLED",
+      "holdingWeightAnnual": 1.4,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80516",
+      "conceptName": "物业",
+      "holdingWeightAnnual": 0.05,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80551",
+      "conceptName": "跨境支付",
+      "holdingWeightAnnual": 0.27,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80235",
+      "conceptName": "大飞机",
+      "holdingWeightAnnual": 0.8,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80170",
+      "conceptName": "新能源汽车",
+      "holdingWeightAnnual": 12.38,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82424",
+      "conceptName": "5.5G",
+      "holdingWeightAnnual": 0.4,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80268",
+      "conceptName": "汽车",
+      "holdingWeightAnnual": 2.51,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80028",
+      "conceptName": "钢铁",
+      "holdingWeightAnnual": 0.37,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80115",
+      "conceptName": "有色·铜",
+      "holdingWeightAnnual": 2.5,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80006",
+      "conceptName": "教育产业",
+      "holdingWeightAnnual": 0.53,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82586",
+      "conceptName": "离境退税",
+      "holdingWeightAnnual": 0.1,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82495",
+      "conceptName": "优必选概念",
+      "holdingWeightAnnual": 0.27,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80452",
+      "conceptName": "5G产业链",
+      "holdingWeightAnnual": 18.42,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82453",
+      "conceptName": "可控核聚变",
+      "holdingWeightAnnual": 2.0,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80509",
+      "conceptName": "医用耗材",
+      "holdingWeightAnnual": 0.05,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80200",
+      "conceptName": "国产软件",
+      "holdingWeightAnnual": 2.85,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80623",
+      "conceptName": "中字头",
+      "holdingWeightAnnual": 9.11,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80464",
+      "conceptName": "REITs",
+      "holdingWeightAnnual": 0.09,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80574",
+      "conceptName": "通用设备",
+      "holdingWeightAnnual": 0.0,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80195",
+      "conceptName": "半导体芯片",
+      "holdingWeightAnnual": 13.02,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80291",
+      "conceptName": "广电系",
+      "holdingWeightAnnual": 0.04,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81970",
+      "conceptName": "四川",
+      "holdingWeightAnnual": 4.59,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81925",
+      "conceptName": "抗流感",
+      "holdingWeightAnnual": 0.29,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80265",
+      "conceptName": "轮胎",
+      "holdingWeightAnnual": 0.1,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80045",
+      "conceptName": "饲料",
+      "holdingWeightAnnual": 0.29,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80608",
+      "conceptName": "光热",
+      "holdingWeightAnnual": 0.28,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81370",
+      "conceptName": "阿里云",
+      "holdingWeightAnnual": 0.52,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82056",
+      "conceptName": "医药",
+      "holdingWeightAnnual": 3.53,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80075",
+      "conceptName": "苹果产业链",
+      "holdingWeightAnnual": 6.39,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80103",
+      "conceptName": "冷链",
+      "holdingWeightAnnual": 0.02,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81934",
+      "conceptName": "ChatGPT",
+      "holdingWeightAnnual": 2.29,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80331",
+      "conceptName": "屏下指纹",
+      "holdingWeightAnnual": 1.86,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80613",
+      "conceptName": "环氧丙烷",
+      "holdingWeightAnnual": 0.57,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80072",
+      "conceptName": "WIFI",
+      "holdingWeightAnnual": 0.47,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81926",
+      "conceptName": "POE胶膜",
+      "holdingWeightAnnual": 0.23,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80557",
+      "conceptName": "昨日连板",
+      "holdingWeightAnnual": 0.14,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80025",
+      "conceptName": "PCB",
+      "holdingWeightAnnual": 5.98,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81951",
+      "conceptName": "北京",
+      "holdingWeightAnnual": 17.67,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80160",
+      "conceptName": "造纸",
+      "holdingWeightAnnual": 0.0,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80612",
+      "conceptName": "宠物经济",
+      "holdingWeightAnnual": 0.28,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80364",
+      "conceptName": "昨日高换手",
+      "holdingWeightAnnual": 1.2,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80401",
+      "conceptName": "华为手机",
+      "holdingWeightAnnual": 2.36,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80389",
+      "conceptName": "金融科技",
+      "holdingWeightAnnual": 1.45,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80063",
+      "conceptName": "PVC",
+      "holdingWeightAnnual": 0.33,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81932",
+      "conceptName": "网约车",
+      "holdingWeightAnnual": 0.12,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80131",
+      "conceptName": "房地产概念",
+      "holdingWeightAnnual": 0.31,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80081",
+      "conceptName": "油气设服",
+      "holdingWeightAnnual": 0.54,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80085",
+      "conceptName": "水泥",
+      "holdingWeightAnnual": 0.14,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81971",
+      "conceptName": "贵州",
+      "holdingWeightAnnual": 2.52,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80542",
+      "conceptName": "元宇宙",
+      "holdingWeightAnnual": 1.87,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80266",
+      "conceptName": "汽车零部件",
+      "holdingWeightAnnual": 3.47,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80302",
+      "conceptName": "污水处理",
+      "holdingWeightAnnual": 0.32,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80137",
+      "conceptName": "机场",
+      "holdingWeightAnnual": 0.15,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80012",
+      "conceptName": "水产",
+      "holdingWeightAnnual": 0.11,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82091",
+      "conceptName": "食品饮料行业",
+      "holdingWeightAnnual": 4.55,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82556",
+      "conceptName": "近已解禁",
+      "holdingWeightAnnual": 0.77,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80343",
+      "conceptName": "数字孪生",
+      "holdingWeightAnnual": 0.27,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82033",
+      "conceptName": "影视院线",
+      "holdingWeightAnnual": 0.06,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82406",
+      "conceptName": "有色金属概念",
+      "holdingWeightAnnual": 10.01,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80502",
+      "conceptName": "面板",
+      "holdingWeightAnnual": 1.48,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82280",
+      "conceptName": "建筑工程",
+      "holdingWeightAnnual": 1.1,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80120",
+      "conceptName": "有色·钼",
+      "holdingWeightAnnual": 4.39,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82474",
+      "conceptName": "PEEK材料",
+      "holdingWeightAnnual": 0.84,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80466",
+      "conceptName": "信创",
+      "holdingWeightAnnual": 1.64,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82429",
+      "conceptName": "新型工业化",
+      "holdingWeightAnnual": 1.52,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82225",
+      "conceptName": "铁路公路",
+      "holdingWeightAnnual": 0.7,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80052",
+      "conceptName": "西部开发",
+      "holdingWeightAnnual": 6.66,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80456",
+      "conceptName": "半导体设备",
+      "holdingWeightAnnual": 4.02,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80212",
+      "conceptName": "河南国资",
+      "holdingWeightAnnual": 0.0,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80139",
+      "conceptName": "航运",
+      "holdingWeightAnnual": 0.57,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82475",
+      "conceptName": "合成生物",
+      "holdingWeightAnnual": 0.48,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82500",
+      "conceptName": "循环经济",
+      "holdingWeightAnnual": 0.99,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80573",
+      "conceptName": "商业零售",
+      "holdingWeightAnnual": 0.17,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80095",
+      "conceptName": "小米概念",
+      "holdingWeightAnnual": 2.52,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82557",
+      "conceptName": "摩尔线程概念",
+      "holdingWeightAnnual": 1.7,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80515",
+      "conceptName": "碳中和",
+      "holdingWeightAnnual": 0.83,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82454",
+      "conceptName": "荣耀概念",
+      "holdingWeightAnnual": 1.57,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80184",
+      "conceptName": "辽宁",
+      "holdingWeightAnnual": 0.98,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80078",
+      "conceptName": "保险概念",
+      "holdingWeightAnnual": 2.5,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80226",
+      "conceptName": "体育产业",
+      "holdingWeightAnnual": 0.05,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82566",
+      "conceptName": "消费精选",
+      "holdingWeightAnnual": 2.75,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80130",
+      "conceptName": "稀土永磁",
+      "holdingWeightAnnual": 1.37,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80262",
+      "conceptName": "动漫产业",
+      "holdingWeightAnnual": 0.23,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82269",
+      "conceptName": "美容护理",
+      "holdingWeightAnnual": 0.05,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80157",
+      "conceptName": "沥青",
+      "holdingWeightAnnual": 0.15,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80217",
+      "conceptName": "湖南国资",
+      "holdingWeightAnnual": 0.16,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80146",
+      "conceptName": "风电",
+      "holdingWeightAnnual": 2.58,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80084",
+      "conceptName": "玻璃",
+      "holdingWeightAnnual": 0.86,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80333",
+      "conceptName": "大金融",
+      "holdingWeightAnnual": 16.43,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82592",
+      "conceptName": "盾构机",
+      "holdingWeightAnnual": 0.59,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80076",
+      "conceptName": "区块链",
+      "holdingWeightAnnual": 3.35,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81960",
+      "conceptName": "山东",
+      "holdingWeightAnnual": 7.6,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80175",
+      "conceptName": "上海自贸区",
+      "holdingWeightAnnual": 0.82,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80260",
+      "conceptName": "工业物联网",
+      "holdingWeightAnnual": 0.48,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80132",
+      "conceptName": "有色金属",
+      "holdingWeightAnnual": 5.0,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80457",
+      "conceptName": "芯片产业链",
+      "holdingWeightAnnual": 19.09,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80164",
+      "conceptName": "婴童",
+      "holdingWeightAnnual": 0.13,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80201",
+      "conceptName": "机器人概念",
+      "holdingWeightAnnual": 7.09,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80621",
+      "conceptName": "国资云",
+      "holdingWeightAnnual": 0.99,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81935",
+      "conceptName": "CPO",
+      "holdingWeightAnnual": 9.68,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80279",
+      "conceptName": "包装印刷",
+      "holdingWeightAnnual": 0.0,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80181",
+      "conceptName": "创投",
+      "holdingWeightAnnual": 2.24,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82520",
+      "conceptName": "玻璃基板",
+      "holdingWeightAnnual": 2.45,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80219",
+      "conceptName": "浙江国资",
+      "holdingWeightAnnual": 0.79,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80258",
+      "conceptName": "RFID",
+      "holdingWeightAnnual": 0.61,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82502",
+      "conceptName": "高速连接器",
+      "holdingWeightAnnual": 1.42,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80136",
+      "conceptName": "高速公路",
+      "holdingWeightAnnual": 0.15,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81763",
+      "conceptName": "军工信息化",
+      "holdingWeightAnnual": 0.21,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80371",
+      "conceptName": "大基金系",
+      "holdingWeightAnnual": 6.2,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81952",
+      "conceptName": "天津",
+      "holdingWeightAnnual": 2.09,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80111",
+      "conceptName": "云计算",
+      "holdingWeightAnnual": 4.22,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80059",
+      "conceptName": "PTA",
+      "holdingWeightAnnual": 0.34,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81950",
+      "conceptName": "算力芯片",
+      "holdingWeightAnnual": 6.93,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80051",
+      "conceptName": "家电",
+      "holdingWeightAnnual": 2.67,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80366",
+      "conceptName": "低市盈率",
+      "holdingWeightAnnual": 21.0,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80108",
+      "conceptName": "征信",
+      "holdingWeightAnnual": 0.06,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80423",
+      "conceptName": "工业母机",
+      "holdingWeightAnnual": 0.43,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82522",
+      "conceptName": "电磁屏蔽",
+      "holdingWeightAnnual": 0.18,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82303",
+      "conceptName": "IT服务",
+      "holdingWeightAnnual": 0.72,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80086",
+      "conceptName": "雄安新区",
+      "holdingWeightAnnual": 2.24,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81956",
+      "conceptName": "内蒙古",
+      "holdingWeightAnnual": 1.2,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82000",
+      "conceptName": "房地产",
+      "holdingWeightAnnual": 0.26,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80453",
+      "conceptName": "数据中心",
+      "holdingWeightAnnual": 8.45,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80044",
+      "conceptName": "创新药",
+      "holdingWeightAnnual": 1.44,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80155",
+      "conceptName": "文化传媒",
+      "holdingWeightAnnual": 0.68,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82450",
+      "conceptName": "HBM",
+      "holdingWeightAnnual": 0.21,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81938",
+      "conceptName": "酿酒",
+      "holdingWeightAnnual": 3.69,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80150",
+      "conceptName": "化肥",
+      "holdingWeightAnnual": 0.88,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80114",
+      "conceptName": "贵金属",
+      "holdingWeightAnnual": 0.42,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80405",
+      "conceptName": "华为产业链",
+      "holdingWeightAnnual": 17.81,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80215",
+      "conceptName": "安徽国资",
+      "holdingWeightAnnual": 0.36,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80251",
+      "conceptName": "电子烟",
+      "holdingWeightAnnual": 1.56,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82519",
+      "conceptName": "细胞治疗",
+      "holdingWeightAnnual": 0.1,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80486",
+      "conceptName": "蚂蚁集团概念",
+      "holdingWeightAnnual": 1.04,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80474",
+      "conceptName": "两轮车",
+      "holdingWeightAnnual": 0.0,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80159",
+      "conceptName": "网红经济",
+      "holdingWeightAnnual": 0.1,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82534",
+      "conceptName": "即将解禁",
+      "holdingWeightAnnual": 0.04,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82532",
+      "conceptName": "高ROE",
+      "holdingWeightAnnual": 35.78,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81969",
+      "conceptName": "江西",
+      "holdingWeightAnnual": 0.47,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80488",
+      "conceptName": "玻纤",
+      "holdingWeightAnnual": 0.59,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80211",
+      "conceptName": "江苏国资",
+      "holdingWeightAnnual": 1.41,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80576",
+      "conceptName": "医疗器械",
+      "holdingWeightAnnual": 1.43,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82261",
+      "conceptName": "电子",
+      "holdingWeightAnnual": 23.06,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81985",
+      "conceptName": "证券",
+      "holdingWeightAnnual": 4.82,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80233",
+      "conceptName": "智能驾驶",
+      "holdingWeightAnnual": 3.04,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80400",
+      "conceptName": "华为鸿蒙",
+      "holdingWeightAnnual": 0.19,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80193",
+      "conceptName": "振兴东北",
+      "holdingWeightAnnual": 0.89,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80586",
+      "conceptName": "福建国资",
+      "holdingWeightAnnual": 2.22,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82584",
+      "conceptName": "深海科技",
+      "holdingWeightAnnual": 0.74,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80092",
+      "conceptName": "氢能",
+      "holdingWeightAnnual": 3.88,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80373",
+      "conceptName": "ETC",
+      "holdingWeightAnnual": 0.34,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80140",
+      "conceptName": "光伏",
+      "holdingWeightAnnual": 10.37,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80505",
+      "conceptName": "硅片",
+      "holdingWeightAnnual": 1.19,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82218",
+      "conceptName": "农林牧渔",
+      "holdingWeightAnnual": 0.73,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82577",
+      "conceptName": "杭州",
+      "holdingWeightAnnual": 1.86,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80007",
+      "conceptName": "猪肉产业",
+      "holdingWeightAnnual": 0.76,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81962",
+      "conceptName": "安徽",
+      "holdingWeightAnnual": 1.52,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80064",
+      "conceptName": "疫苗",
+      "holdingWeightAnnual": 0.08,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80408",
+      "conceptName": "医药商业",
+      "holdingWeightAnnual": 0.2,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80422",
+      "conceptName": "工程设计",
+      "holdingWeightAnnual": 0.27,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82055",
+      "conceptName": "化学制药",
+      "holdingWeightAnnual": 1.36,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80073",
+      "conceptName": "量子科技",
+      "holdingWeightAnnual": 7.39,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82437",
+      "conceptName": "低空经济",
+      "holdingWeightAnnual": 1.36,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80425",
+      "conceptName": "应急产业",
+      "holdingWeightAnnual": 0.36,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80355",
+      "conceptName": "智能音箱",
+      "holdingWeightAnnual": 0.68,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81953",
+      "conceptName": "河北",
+      "holdingWeightAnnual": 0.67,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80252",
+      "conceptName": "养老金持股",
+      "holdingWeightAnnual": 2.74,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80199",
+      "conceptName": "大数据",
+      "holdingWeightAnnual": 2.11,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80462",
+      "conceptName": "旧改",
+      "holdingWeightAnnual": 0.58,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81965",
+      "conceptName": "SAM模型",
+      "holdingWeightAnnual": 0.28,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80058",
+      "conceptName": "旅游酒店",
+      "holdingWeightAnnual": 0.5,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80328",
+      "conceptName": "折叠屏",
+      "holdingWeightAnnual": 3.45,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82560",
+      "conceptName": "豆包大模型",
+      "holdingWeightAnnual": 0.4,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80239",
+      "conceptName": "医疗信息化",
+      "holdingWeightAnnual": 0.62,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80490",
+      "conceptName": "新冠疫苗",
+      "holdingWeightAnnual": 0.15,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80537",
+      "conceptName": "功率半导体",
+      "holdingWeightAnnual": 1.67,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80118",
+      "conceptName": "航母",
+      "holdingWeightAnnual": 1.52,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82198",
+      "conceptName": "国防军工",
+      "holdingWeightAnnual": 1.77,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80032",
+      "conceptName": "食品饮料",
+      "holdingWeightAnnual": 4.65,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80500",
+      "conceptName": "中电科系",
+      "holdingWeightAnnual": 0.43,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80604",
+      "conceptName": "吸波材料",
+      "holdingWeightAnnual": 0.18,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80321",
+      "conceptName": "工程建设",
+      "holdingWeightAnnual": 1.1,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80267",
+      "conceptName": "特高压",
+      "holdingWeightAnnual": 1.64,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80473",
+      "conceptName": "地摊经济",
+      "holdingWeightAnnual": 0.27,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81388",
+      "conceptName": "教育信息化",
+      "holdingWeightAnnual": 0.27,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80047",
+      "conceptName": "新疆",
+      "holdingWeightAnnual": 0.85,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80368",
+      "conceptName": "昨日涨停",
+      "holdingWeightAnnual": 0.14,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80556",
+      "conceptName": "历史新低",
+      "holdingWeightAnnual": 0.01,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82417",
+      "conceptName": "减肥药",
+      "holdingWeightAnnual": 0.09,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80218",
+      "conceptName": "国企改革",
+      "holdingWeightAnnual": 39.42,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80154",
+      "conceptName": "水利",
+      "holdingWeightAnnual": 0.29,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80529",
+      "conceptName": "钠电池",
+      "holdingWeightAnnual": 4.72,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80142",
+      "conceptName": "高校",
+      "holdingWeightAnnual": 0.93,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81732",
+      "conceptName": "证券IT",
+      "holdingWeightAnnual": 1.36,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80548",
+      "conceptName": "新冠治疗",
+      "holdingWeightAnnual": 0.39,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82596",
+      "conceptName": "深地经济",
+      "holdingWeightAnnual": 0.59,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82579",
+      "conceptName": "算力一体机",
+      "holdingWeightAnnual": 1.48,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82571",
+      "conceptName": "DeepSeek概念",
+      "holdingWeightAnnual": 2.71,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80189",
+      "conceptName": "光通信",
+      "holdingWeightAnnual": 17.65,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80037",
+      "conceptName": "调味品",
+      "holdingWeightAnnual": 0.19,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80539",
+      "conceptName": "电信运营",
+      "holdingWeightAnnual": 0.88,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80471",
+      "conceptName": "免税",
+      "holdingWeightAnnual": 0.47,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81966",
+      "conceptName": "湖南",
+      "holdingWeightAnnual": 0.83,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80135",
+      "conceptName": "高铁轨交",
+      "holdingWeightAnnual": 1.85,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80227",
+      "conceptName": "煤化工",
+      "holdingWeightAnnual": 0.46,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80582",
+      "conceptName": "新型城镇化",
+      "holdingWeightAnnual": 2.68,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80596",
+      "conceptName": "麒麟电池",
+      "holdingWeightAnnual": 3.55,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80041",
+      "conceptName": "乳业奶粉",
+      "holdingWeightAnnual": 0.74,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82494",
+      "conceptName": "AI手机",
+      "holdingWeightAnnual": 1.78,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82588",
+      "conceptName": "IP经济",
+      "holdingWeightAnnual": 0.16,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82595",
+      "conceptName": "沐曦概念",
+      "holdingWeightAnnual": 0.24,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80431",
+      "conceptName": "陶瓷产业",
+      "holdingWeightAnnual": 1.12,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82433",
+      "conceptName": "小米汽车",
+      "holdingWeightAnnual": 5.47,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80348",
+      "conceptName": "食药溯源",
+      "holdingWeightAnnual": 0.61,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82168",
+      "conceptName": "交运设备",
+      "holdingWeightAnnual": 2.78,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80287",
+      "conceptName": "中科院系",
+      "holdingWeightAnnual": 1.65,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81957",
+      "conceptName": "AI模型",
+      "holdingWeightAnnual": 0.95,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82059",
+      "conceptName": "MR混合现实",
+      "holdingWeightAnnual": 1.41,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80202",
+      "conceptName": "深圳国资",
+      "holdingWeightAnnual": 0.17,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80562",
+      "conceptName": "百日新高",
+      "holdingWeightAnnual": 10.92,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80437",
+      "conceptName": "远程办公",
+      "holdingWeightAnnual": 0.24,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80145",
+      "conceptName": "电力",
+      "holdingWeightAnnual": 2.98,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81670",
+      "conceptName": "光纤光缆",
+      "holdingWeightAnnual": 0.62,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80611",
+      "conceptName": "虚拟电厂",
+      "holdingWeightAnnual": 0.31,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80056",
+      "conceptName": "煤炭",
+      "holdingWeightAnnual": 0.83,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80289",
+      "conceptName": "精准医疗",
+      "holdingWeightAnnual": 0.05,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81936",
+      "conceptName": "固态电池",
+      "holdingWeightAnnual": 6.02,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80614",
+      "conceptName": "eSIM",
+      "holdingWeightAnnual": 0.21,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80543",
+      "conceptName": "培育钻石",
+      "holdingWeightAnnual": 0.13,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82063",
+      "conceptName": "算力租赁",
+      "holdingWeightAnnual": 2.39,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80293",
+      "conceptName": "节能环保",
+      "holdingWeightAnnual": 1.34,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80531",
+      "conceptName": "上海",
+      "holdingWeightAnnual": 9.64,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80498",
+      "conceptName": "中航系",
+      "holdingWeightAnnual": 1.06,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80054",
+      "conceptName": "医药生物",
+      "holdingWeightAnnual": 2.92,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80180",
+      "conceptName": "烧碱",
+      "holdingWeightAnnual": 0.24,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80338",
+      "conceptName": "超高清视频",
+      "holdingWeightAnnual": 4.36,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80190",
+      "conceptName": "LED",
+      "holdingWeightAnnual": 1.36,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80263",
+      "conceptName": "石墨烯",
+      "holdingWeightAnnual": 1.89,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80445",
+      "conceptName": "铜箔/覆铜板",
+      "holdingWeightAnnual": 1.02,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80435",
+      "conceptName": "异质结电池",
+      "holdingWeightAnnual": 1.26,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82438",
+      "conceptName": "纳米压印",
+      "holdingWeightAnnual": 0.19,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80094",
+      "conceptName": "特斯拉概念",
+      "holdingWeightAnnual": 6.9,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80517",
+      "conceptName": "化纤",
+      "holdingWeightAnnual": 0.58,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80009",
+      "conceptName": "家禽",
+      "holdingWeightAnnual": 0.3,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80572",
+      "conceptName": "肝炎治疗",
+      "holdingWeightAnnual": 1.1,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81941",
+      "conceptName": "激光雷达",
+      "holdingWeightAnnual": 3.78,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81931",
+      "conceptName": "电子纸",
+      "holdingWeightAnnual": 1.07,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80336",
+      "conceptName": "京东概念",
+      "holdingWeightAnnual": 0.73,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80125",
+      "conceptName": "有色·镍",
+      "holdingWeightAnnual": 0.65,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80165",
+      "conceptName": "油气改革",
+      "holdingWeightAnnual": 0.65,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80185",
+      "conceptName": "盖板玻璃",
+      "holdingWeightAnnual": 1.71,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80356",
+      "conceptName": "富士康系",
+      "holdingWeightAnnual": 1.23,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80030",
+      "conceptName": "天然气",
+      "holdingWeightAnnual": 1.19,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80469",
+      "conceptName": "机器视觉",
+      "holdingWeightAnnual": 0.27,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80088",
+      "conceptName": "期货概念",
+      "holdingWeightAnnual": 0.12,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80393",
+      "conceptName": "深圳本地",
+      "holdingWeightAnnual": 10.43,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80499",
+      "conceptName": "中兵系",
+      "holdingWeightAnnual": 0.12,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80104",
+      "conceptName": "无线充电",
+      "holdingWeightAnnual": 1.96,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80224",
+      "conceptName": "氟化工",
+      "holdingWeightAnnual": 0.49,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80397",
+      "conceptName": "消费电子",
+      "holdingWeightAnnual": 7.14,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80117",
+      "conceptName": "有色·铝",
+      "holdingWeightAnnual": 0.59,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80149",
+      "conceptName": "电梯",
+      "holdingWeightAnnual": 0.58,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80183",
+      "conceptName": "纺织服装",
+      "holdingWeightAnnual": 0.0,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80601",
+      "conceptName": "电池回收",
+      "holdingWeightAnnual": 0.99,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82591",
+      "conceptName": "超级水电",
+      "holdingWeightAnnual": 1.73,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82132",
+      "conceptName": "商贸零售",
+      "holdingWeightAnnual": 0.27,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80096",
+      "conceptName": "宁德时代概念",
+      "holdingWeightAnnual": 4.78,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82058",
+      "conceptName": "英伟达概念",
+      "holdingWeightAnnual": 3.25,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80294",
+      "conceptName": "家居装饰",
+      "holdingWeightAnnual": 2.35,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80475",
+      "conceptName": "文创玩具",
+      "holdingWeightAnnual": 0.16,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82543",
+      "conceptName": "无人车辆",
+      "holdingWeightAnnual": 0.25,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80222",
+      "conceptName": "军工",
+      "holdingWeightAnnual": 3.72,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80544",
+      "conceptName": "绿色电力",
+      "holdingWeightAnnual": 2.09,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82551",
+      "conceptName": "并购重组",
+      "holdingWeightAnnual": 10.42,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80126",
+      "conceptName": "有色·镁",
+      "holdingWeightAnnual": 0.33,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80231",
+      "conceptName": "指纹识别",
+      "holdingWeightAnnual": 2.98,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80208",
+      "conceptName": "车联网",
+      "holdingWeightAnnual": 0.71,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80479",
+      "conceptName": "激光产业",
+      "holdingWeightAnnual": 0.61,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82457",
+      "conceptName": "湖北国资",
+      "holdingWeightAnnual": 0.61,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82065",
+      "conceptName": "交换机",
+      "holdingWeightAnnual": 0.66,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80402",
+      "conceptName": "华为汽车",
+      "holdingWeightAnnual": 0.56,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80522",
+      "conceptName": "水电",
+      "holdingWeightAnnual": 1.51,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80412",
+      "conceptName": "存储器",
+      "holdingWeightAnnual": 4.56,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80272",
+      "conceptName": "股权转让",
+      "holdingWeightAnnual": 6.69,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80403",
+      "conceptName": "华为云",
+      "holdingWeightAnnual": 0.45,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81342",
+      "conceptName": "车路云",
+      "holdingWeightAnnual": 0.91,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82521",
+      "conceptName": "高股息",
+      "holdingWeightAnnual": 8.07,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80043",
+      "conceptName": "免疫治疗",
+      "holdingWeightAnnual": 0.1,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80357",
+      "conceptName": "磷化工",
+      "holdingWeightAnnual": 0.59,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80296",
+      "conceptName": "高送转",
+      "holdingWeightAnnual": 7.92,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80442",
+      "conceptName": "氮化镓(GaN)",
+      "holdingWeightAnnual": 0.34,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80173",
+      "conceptName": "陕西",
+      "holdingWeightAnnual": 0.87,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82508",
+      "conceptName": "财跃/阶跃大模型",
+      "holdingWeightAnnual": 0.7,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81705",
+      "conceptName": "RISC芯片",
+      "holdingWeightAnnual": 0.68,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81782",
+      "conceptName": "锂矿",
+      "holdingWeightAnnual": 1.87,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81813",
+      "conceptName": "碳交易",
+      "holdingWeightAnnual": 0.32,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82155",
+      "conceptName": "轻工制造",
+      "holdingWeightAnnual": 0.0,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81757",
+      "conceptName": "碳化硅",
+      "holdingWeightAnnual": 1.86,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82221",
+      "conceptName": "航运港口",
+      "holdingWeightAnnual": 0.66,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81975",
+      "conceptName": "云南",
+      "holdingWeightAnnual": 0.37,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80386",
+      "conceptName": "超硬材料",
+      "holdingWeightAnnual": 0.43,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80334",
+      "conceptName": "字节跳动",
+      "holdingWeightAnnual": 1.11,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82459",
+      "conceptName": "多模态AI",
+      "holdingWeightAnnual": 0.7,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80144",
+      "conceptName": "上海国资",
+      "holdingWeightAnnual": 2.46,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80093",
+      "conceptName": "盐湖提锂",
+      "holdingWeightAnnual": 2.52,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80381",
+      "conceptName": "超级计算机",
+      "holdingWeightAnnual": 1.21,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80010",
+      "conceptName": "基因测序",
+      "holdingWeightAnnual": 1.05,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80234",
+      "conceptName": "农机",
+      "holdingWeightAnnual": 0.62,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80597",
+      "conceptName": "汽车轻量化",
+      "holdingWeightAnnual": 1.41,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80541",
+      "conceptName": "氯碱工业",
+      "holdingWeightAnnual": 0.57,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80494",
+      "conceptName": "肝素",
+      "holdingWeightAnnual": 0.1,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80203",
+      "conceptName": "山东国资",
+      "holdingWeightAnnual": 1.77,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80069",
+      "conceptName": "工业互联网",
+      "holdingWeightAnnual": 4.33,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80123",
+      "conceptName": "有色·锆",
+      "holdingWeightAnnual": 0.76,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80598",
+      "conceptName": "钙钛矿电池",
+      "holdingWeightAnnual": 0.88,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80176",
+      "conceptName": "装配式建筑",
+      "holdingWeightAnnual": 0.3,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80481",
+      "conceptName": "CRO/CMO",
+      "holdingWeightAnnual": 1.05,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82590",
+      "conceptName": "充电宝概念",
+      "holdingWeightAnnual": 0.08,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82603",
+      "conceptName": "海洋经济",
+      "holdingWeightAnnual": 0.85,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80360",
+      "conceptName": "破净股",
+      "holdingWeightAnnual": 16.05,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80278",
+      "conceptName": "民航",
+      "holdingWeightAnnual": 0.49,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80332",
+      "conceptName": "工业大麻",
+      "holdingWeightAnnual": 0.15,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81945",
+      "conceptName": "文心一言",
+      "holdingWeightAnnual": 1.26,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80014",
+      "conceptName": "白酒",
+      "holdingWeightAnnual": 3.63,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80361",
+      "conceptName": "次新股",
+      "holdingWeightAnnual": 0.05,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80567",
+      "conceptName": "行业龙头",
+      "holdingWeightAnnual": 48.02,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80286",
+      "conceptName": "石墨电极",
+      "holdingWeightAnnual": 0.05,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80179",
+      "conceptName": "油品升级",
+      "holdingWeightAnnual": 1.04,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80504",
+      "conceptName": "医疗美容",
+      "holdingWeightAnnual": 0.39,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80206",
+      "conceptName": "智能制造",
+      "holdingWeightAnnual": 4.32,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80603",
+      "conceptName": "EDA",
+      "holdingWeightAnnual": 0.09,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80141",
+      "conceptName": "重卡",
+      "holdingWeightAnnual": 0.5,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82582",
+      "conceptName": "智元机器人",
+      "holdingWeightAnnual": 1.4,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81939",
+      "conceptName": "毫米波雷达",
+      "holdingWeightAnnual": 0.81,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80172",
+      "conceptName": "乡村振兴",
+      "holdingWeightAnnual": 0.55,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82353",
+      "conceptName": "公用事业",
+      "holdingWeightAnnual": 0.05,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80225",
+      "conceptName": "有机硅",
+      "holdingWeightAnnual": 0.08,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80455",
+      "conceptName": "半导体材料",
+      "holdingWeightAnnual": 0.87,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80271",
+      "conceptName": "养老",
+      "holdingWeightAnnual": 2.0,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80385",
+      "conceptName": "新材料",
+      "holdingWeightAnnual": 1.8,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82558",
+      "conceptName": "AI智能体",
+      "holdingWeightAnnual": 0.78,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80508",
+      "conceptName": "换电",
+      "holdingWeightAnnual": 0.51,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82016",
+      "conceptName": "小金属",
+      "holdingWeightAnnual": 1.14,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81964",
+      "conceptName": "宁夏",
+      "holdingWeightAnnual": 0.15,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80284",
+      "conceptName": "尿素",
+      "holdingWeightAnnual": 0.12,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80237",
+      "conceptName": "石油化工",
+      "holdingWeightAnnual": 1.63,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81927",
+      "conceptName": "新冠药物",
+      "holdingWeightAnnual": 0.16,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80119",
+      "conceptName": "有色·钨",
+      "holdingWeightAnnual": 1.14,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80330",
+      "conceptName": "触摸屏",
+      "holdingWeightAnnual": 1.43,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80248",
+      "conceptName": "电竞",
+      "holdingWeightAnnual": 0.26,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82420",
+      "conceptName": "核污染防治",
+      "holdingWeightAnnual": 0.1,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80124",
+      "conceptName": "有色·钴",
+      "holdingWeightAnnual": 1.17,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80055",
+      "conceptName": "工程机械",
+      "holdingWeightAnnual": 0.89,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80325",
+      "conceptName": "IPv6",
+      "holdingWeightAnnual": 0.86,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81919",
+      "conceptName": "数据要素",
+      "holdingWeightAnnual": 0.31,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82583",
+      "conceptName": "发电机概念",
+      "holdingWeightAnnual": 1.24,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82384",
+      "conceptName": "基础化工",
+      "holdingWeightAnnual": 1.65,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82013",
+      "conceptName": "能源金属",
+      "holdingWeightAnnual": 0.71,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80197",
+      "conceptName": "储能",
+      "holdingWeightAnnual": 9.71,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80057",
+      "conceptName": "甲醇",
+      "holdingWeightAnnual": 0.98,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80375",
+      "conceptName": "华为海思",
+      "holdingWeightAnnual": 1.18,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80245",
+      "conceptName": "电商",
+      "holdingWeightAnnual": 0.42,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80048",
+      "conceptName": "快递物流",
+      "holdingWeightAnnual": 0.36,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82237",
+      "conceptName": "煤炭采选",
+      "holdingWeightAnnual": 0.83,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80521",
+      "conceptName": "BIPV",
+      "holdingWeightAnnual": 0.36,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82456",
+      "conceptName": "长安汽车概念",
+      "holdingWeightAnnual": 0.21,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80374",
+      "conceptName": "蔚来汽车",
+      "holdingWeightAnnual": 4.73,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82493",
+      "conceptName": "制冷剂",
+      "holdingWeightAnnual": 0.24,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82074",
+      "conceptName": "通信",
+      "holdingWeightAnnual": 10.14,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80335",
+      "conceptName": "参股券商",
+      "holdingWeightAnnual": 0.96,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82304",
+      "conceptName": "计算机",
+      "holdingWeightAnnual": 3.31,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80019",
+      "conceptName": "啤酒",
+      "holdingWeightAnnual": 0.06,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80353",
+      "conceptName": "跨境电商",
+      "holdingWeightAnnual": 0.12,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80079",
+      "conceptName": "银行",
+      "holdingWeightAnnual": 8.99,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81377",
+      "conceptName": "黄金概念",
+      "holdingWeightAnnual": 2.89,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80605",
+      "conceptName": "先进封装",
+      "holdingWeightAnnual": 2.94,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80370",
+      "conceptName": "安防",
+      "holdingWeightAnnual": 1.1,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81990",
+      "conceptName": "非银金融",
+      "holdingWeightAnnual": 7.44,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80113",
+      "conceptName": "粤港澳大湾区",
+      "holdingWeightAnnual": 0.08,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80454",
+      "conceptName": "卫星互联网",
+      "holdingWeightAnnual": 0.57,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80599",
+      "conceptName": "液流电池",
+      "holdingWeightAnnual": 0.28,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80367",
+      "conceptName": "摘帽",
+      "holdingWeightAnnual": 0.28,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80316",
+      "conceptName": "石油",
+      "holdingWeightAnnual": 0.82,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80527",
+      "conceptName": "预制菜",
+      "holdingWeightAnnual": 0.05,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80261",
+      "conceptName": "物联网",
+      "holdingWeightAnnual": 8.37,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80602",
+      "conceptName": "减速器",
+      "holdingWeightAnnual": 0.15,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80105",
+      "conceptName": "人脸识别",
+      "holdingWeightAnnual": 0.81,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81928",
+      "conceptName": "止泻药",
+      "holdingWeightAnnual": 0.05,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80470",
+      "conceptName": "碳纤维",
+      "holdingWeightAnnual": 0.16,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80434",
+      "conceptName": "无人机",
+      "holdingWeightAnnual": 0.61,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80428",
+      "conceptName": "云游戏",
+      "holdingWeightAnnual": 0.28,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80097",
+      "conceptName": "Facebook概念",
+      "holdingWeightAnnual": 0.19,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80392",
+      "conceptName": "高端合金",
+      "holdingWeightAnnual": 0.0,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80060",
+      "conceptName": "海工装备",
+      "holdingWeightAnnual": 0.52,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80198",
+      "conceptName": "锂电池",
+      "holdingWeightAnnual": 11.61,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80290",
+      "conceptName": "人脑工程",
+      "holdingWeightAnnual": 1.47,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80099",
+      "conceptName": "阿里概念",
+      "holdingWeightAnnual": 2.32,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80460",
+      "conceptName": "融合通信(RCS)",
+      "holdingWeightAnnual": 0.68,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82181",
+      "conceptName": "专用设备",
+      "holdingWeightAnnual": 0.83,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80318",
+      "conceptName": "边缘计算",
+      "holdingWeightAnnual": 2.68,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82569",
+      "conceptName": "AI玩具",
+      "holdingWeightAnnual": 0.14,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81867",
+      "conceptName": "虚拟数字人",
+      "holdingWeightAnnual": 0.4,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80592",
+      "conceptName": "比亚迪概念",
+      "holdingWeightAnnual": 1.94,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80554",
+      "conceptName": "新冠抗原检测",
+      "holdingWeightAnnual": 0.13,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82511",
+      "conceptName": "通感一体化",
+      "holdingWeightAnnual": 0.4,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80274",
+      "conceptName": "网络安全",
+      "holdingWeightAnnual": 1.08,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80523",
+      "conceptName": "NFT文交所",
+      "holdingWeightAnnual": 0.27,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80013",
+      "conceptName": "海南",
+      "holdingWeightAnnual": 0.47,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80420",
+      "conceptName": "智能穿戴",
+      "holdingWeightAnnual": 1.15,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82337",
+      "conceptName": "电力设备",
+      "holdingWeightAnnual": 1.68,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80496",
+      "conceptName": "航天系",
+      "holdingWeightAnnual": 0.29,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80327",
+      "conceptName": "智能电网",
+      "holdingWeightAnnual": 1.53,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80342",
+      "conceptName": "数字中国",
+      "holdingWeightAnnual": 1.51,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82537",
+      "conceptName": "大盘股",
+      "holdingWeightAnnual": 90.51,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80221",
+      "conceptName": "山西国资",
+      "holdingWeightAnnual": 0.18,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80213",
+      "conceptName": "北京国资",
+      "holdingWeightAnnual": 2.72,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80424",
+      "conceptName": "MLCC",
+      "holdingWeightAnnual": 0.76,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80112",
+      "conceptName": "北斗导航",
+      "holdingWeightAnnual": 0.29,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80061",
+      "conceptName": "维生素",
+      "holdingWeightAnnual": 0.15,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81769",
+      "conceptName": "航海装备",
+      "holdingWeightAnnual": 0.64,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80417",
+      "conceptName": "6G",
+      "holdingWeightAnnual": 0.53,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80340",
+      "conceptName": "长三角一体化",
+      "holdingWeightAnnual": 0.63,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81973",
+      "conceptName": "重庆",
+      "holdingWeightAnnual": 0.58,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82346",
+      "conceptName": "电新行业",
+      "holdingWeightAnnual": 9.67,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82505",
+      "conceptName": "AI医疗",
+      "holdingWeightAnnual": 0.27,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80204",
+      "conceptName": "电力改革",
+      "holdingWeightAnnual": 1.79,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80427",
+      "conceptName": "影视",
+      "holdingWeightAnnual": 0.1,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82542",
+      "conceptName": "统一大市场",
+      "holdingWeightAnnual": 0.46,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82600",
+      "conceptName": "海南自贸区",
+      "holdingWeightAnnual": 0.64,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80143",
+      "conceptName": "一带一路",
+      "holdingWeightAnnual": 9.22,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80534",
+      "conceptName": "电器机械",
+      "holdingWeightAnnual": 2.03,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80191",
+      "conceptName": "OLED",
+      "holdingWeightAnnual": 2.84,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80495",
+      "conceptName": "航空发动机",
+      "holdingWeightAnnual": 0.17,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80151",
+      "conceptName": "农药",
+      "holdingWeightAnnual": 0.05,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82580",
+      "conceptName": "IDC电源",
+      "holdingWeightAnnual": 1.13,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80438",
+      "conceptName": "口罩",
+      "holdingWeightAnnual": 1.02,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80622",
+      "conceptName": "复合集流体",
+      "holdingWeightAnnual": 0.0,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82231",
+      "conceptName": "交通运输",
+      "holdingWeightAnnual": 2.36,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80382",
+      "conceptName": "业绩超预期",
+      "holdingWeightAnnual": 20.59,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80606",
+      "conceptName": "TOPCon电池",
+      "holdingWeightAnnual": 0.5,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82472",
+      "conceptName": "AIPC",
+      "holdingWeightAnnual": 2.33,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80492",
+      "conceptName": "可降解材料",
+      "holdingWeightAnnual": 0.13,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82187",
+      "conceptName": "机械设备",
+      "holdingWeightAnnual": 2.76,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81702",
+      "conceptName": "模拟芯片",
+      "holdingWeightAnnual": 2.06,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82422",
+      "conceptName": "BC电池",
+      "holdingWeightAnnual": 0.49,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82054",
+      "conceptName": "生物制品",
+      "holdingWeightAnnual": 0.08,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80232",
+      "conceptName": "智能交通",
+      "holdingWeightAnnual": 0.8,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82447",
+      "conceptName": "智能座舱",
+      "holdingWeightAnnual": 0.17,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82062",
+      "conceptName": "AMD概念",
+      "holdingWeightAnnual": 2.24,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81968",
+      "conceptName": "AI服务器",
+      "holdingWeightAnnual": 5.18,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82572",
+      "conceptName": "科技助农",
+      "holdingWeightAnnual": 0.62,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80595",
+      "conceptName": "汽车热管理",
+      "holdingWeightAnnual": 0.5,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80538",
+      "conceptName": "新冠检测",
+      "holdingWeightAnnual": 0.08,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80309",
+      "conceptName": "举牌",
+      "holdingWeightAnnual": 0.53,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82568",
+      "conceptName": "立案调查",
+      "holdingWeightAnnual": 0.93,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82517",
+      "conceptName": "商业航天",
+      "holdingWeightAnnual": 2.64,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80138",
+      "conceptName": "港口",
+      "holdingWeightAnnual": 0.09,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80362",
+      "conceptName": "百元股",
+      "holdingWeightAnnual": 30.13,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80571",
+      "conceptName": "智慧政务",
+      "holdingWeightAnnual": 0.27,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81386",
+      "conceptName": "ERP软件",
+      "holdingWeightAnnual": 0.06,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82540",
+      "conceptName": "百度自动驾驶",
+      "holdingWeightAnnual": 0.26,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81083",
+      "conceptName": "AI应用",
+      "holdingWeightAnnual": 2.43,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80484",
+      "conceptName": "多元金融",
+      "holdingWeightAnnual": 0.12,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80008",
+      "conceptName": "体外诊断",
+      "holdingWeightAnnual": 0.36,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81967",
+      "conceptName": "湖北",
+      "holdingWeightAnnual": 0.65,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80116",
+      "conceptName": "有色·锌",
+      "holdingWeightAnnual": 1.51,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80315",
+      "conceptName": "建材",
+      "holdingWeightAnnual": 1.0,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80593",
+      "conceptName": "广东",
+      "holdingWeightAnnual": 18.31,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80365",
+      "conceptName": "昨日大额成交",
+      "holdingWeightAnnual": 78.11,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80415",
+      "conceptName": "玻尿酸",
+      "holdingWeightAnnual": 0.05,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80171",
+      "conceptName": "房屋租赁",
+      "holdingWeightAnnual": 0.15,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80588",
+      "conceptName": "猴痘概念",
+      "holdingWeightAnnual": 0.05,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80152",
+      "conceptName": "病菌防治",
+      "holdingWeightAnnual": 0.45,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80100",
+      "conceptName": "百度概念",
+      "holdingWeightAnnual": 0.26,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80550",
+      "conceptName": "算力工程",
+      "holdingWeightAnnual": 14.1,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81958",
+      "conceptName": "MLOps",
+      "holdingWeightAnnual": 0.1,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82099",
+      "conceptName": "石油石化",
+      "holdingWeightAnnual": 1.16,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80354",
+      "conceptName": "成渝板块",
+      "holdingWeightAnnual": 5.17,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80459",
+      "conceptName": "呼吸机",
+      "holdingWeightAnnual": 0.38,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81933",
+      "conceptName": "成飞概念",
+      "holdingWeightAnnual": 0.06,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80187",
+      "conceptName": "3D感应",
+      "holdingWeightAnnual": 0.19,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81978",
+      "conceptName": "液冷IDC",
+      "holdingWeightAnnual": 5.44,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80414",
+      "conceptName": "VPN概念",
+      "holdingWeightAnnual": 0.54,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81961",
+      "conceptName": "江苏",
+      "holdingWeightAnnual": 7.87,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80533",
+      "conceptName": "华为昇腾",
+      "holdingWeightAnnual": 0.13,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80416",
+      "conceptName": "无线耳机",
+      "holdingWeightAnnual": 5.24,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80563",
+      "conceptName": "百日新低",
+      "holdingWeightAnnual": 17.86,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82411",
+      "conceptName": "肿瘤治疗",
+      "holdingWeightAnnual": 1.32,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80110",
+      "conceptName": "智慧城市",
+      "holdingWeightAnnual": 2.52,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80568",
+      "conceptName": "高市盈率",
+      "holdingWeightAnnual": 0.33,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80585",
+      "conceptName": "云南国资",
+      "holdingWeightAnnual": 0.15,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80259",
+      "conceptName": "传感器",
+      "holdingWeightAnnual": 1.91,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82313",
+      "conceptName": "纺服行业",
+      "holdingWeightAnnual": 0.0,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80584",
+      "conceptName": "出海概念",
+      "holdingWeightAnnual": 15.14,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80506",
+      "conceptName": "医院",
+      "holdingWeightAnnual": 0.13,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80514",
+      "conceptName": "醋酸",
+      "holdingWeightAnnual": 0.12,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80322",
+      "conceptName": "超级电容",
+      "holdingWeightAnnual": 0.37,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82333",
+      "conceptName": "电网设备",
+      "holdingWeightAnnual": 1.28,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80209",
+      "conceptName": "广东国资",
+      "holdingWeightAnnual": 0.04,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80607",
+      "conceptName": "热泵",
+      "holdingWeightAnnual": 0.18,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80358",
+      "conceptName": "低价股",
+      "holdingWeightAnnual": 1.56,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80107",
+      "conceptName": "超导",
+      "holdingWeightAnnual": 1.7,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80005",
+      "conceptName": "中药",
+      "holdingWeightAnnual": 0.46,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81946",
+      "conceptName": "四川国资",
+      "holdingWeightAnnual": 1.0,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80411",
+      "conceptName": "数字货币",
+      "holdingWeightAnnual": 0.51,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80090",
+      "conceptName": "汽车后市场",
+      "holdingWeightAnnual": 0.12,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80419",
+      "conceptName": "胎压监测",
+      "holdingWeightAnnual": 0.34,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80067",
+      "conceptName": "浙江",
+      "holdingWeightAnnual": 5.05,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80530",
+      "conceptName": "口腔医疗",
+      "holdingWeightAnnual": 0.15,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82290",
+      "conceptName": "建筑材料",
+      "holdingWeightAnnual": 0.73,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80129",
+      "conceptName": "职业教育",
+      "holdingWeightAnnual": 0.22,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80465",
+      "conceptName": "中芯国际概念",
+      "holdingWeightAnnual": 7.18,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80098",
+      "conceptName": "谷歌概念",
+      "holdingWeightAnnual": 0.21,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80196",
+      "conceptName": "充电桩",
+      "holdingWeightAnnual": 3.24,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80319",
+      "conceptName": "移动支付",
+      "holdingWeightAnnual": 2.16,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81955",
+      "conceptName": "山西",
+      "holdingWeightAnnual": 0.37,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS80089",
+      "conceptName": "汽车整车",
+      "holdingWeightAnnual": 1.4,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS81974",
+      "conceptName": "青海",
+      "holdingWeightAnnual": 0.52,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    },
+    {
+      "fundCode": "510300",
+      "conceptCode": "CLS82446",
+      "conceptName": "短剧",
+      "holdingWeightAnnual": 0.33,
+      "publishDate": "2026-08-29",
+      "endDate": "2026-06-30",
+      "conceptCategory": "C01",
+      "fundName": "华泰柏瑞沪深300ETF"
+    }
+  ]
+}

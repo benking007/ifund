@@ -2,6 +2,882 @@
   "sourceSha256": "e531910749eafe4426e91b158dc669ca08cc0c304a302d507064d41452028fbd",
   "operations": [
     {
+      "id": "api-142",
+      "number": 142,
+      "title": "行业与ETF映射",
+      "category": "板块",
+      "categoryPath": [
+        "板块",
+        "特色数据"
+      ],
+      "method": "POST",
+      "path": "/industry/etf-mapping",
+      "operationId": "list_industry_etf_mapping",
+      "level": "L2(x2)",
+      "entitlement": "资源包",
+      "description": "支持通过行业代码列表、基金代码列表、年报持仓最小占比进行多条件筛选，分页查询行业与ETF的双向映射关系数据，包含发布日期、报告截止日期、行业代码、名称、级别，以及ETF的内部编码、交易代码、名称、规模，还有最新报告、季报、年报中该行业占ETF总资产、净资产的比例，以及穿透后的净资产占比，可用于构建行业与ETF的关联关系、分析ETF的行业持仓结构、筛选符合持仓占比要求的ETF等投研场景",
+      "parameters": [],
+      "requestFields": [
+        {
+          "path": "$",
+          "type": "object",
+          "required": "是",
+          "description": "文档未说明",
+          "constraints": "—",
+          "example": "—"
+        },
+        {
+          "path": "industryCodes",
+          "type": "string[]",
+          "required": "未标注",
+          "description": "行业代码列表（通过行业列表获取）【与fundCodes组成多选一参数，必须且只能传递其中一个】",
+          "constraints": "—",
+          "example": "[\"640000\",\"730000\"]"
+        },
+        {
+          "path": "industryCodes[]",
+          "type": "string",
+          "required": "未标注",
+          "description": "文档未说明",
+          "constraints": "—",
+          "example": "—"
+        },
+        {
+          "path": "fundCodes",
+          "type": "string[]",
+          "required": "未标注",
+          "description": "基金代码列表（通过基金基本信息获取）【与industryCodes组成多选一参数，必须且只能传递其中一个】",
+          "constraints": "—",
+          "example": "[\"512720\",\"515880\"]"
+        },
+        {
+          "path": "fundCodes[]",
+          "type": "string",
+          "required": "未标注",
+          "description": "文档未说明",
+          "constraints": "—",
+          "example": "—"
+        },
+        {
+          "path": "minAnnualWeight",
+          "type": "number",
+          "required": "未标注",
+          "description": "年报占基金总资产的最小持仓比重。\n最小值:0;\n最大值:100;",
+          "constraints": "—",
+          "example": "20"
+        },
+        {
+          "path": "pageNum",
+          "type": "integer<int32>",
+          "required": "未标注",
+          "description": "页码。\n最小值:1;",
+          "constraints": "—",
+          "example": "1"
+        },
+        {
+          "path": "pageSize",
+          "type": "integer<int32>",
+          "required": "未标注",
+          "description": "页长。\n最小值:1;\n最大值:500;",
+          "constraints": "—",
+          "example": "10"
+        }
+      ],
+      "responseFields": [
+        {
+          "path": "$",
+          "type": "object",
+          "required": "未标注",
+          "description": "文档未说明",
+          "constraints": "—",
+          "example": "—"
+        },
+        {
+          "path": "code",
+          "type": "integer<int32>",
+          "required": "未标注",
+          "description": "响应状态码",
+          "constraints": "—",
+          "example": "0"
+        },
+        {
+          "path": "message",
+          "type": "string",
+          "required": "未标注",
+          "description": "响应消息",
+          "constraints": "—",
+          "example": "success"
+        },
+        {
+          "path": "data",
+          "type": "object[]",
+          "required": "未标注",
+          "description": "文档未说明",
+          "constraints": "—",
+          "example": "—"
+        },
+        {
+          "path": "data[]",
+          "type": "object",
+          "required": "未标注",
+          "description": "文档未说明",
+          "constraints": "—",
+          "example": "—"
+        },
+        {
+          "path": "data[].publishDate",
+          "type": "string",
+          "required": "未标注",
+          "description": "发布日期",
+          "constraints": "—",
+          "example": "2026-09-01 00:00:00"
+        },
+        {
+          "path": "data[].endDate",
+          "type": "string",
+          "required": "未标注",
+          "description": "报告截止日期",
+          "constraints": "—",
+          "example": "2026-06-30 00:00:00"
+        },
+        {
+          "path": "data[].industryCode",
+          "type": "string",
+          "required": "未标注",
+          "description": "行业代码",
+          "constraints": "—",
+          "example": "640000"
+        },
+        {
+          "path": "data[].industryName",
+          "type": "string",
+          "required": "未标注",
+          "description": "行业名称",
+          "constraints": "—",
+          "example": "计算机"
+        },
+        {
+          "path": "data[].industryLevel",
+          "type": "enum<integer>",
+          "required": "未标注",
+          "description": "行业级别\n\n1代表一级行业,2代表二级行业,3代表三级行业",
+          "constraints": "枚举：[1]",
+          "example": "1"
+        },
+        {
+          "path": "data[].fundId",
+          "type": "string",
+          "required": "未标注",
+          "description": "内部编码",
+          "constraints": "—",
+          "example": "000001JK"
+        },
+        {
+          "path": "data[].fundCode",
+          "type": "string",
+          "required": "未标注",
+          "description": "基金代码",
+          "constraints": "—",
+          "example": "512720"
+        },
+        {
+          "path": "data[].fundName",
+          "type": "string",
+          "required": "未标注",
+          "description": "基金名称",
+          "constraints": "—",
+          "example": "计算机ETF"
+        },
+        {
+          "path": "data[].fundScale",
+          "type": "number",
+          "required": "未标注",
+          "description": "基金规模",
+          "constraints": "—",
+          "example": "35.2"
+        },
+        {
+          "path": "data[].holdingAssetLatest",
+          "type": "number",
+          "required": "未标注",
+          "description": "最新报告占基金总资产比重",
+          "constraints": "—",
+          "example": "35.2"
+        },
+        {
+          "path": "data[].holdingAssetQuarterly",
+          "type": "number",
+          "required": "未标注",
+          "description": "季报占基金总资产比重",
+          "constraints": "—",
+          "example": "33.8"
+        },
+        {
+          "path": "data[].holdingAssetAnnual",
+          "type": "number",
+          "required": "未标注",
+          "description": "年报占基金总资产比重",
+          "constraints": "—",
+          "example": "32.6"
+        },
+        {
+          "path": "data[].holdingNavLatest",
+          "type": "number",
+          "required": "未标注",
+          "description": "最新报告占基金净资产比重",
+          "constraints": "—",
+          "example": "36.1"
+        },
+        {
+          "path": "data[].holdingNavQuarterly",
+          "type": "number",
+          "required": "未标注",
+          "description": "季报占基金净资产比重",
+          "constraints": "—",
+          "example": "34.5"
+        },
+        {
+          "path": "data[].holdingNavAnnual",
+          "type": "number",
+          "required": "未标注",
+          "description": "年报占基金净资产比重",
+          "constraints": "—",
+          "example": "33.2"
+        },
+        {
+          "path": "data[].holdingNavLookthrough",
+          "type": "number",
+          "required": "未标注",
+          "description": "穿透后占基金净资产比重",
+          "constraints": "—",
+          "example": "37"
+        },
+        {
+          "path": "pageNum",
+          "type": "integer<int32>",
+          "required": "未标注",
+          "description": "page number",
+          "constraints": "—",
+          "example": "1"
+        },
+        {
+          "path": "pageSize",
+          "type": "integer<int32>",
+          "required": "未标注",
+          "description": "page size",
+          "constraints": "—",
+          "example": "100"
+        },
+        {
+          "path": "totalCount",
+          "type": "integer<int32>",
+          "required": "未标注",
+          "description": "total count",
+          "constraints": "—",
+          "example": "0"
+        }
+      ],
+      "requestBodyRequired": true,
+      "requestSchema": {
+        "type": "object",
+        "properties": {
+          "industryCodes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "行业代码列表（通过行业列表获取）【与fundCodes组成多选一参数，必须且只能传递其中一个】"
+            },
+            "description": "行业代码列表（通过行业列表获取）【与fundCodes组成多选一参数，必须且只能传递其中一个】"
+          },
+          "fundCodes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "基金代码列表（通过基金基本信息获取）【与industryCodes组成多选一参数，必须且只能传递其中一个】"
+            },
+            "description": "基金代码列表（通过基金基本信息获取）【与industryCodes组成多选一参数，必须且只能传递其中一个】"
+          },
+          "minAnnualWeight": {
+            "type": "number",
+            "description": "年报占基金总资产的最小持仓比重。\n最小值:0;\n最大值:100;"
+          },
+          "pageNum": {
+            "type": "integer",
+            "format": "int32",
+            "description": "页码。\n最小值:1;"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32",
+            "description": "页长。\n最小值:1;\n最大值:500;"
+          }
+        }
+      },
+      "responseSchema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "description": "响应状态码"
+          },
+          "message": {
+            "type": "string",
+            "description": "响应消息"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "publishDate": {
+                  "type": "string",
+                  "description": "发布日期"
+                },
+                "endDate": {
+                  "type": "string",
+                  "description": "报告截止日期"
+                },
+                "industryCode": {
+                  "type": "string",
+                  "description": "行业代码"
+                },
+                "industryName": {
+                  "type": "string",
+                  "description": "行业名称"
+                },
+                "industryLevel": {
+                  "type": "integer",
+                  "description": "行业级别\n\n1代表一级行业,2代表二级行业,3代表三级行业",
+                  "enum": [
+                    1
+                  ]
+                },
+                "fundId": {
+                  "type": "string",
+                  "description": "内部编码"
+                },
+                "fundCode": {
+                  "type": "string",
+                  "description": "基金代码"
+                },
+                "fundName": {
+                  "type": "string",
+                  "description": "基金名称"
+                },
+                "fundScale": {
+                  "type": "number",
+                  "description": "基金规模"
+                },
+                "holdingAssetLatest": {
+                  "type": "number",
+                  "description": "最新报告占基金总资产比重"
+                },
+                "holdingAssetQuarterly": {
+                  "type": "number",
+                  "description": "季报占基金总资产比重"
+                },
+                "holdingAssetAnnual": {
+                  "type": "number",
+                  "description": "年报占基金总资产比重"
+                },
+                "holdingNavLatest": {
+                  "type": "number",
+                  "description": "最新报告占基金净资产比重"
+                },
+                "holdingNavQuarterly": {
+                  "type": "number",
+                  "description": "季报占基金净资产比重"
+                },
+                "holdingNavAnnual": {
+                  "type": "number",
+                  "description": "年报占基金净资产比重"
+                },
+                "holdingNavLookthrough": {
+                  "type": "number",
+                  "description": "穿透后占基金净资产比重"
+                }
+              }
+            }
+          },
+          "pageNum": {
+            "type": "integer",
+            "format": "int32",
+            "description": "page number"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32",
+            "description": "page size"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32",
+            "description": "total count"
+          }
+        }
+      },
+      "requestExamples": [
+        {
+          "industryCodes": [
+            "640000",
+            "730000"
+          ],
+          "fundCodes": [
+            "512720",
+            "515880"
+          ],
+          "minAnnualWeight": 20,
+          "pageNum": 1,
+          "pageSize": 10
+        }
+      ],
+      "responseExamples": [
+        {
+          "code": 0,
+          "message": "success",
+          "data": [
+            {
+              "publishDate": "2026-09-01 00:00:00",
+              "endDate": "2026-06-30 00:00:00",
+              "industryCode": "640000",
+              "industryName": "计算机",
+              "industryLevel": 1,
+              "fundId": "000001JK",
+              "fundCode": "512720",
+              "fundName": "计算机ETF",
+              "fundScale": 35.2,
+              "holdingAssetLatest": 35.2,
+              "holdingAssetQuarterly": 33.8,
+              "holdingAssetAnnual": 32.6,
+              "holdingNavLatest": 36.1,
+              "holdingNavQuarterly": 34.5,
+              "holdingNavAnnual": 33.2,
+              "holdingNavLookthrough": 37
+            }
+          ],
+          "pageNum": 1,
+          "pageSize": 100,
+          "totalCount": 0
+        }
+      ],
+      "sourceWarnings": [
+        "原文请求示例同时填写互斥参数 fundCodes、industryCodes；调用时只能选择其中一个。"
+      ]
+    },
+    {
+      "id": "api-143",
+      "number": 143,
+      "title": "概念与ETF映射",
+      "category": "板块",
+      "categoryPath": [
+        "板块",
+        "特色数据"
+      ],
+      "method": "POST",
+      "path": "/concept/etf-mapping",
+      "operationId": "list_concept_etf_mapping",
+      "level": "L2(x2)",
+      "entitlement": "资源包",
+      "description": "支持通过概念代码列表、ETF代码列表，或设置年报/半年报概念持仓比例下限进行筛选，分页查询概念与ETF的双向映射关系数据，包含概念的代码、类别、名称，ETF的代码、名称、规模，以及最新报告、季报、年报中该概念在对应ETF中的持仓比例，还有报告发布日期、最新报告截止日期、年报/半年报截止日期等信息，可用于分析概念与ETF的关联度、ETF跟踪标的情况等投研场景。",
+      "parameters": [],
+      "requestFields": [
+        {
+          "path": "$",
+          "type": "object",
+          "required": "是",
+          "description": "文档未说明",
+          "constraints": "—",
+          "example": "—"
+        },
+        {
+          "path": "conceptCodes",
+          "type": "string[]",
+          "required": "未标注",
+          "description": "概念代码列表（通过概念列表获取）【与fundCodes组成多选一参数，必须且只能传递其中一个】",
+          "constraints": "—",
+          "example": "[\"CLS80006\",\"CLS80003\"]"
+        },
+        {
+          "path": "conceptCodes[]",
+          "type": "string",
+          "required": "未标注",
+          "description": "文档未说明",
+          "constraints": "—",
+          "example": "—"
+        },
+        {
+          "path": "fundCodes",
+          "type": "string[]",
+          "required": "未标注",
+          "description": "基金代码列表【与conceptCodes组成多选一参数，必须且只能传递其中一个】",
+          "constraints": "—",
+          "example": "[\"512480\",\"515880\"]"
+        },
+        {
+          "path": "fundCodes[]",
+          "type": "string",
+          "required": "未标注",
+          "description": "文档未说明",
+          "constraints": "—",
+          "example": "—"
+        },
+        {
+          "path": "minAnnualWeight",
+          "type": "number",
+          "required": "未标注",
+          "description": "年报或半年报概念持仓比例下限。\n最小值:0;\n最大值:100;",
+          "constraints": "—",
+          "example": "20"
+        },
+        {
+          "path": "pageNum",
+          "type": "integer<int32>",
+          "required": "未标注",
+          "description": "页码。\n最小值:1;",
+          "constraints": "—",
+          "example": "1"
+        },
+        {
+          "path": "pageSize",
+          "type": "integer<int32>",
+          "required": "未标注",
+          "description": "页长。\n最小值:1;\n最大值:500;",
+          "constraints": "—",
+          "example": "10"
+        }
+      ],
+      "responseFields": [
+        {
+          "path": "$",
+          "type": "object",
+          "required": "未标注",
+          "description": "文档未说明",
+          "constraints": "—",
+          "example": "—"
+        },
+        {
+          "path": "code",
+          "type": "integer<int32>",
+          "required": "未标注",
+          "description": "响应状态码",
+          "constraints": "—",
+          "example": "0"
+        },
+        {
+          "path": "message",
+          "type": "string",
+          "required": "未标注",
+          "description": "响应消息",
+          "constraints": "—",
+          "example": "success"
+        },
+        {
+          "path": "data",
+          "type": "object[]",
+          "required": "未标注",
+          "description": "文档未说明",
+          "constraints": "—",
+          "example": "—"
+        },
+        {
+          "path": "data[]",
+          "type": "object",
+          "required": "未标注",
+          "description": "文档未说明",
+          "constraints": "—",
+          "example": "—"
+        },
+        {
+          "path": "data[].publishDate",
+          "type": "string",
+          "required": "未标注",
+          "description": "发布日期",
+          "constraints": "—",
+          "example": "2026-09-01 00:00:00"
+        },
+        {
+          "path": "data[].endDate",
+          "type": "string",
+          "required": "未标注",
+          "description": "最新报告截止日期",
+          "constraints": "—",
+          "example": "2026-06-30 00:00:00"
+        },
+        {
+          "path": "data[].conceptCode",
+          "type": "string",
+          "required": "未标注",
+          "description": "概念代码",
+          "constraints": "—",
+          "example": "CLS80006"
+        },
+        {
+          "path": "data[].conceptCategory",
+          "type": "enum<string>",
+          "required": "未标注",
+          "description": "概念类别\n\nC01代表财联社概念板块",
+          "constraints": "枚举：[\"C01\"]",
+          "example": "C01"
+        },
+        {
+          "path": "data[].conceptName",
+          "type": "string",
+          "required": "未标注",
+          "description": "概念名称",
+          "constraints": "—",
+          "example": "人工智能"
+        },
+        {
+          "path": "data[].fundId",
+          "type": "string",
+          "required": "未标注",
+          "description": "内部编码",
+          "constraints": "—",
+          "example": "000001JK"
+        },
+        {
+          "path": "data[].fundCode",
+          "type": "string",
+          "required": "未标注",
+          "description": "基金代码",
+          "constraints": "—",
+          "example": "512480"
+        },
+        {
+          "path": "data[].fundName",
+          "type": "string",
+          "required": "未标注",
+          "description": "基金名称",
+          "constraints": "—",
+          "example": "半导体ETF"
+        },
+        {
+          "path": "data[].fundScale",
+          "type": "number",
+          "required": "未标注",
+          "description": "基金规模",
+          "constraints": "—",
+          "example": "52.3"
+        },
+        {
+          "path": "data[].holdingWeightLatest",
+          "type": "number",
+          "required": "未标注",
+          "description": "最新报告概念持仓比例",
+          "constraints": "—",
+          "example": "35.2"
+        },
+        {
+          "path": "data[].holdingWeightQuarterly",
+          "type": "number",
+          "required": "未标注",
+          "description": "季报概念持仓比例",
+          "constraints": "—",
+          "example": "34.8"
+        },
+        {
+          "path": "data[].holdingWeightAnnual",
+          "type": "number",
+          "required": "未标注",
+          "description": "年报或半年报概念持仓比例",
+          "constraints": "—",
+          "example": "33.5"
+        },
+        {
+          "path": "pageNum",
+          "type": "integer<int32>",
+          "required": "未标注",
+          "description": "page number",
+          "constraints": "—",
+          "example": "1"
+        },
+        {
+          "path": "pageSize",
+          "type": "integer<int32>",
+          "required": "未标注",
+          "description": "page size",
+          "constraints": "—",
+          "example": "100"
+        },
+        {
+          "path": "totalCount",
+          "type": "integer<int32>",
+          "required": "未标注",
+          "description": "total count",
+          "constraints": "—",
+          "example": "0"
+        }
+      ],
+      "requestBodyRequired": true,
+      "requestSchema": {
+        "type": "object",
+        "properties": {
+          "conceptCodes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "概念代码列表（通过概念列表获取）【与fundCodes组成多选一参数，必须且只能传递其中一个】"
+            },
+            "description": "概念代码列表（通过概念列表获取）【与fundCodes组成多选一参数，必须且只能传递其中一个】"
+          },
+          "fundCodes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "基金代码列表【与conceptCodes组成多选一参数，必须且只能传递其中一个】"
+            },
+            "description": "基金代码列表【与conceptCodes组成多选一参数，必须且只能传递其中一个】"
+          },
+          "minAnnualWeight": {
+            "type": "number",
+            "description": "年报或半年报概念持仓比例下限。\n最小值:0;\n最大值:100;"
+          },
+          "pageNum": {
+            "type": "integer",
+            "format": "int32",
+            "description": "页码。\n最小值:1;"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32",
+            "description": "页长。\n最小值:1;\n最大值:500;"
+          }
+        }
+      },
+      "responseSchema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "description": "响应状态码"
+          },
+          "message": {
+            "type": "string",
+            "description": "响应消息"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "publishDate": {
+                  "type": "string",
+                  "description": "发布日期"
+                },
+                "endDate": {
+                  "type": "string",
+                  "description": "最新报告截止日期"
+                },
+                "conceptCode": {
+                  "type": "string",
+                  "description": "概念代码"
+                },
+                "conceptCategory": {
+                  "type": "string",
+                  "description": "概念类别\n\nC01代表财联社概念板块",
+                  "enum": [
+                    "C01"
+                  ]
+                },
+                "conceptName": {
+                  "type": "string",
+                  "description": "概念名称"
+                },
+                "fundId": {
+                  "type": "string",
+                  "description": "内部编码"
+                },
+                "fundCode": {
+                  "type": "string",
+                  "description": "基金代码"
+                },
+                "fundName": {
+                  "type": "string",
+                  "description": "基金名称"
+                },
+                "fundScale": {
+                  "type": "number",
+                  "description": "基金规模"
+                },
+                "holdingWeightLatest": {
+                  "type": "number",
+                  "description": "最新报告概念持仓比例"
+                },
+                "holdingWeightQuarterly": {
+                  "type": "number",
+                  "description": "季报概念持仓比例"
+                },
+                "holdingWeightAnnual": {
+                  "type": "number",
+                  "description": "年报或半年报概念持仓比例"
+                }
+              }
+            }
+          },
+          "pageNum": {
+            "type": "integer",
+            "format": "int32",
+            "description": "page number"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32",
+            "description": "page size"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32",
+            "description": "total count"
+          }
+        }
+      },
+      "requestExamples": [
+        {
+          "conceptCodes": [
+            "CLS80006",
+            "CLS80003"
+          ],
+          "fundCodes": [
+            "512480",
+            "515880"
+          ],
+          "minAnnualWeight": 20,
+          "pageNum": 1,
+          "pageSize": 10
+        }
+      ],
+      "responseExamples": [
+        {
+          "code": 0,
+          "message": "success",
+          "data": [
+            {
+              "publishDate": "2026-09-01 00:00:00",
+              "endDate": "2026-06-30 00:00:00",
+              "conceptCode": "CLS80006",
+              "conceptCategory": "C01",
+              "conceptName": "人工智能",
+              "fundId": "000001JK",
+              "fundCode": "512480",
+              "fundName": "半导体ETF",
+              "fundScale": 52.3,
+              "holdingWeightLatest": 35.2,
+              "holdingWeightQuarterly": 34.8,
+              "holdingWeightAnnual": 33.5
+            }
+          ],
+          "pageNum": 1,
+          "pageSize": 100,
+          "totalCount": 0
+        }
+      ],
+      "sourceWarnings": [
+        "原文请求示例同时填写互斥参数 conceptCodes、fundCodes；调用时只能选择其中一个。"
+      ]
+    },
+    {
       "id": "api-223",
       "number": 223,
       "title": "基金公司的公告",

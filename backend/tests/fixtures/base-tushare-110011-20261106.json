@@ -1,0 +1,161 @@
+{
+  "fund_basic": [
+    {
+      "ts_code": "110011.OF",
+      "name": "易方达优质精选混合(QDII)",
+      "fund_type": "混合型",
+      "market": "O",
+      "status": "L",
+      "management": "易方达基金管理有限公司"
+    }
+  ],
+  "fund_nav": [
+    {
+      "ts_code": "110011.OF",
+      "nav_date": "20261105",
+      "unit_nav": 4.1627,
+      "accum_nav": 5.9527,
+      "adj_nav": 4.1627
+    },
+    {
+      "ts_code": "110011.OF",
+      "nav_date": "20261104",
+      "unit_nav": 4.0866,
+      "accum_nav": 5.8766,
+      "adj_nav": 4.0866
+    },
+    {
+      "ts_code": "110011.OF",
+      "nav_date": "20261103",
+      "unit_nav": 4.0874,
+      "accum_nav": 5.8774,
+      "adj_nav": 4.0874
+    },
+    {
+      "ts_code": "110011.OF",
+      "nav_date": "20261102",
+      "unit_nav": 4.049,
+      "accum_nav": 5.839,
+      "adj_nav": 4.049
+    },
+    {
+      "ts_code": "110011.OF",
+      "nav_date": "20261030",
+      "unit_nav": 4.0128,
+      "accum_nav": 5.8028,
+      "adj_nav": 4.0128
+    },
+    {
+      "ts_code": "110011.OF",
+      "nav_date": "20261029",
+      "unit_nav": 3.9177,
+      "accum_nav": 5.7077,
+      "adj_nav": 3.9177
+    },
+    {
+      "ts_code": "110011.OF",
+      "nav_date": "20261028",
+      "unit_nav": 3.9145,
+      "accum_nav": 5.7045,
+      "adj_nav": 3.9145
+    },
+    {
+      "ts_code": "110011.OF",
+      "nav_date": "20261027",
+      "unit_nav": 3.9349,
+      "accum_nav": 5.7249,
+      "adj_nav": 3.9349
+    },
+    {
+      "ts_code": "110011.OF",
+      "nav_date": "20261026",
+      "unit_nav": 3.9411,
+      "accum_nav": 5.7311,
+      "adj_nav": 3.9411
+    },
+    {
+      "ts_code": "110011.OF",
+      "nav_date": "20261023",
+      "unit_nav": 3.9095,
+      "accum_nav": 5.6995,
+      "adj_nav": 3.9095
+    },
+    {
+      "ts_code": "110011.OF",
+      "nav_date": "20261022",
+      "unit_nav": 3.8601,
+      "accum_nav": 5.6501,
+      "adj_nav": 3.8601
+    },
+    {
+      "ts_code": "110011.OF",
+      "nav_date": "20261021",
+      "unit_nav": 3.9353,
+      "accum_nav": 5.7253,
+      "adj_nav": 3.9353
+    },
+    {
+      "ts_code": "110011.OF",
+      "nav_date": "20261020",
+      "unit_nav": 3.9963,
+      "accum_nav": 5.7863,
+      "adj_nav": 3.9963
+    },
+    {
+      "ts_code": "110011.OF",
+      "nav_date": "20261019",
+      "unit_nav": 4.024,
+      "accum_nav": 5.814,
+      "adj_nav": 4.024
+    },
+    {
+      "ts_code": "110011.OF",
+      "nav_date": "20261016",
+      "unit_nav": 4.0094,
+      "accum_nav": 5.7994,
+      "adj_nav": 4.0094
+    },
+    {
+      "ts_code": "110011.OF",
+      "nav_date": "20261015",
+      "unit_nav": 3.9853,
+      "accum_nav": 5.7753,
+      "adj_nav": 3.9853
+    },
+    {
+      "ts_code": "110011.OF",
+      "nav_date": "20261014",
+      "unit_nav": 4.0062,
+      "accum_nav": 5.7962,
+      "adj_nav": 4.0062
+    },
+    {
+      "ts_code": "110011.OF",
+      "nav_date": "20261013",
+      "unit_nav": 4.0047,
+      "accum_nav": 5.7947,
+      "adj_nav": 4.0047
+    },
+    {
+      "ts_code": "110011.OF",
+      "nav_date": "20261012",
+      "unit_nav": 4.0145,
+      "accum_nav": 5.8045,
+      "adj_nav": 4.0145
+    },
+    {
+      "ts_code": "110011.OF",
+      "nav_date": "20261009",
+      "unit_nav": 3.9987,
+      "accum_nav": 5.7887,
+      "adj_nav": 3.9987
+    },
+    {
+      "ts_code": "110011.OF",
+      "nav_date": "20261008",
+      "unit_nav": 3.9569,
+      "accum_nav": 5.7469,
+      "adj_nav": 3.9569
+    }
+  ]
+}

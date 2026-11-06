@@ -2,11 +2,9 @@
 from __future__ import annotations
 
 import calendar
-from datetime import date, datetime
-from decimal import Decimal
+from datetime import date, datetime, timedelta
 import html
 import json
-import math
 import re
 from zoneinfo import ZoneInfo
 
@@ -15,10 +13,13 @@ from . import product_collectors as collectors
 from . import product_eastmoney as eastmoney
 from . import product_store as store
 from .product_contracts import day
+from .product_numbers import numeric
+from .product_identity import canonical_master as _master, not_yet_reportable
+from .product_outcomes import NotDisclosedError, NotApplicableError
 
 KINDS = {"purchase-status", "holder-ratios", "investment-scope", "company-profile", "peer-returns",
          "industry-exposure", "pcf-header", "quarter-nav", "manager-intervals", "industry-reverse",
-         "holding-stock-returns", "manager-directory"}
+         "holding-stock-returns", "manager-directory", "fee-tiers", "performance"}
 
 
 def assignment(document, name):
@@ -59,19 +60,6 @@ def script_value(document, name):
     return value
 
 
-def numeric(value):
-    """Parse documented comma, currency and percent renderings; preserve units."""
-    if value is None or str(value).strip() in ("", "-", "--", "---", "—"):
-        return None
-    if isinstance(value, bool):
-        raise ValueError("Boolean financial observation")
-    text = str(value).strip().replace(",", "").removeprefix("￥").removesuffix("%")
-    number = Decimal(text)
-    if not number.is_finite() or not math.isfinite(float(number)):
-        raise ValueError("Nonfinite financial observation")
-    return float(number)
-
-
 def _record(key, values, **metadata):
     return {"record_key": key, "data": {key: value for key, value in values.items() if value is not None}, **metadata}
 
@@ -91,6 +79,39 @@ def purchase_rows(document, fund_code):
         raise ValueError("Purchase source status is not a string")
     return [_record(fund_code, {"fundCode": fund_code, "fundName": row[1], "subscribeLimit": numeric(row[9]),
                                 "remark": "当前申购状态："+row[5]+"；当前赎回状态："+row[6]})]
+
+
+def collect_purchase_all(args):
+    """One full source response and one atomic batch, never N identical downloads."""
+    import requests  # pylint: disable=import-outside-toplevel
+    with requests.Session() as session:
+        response = _get(session, 'https://fund.eastmoney.com/Data/Fund_JJJZ_Data.aspx',
+                        params={'t': '8', 'page': '1,50000', 'js': 'reData', 'sort': 'fcode,asc'})
+    document = response.content.decode('utf-8')
+    raw = assignment(document, 'reData')
+    rows = raw.get('datas')
+    if (not isinstance(rows, list) or len(rows) != int(raw.get('record', -1))
+            or not 1 <= len(rows) <= 50000 or raw.get('pages') != '1' or raw.get('curpage') != '1'):
+        raise ValueError('Purchase source full-index pagination is not complete')
+    records, seen = [], set()
+    for row in rows:
+        if not isinstance(row, list) or len(row) != 13 or not re.fullmatch(r'[0-9]{6}', str(row[0])):
+            raise ValueError('Purchase full-index security schema changed')
+        if row[0] in seen or any(not isinstance(row[i], str) or not row[i].strip() for i in (5, 6)):
+            raise ValueError('Duplicate fund or missing purchase status')
+        seen.add(row[0])
+        records.append(_record(row[0], {'fundCode': row[0], 'fundName': row[1],
+                                      'subscribeLimit': numeric(row[9]),
+                                      'remark': '当前申购状态：'+row[5]+'；当前赎回状态：'+row[6]}))
+    today = date.today().isoformat()
+    result = store.ingest(238, records, scope_kind='global', scope_key='*', window_start=today, window_end=today,
+                        source_name='eastmoney:complete-current-purchase-index',
+                        method_version='one-full-source-snapshot-purchase-status-v2',
+                        evidence_uri='https://fund.eastmoney.com/Data/Fund_JJJZ_Data.aspx',
+                        evidence_sha256=collectors.evidence(raw), complete_window=True,
+                        ttl_seconds=min(args.ttl_seconds, 300))
+    result['pruned_old_snapshots'] = store.prune_purchase_snapshots()
+    return result
 
 
 def holder_rows(document, fund_code):
@@ -206,8 +227,11 @@ def peer_rows(document, fund_code):
         raise ValueError("Peer and fund curve endpoints differ")
     end = date.fromisoformat(common[-1])
     result = {"fundCode": fund_code, "date": end.isoformat()}
-    for months, suffix in ((1, "1m"), (3, "3m"), (6, "6m")):
-        cutoff = _shift_months(end, months).isoformat()
+    windows = {"1w": end-timedelta(days=7), "Ytd": date(end.year, 1, 1),
+               **{suffix: _shift_months(end, months) for months, suffix in
+                  ((1, "1m"), (3, "3m"), (6, "6m"), (12, "1y"), (36, "3y"), (60, "5y"))}}
+    for suffix, beginning in windows.items():
+        cutoff = beginning.isoformat()
         prior = [when for when in common if when <= cutoff]
         if not prior or (date.fromisoformat(cutoff)-date.fromisoformat(prior[-1])).days > 7:
             continue
@@ -259,19 +283,14 @@ def _get(session, endpoint, **kwargs):
     return response
 
 
-def _master(fund_code):
-    if not isinstance(fund_code, str) or not re.fullmatch(r"[0-9]{6}", fund_code):
-        raise ValueError("A six-digit canonical fund code is required")
-    row = database.select_one("fund_basic_ext", {"fund_code": "eq."+fund_code})
-    if not row or row.get("ts_code", "").split(".")[0] != fund_code:
-        raise ValueError("Canonical fund role missing")
-    return row
-
-
-def _public_collect(session, kind, code, end):
+def _public_collect(session, kind, code, end):  # pylint: disable=too-many-return-statements
     """Fixed URLs only. No endpoint, SQL ID or source mapping comes from HTTP."""
     source = "eastmoney:disclosed-fund"
     uri = "https://fundf10.eastmoney.com/"
+    if kind == "fee-tiers":
+        from .product_fees import fee_rows  # pylint: disable=import-outside-toplevel
+        raw = _get(session, uri+"jjfl_"+code+".html").content.decode("utf-8")
+        return 243, fee_rows(raw, code), raw, "em-disclosed-original-fee-tiers-v1", source, uri
     if kind == "purchase-status":
         raw = _get(session, "https://fund.eastmoney.com/Data/Fund_JJJZ_Data.aspx",
                    params={"t": "8", "page": "1,50000", "js": "reData", "sort": "fcode,asc"}).content.decode("utf-8")
@@ -289,7 +308,18 @@ def _public_collect(session, kind, code, end):
     if kind == "industry-exposure":
         raw = _get(session, "https://api.fund.eastmoney.com/f10/HYPZ/",
                    params={"fundCode": code, "year": end[:4]}).json()
-        return 264, industry_rows(raw, code), raw, "em-native-industry-nav-current-v1", source, uri
+        try:
+            rows = industry_rows(raw, code)
+        except ValueError:
+            # No rows alone cannot prove no exposure. Require a second actual
+            # report whose identity, NAV and exactly-zero stock ratio verify it.
+            master = _master(code)
+            report = _get(session, uri+"zcpz_"+code+".html").content.decode("utf-8")
+            from .product_reports import latest_report  # pylint: disable=import-outside-toplevel
+            issuer = latest_report(code)
+            rows = verified_zero_industry(raw, report, code, master, issuer)
+            raw = {"industry": raw, "zero_stock_disclosure": report, "issuer_pdf_sha256": issuer["hash"]}
+        return 264, rows, raw, "em-native-industry-nav-current-v1", source, uri
     if kind == "pcf-header":
         uri = "https://query.sse.com.cn/commonQuery.do"
         raw = _get(session, uri, headers={"Referer": "https://www.sse.com.cn/"}, params={
@@ -311,6 +341,15 @@ def ingest_collection(args):
         return _collect_manager(args)
     master = _master(args.fund_code)
     code = args.fund_code
+    if args.kind == 'industry-exposure':
+        proof = not_yet_reportable(master, args.end)
+        if proof:
+            version = store.record_disclosure_state(264, code, 'official-canonical-fund-inception', proof,
+                                                    ttl_seconds=min(args.ttl_seconds, 86400), status='not_applicable')
+            raise NotApplicableError('fund_not_established_in_completed_reporting_period',
+                                     'official-canonical-fund-inception',
+                                     {**proof, 'eligibility_version': version['version_id']},
+                                     observed_at=version['observed_at'], valid_until=version['valid_until'])
     if args.ts_code and args.ts_code != master["ts_code"]:
         raise ValueError("Requested and canonical fund roles differ")
     if args.kind == "pcf-header" and (master.get("market") != "E" or not master["ts_code"].endswith(".SH")):
@@ -318,6 +357,10 @@ def ingest_collection(args):
     if args.kind == "holding-stock-returns":
         product, records, raw, method = _collect_stock_returns(master, end)
         source, uri = "tushare:fund-portfolio-stock-close", "https://tushare.pro"
+    elif args.kind == "performance":
+        records, raw = _collect_performance(args, master)
+        from .product_performance import METHOD  # pylint: disable=import-outside-toplevel
+        product, method, source, uri = 253, METHOD, "tushare:fund-nav-index", "https://tushare.pro"
     elif args.kind == "company-profile":
         company = database.select_one("fund_company", {"company_id": "eq."+str(master["company_id"])})
         records, raw = company_rows(master, company), {"master": master, "company": company}
@@ -332,18 +375,77 @@ def ingest_collection(args):
     else:
         with requests.Session() as session:
             session.headers.update({"Referer": "https://fundf10.eastmoney.com/"})
-            product, records, raw, method, source, uri = _public_collect(session, args.kind, code, end)
+            try:
+                product, records, raw, method, source, uri = _public_collect(session, args.kind, code, end)
+            except NotDisclosedError as exc:
+                if args.kind == 'industry-exposure':
+                    version = store.record_disclosure_state(264, code, exc.source, exc.evidence,
+                                                            ttl_seconds=min(args.ttl_seconds, 86400))
+                    exc.observed_at, exc.valid_until = version['observed_at'], version['valid_until']
+                    exc.evidence = {'fund_code': code, 'eligibility_version': version['version_id'],
+                                    'index_sha256': collectors.evidence(exc.evidence)}
+                raise
     # Snapshot windows are observation windows, never fabricated event dates.
     # A payload-specific revision avoids resurrecting removed members by merging
     # two multirow snapshots from the same source authority.
-    if product != 274:
+    if product == 253:
+        start = end = records[0]["data"]["endDate"]
+    elif product != 274:
         start = end = date.today().isoformat()
         method += ":"+collectors.evidence(raw)[:12]
     fields = set().union(*(set(record["data"]) for record in records))
+    if product == 264 and not records:
+        fields = {"fundCode", "industryCode", "industryName", "holdingRatioLatest"}
     return store.ingest(product, records, scope_kind="fund", scope_key=code, window_start=start, window_end=end,
                         source_name=source, method_version=method, evidence_uri=uri,
                         evidence_sha256=collectors.evidence(raw), complete_window=True, available_fields=fields,
                         ttl_seconds=min(args.ttl_seconds, 300 if product == 238 else 86400))
+
+
+def _collect_performance(args, master):
+    from .product_performance import performance_rows  # pylint: disable=import-outside-toplevel
+    if not args.benchmark_ts_code or not args.benchmark_code:
+        raise ValueError("An explicit verified benchmark role is required")
+    if args.benchmark_ts_code.split(".")[0] != args.benchmark_code:
+        raise ValueError("Benchmark code/role identity mismatch")
+    end = day(args.end)
+    start = day(args.start)
+    if start == "0001-01-01":
+        start = str(int(end[:4])-6)+"-01-01"
+    params = {"start_date": start.replace("-", ""), "end_date": end.replace("-", "")}
+    nav = collectors.collect_tushare("fund_nav", {**params, "ts_code": master["ts_code"]})
+    quote = collectors.collect_tushare("index_daily", {**params, "ts_code": args.benchmark_ts_code})
+    if any(row.get("ts_code") != master["ts_code"] for row in nav):
+        raise ValueError("NAV identity mismatch")
+    if any(row.get("ts_code") != args.benchmark_ts_code for row in quote):
+        raise ValueError("Benchmark identity mismatch")
+    navs = [{"date": day(row["nav_date"]), "value": collectors.number(row["adj_nav"])} for row in nav]
+    quotes = [{"date": day(row["trade_date"]), "value": collectors.number(row["close"])} for row in quote]
+    return performance_rows(navs, quotes, master["fund_code"]), {"nav": nav, "benchmark": quote,
+                                                            "benchmark_role": args.benchmark_ts_code}
+
+
+def verified_zero_industry(payload, report, fund_code, master, issuer_report=None):
+    """A source-empty industry page needs independently disclosed zero stocks.
+
+    A rounded 0.00% allocation is insufficient. Require an explicit issuer
+    statement of no stocks, tied to the same period as the allocation report.
+    """
+    body = payload.get("Data", {})
+    if (payload.get("ErrCode") != 0 or body.get("FundCode") != fund_code
+            or master.get("fund_code") != fund_code or master.get("source") != "tushare"):
+        raise ValueError("No verified zero-exposure source identity and eligible role")
+    quarters = body.get("QuarterInfos")
+    if not isinstance(quarters, list) or any(row.get("HYPZInfo") for row in quarters):
+        raise ValueError("Nonempty industry records cannot become a zero-exposure attestation")
+    rows = eastmoney.asset_rows(report, fund_code)
+    if (len(rows) != 1 or rows[0]["data"].get("stockRatio") != 0
+            or not rows[0]["data"].get("nav", 0) > 0):
+        raise ValueError("A genuine positive-NAV, zero-stock disclosure is required")
+    if (not issuer_report or rows[0]["source_report_period"] != issuer_report["period"]
+            or not re.search(r"本基金(?:本)?报告期末(?:未持有|无)股票", re.sub(r"\s+", "", issuer_report["text"]))):
+        raise ValueError("Same-period issuer statement of no stocks is required; rounded zero is not proof")
+    return []
 
 
 def manager_rows(document, payload, manager_id, manager_name):
@@ -384,9 +486,12 @@ def manager_rows(document, payload, manager_id, manager_name):
         points[when] = {code: numeric(row.get(code)) for code in codes}
     end = date.fromisoformat(max(points))
     result = {"fundManagerName": manager_name}
-    for months, field in ((1, "return1m"), (3, "return3m"), (6, "return6m"),
-                           (12, "return1y"), (36, "return3y"), (60, "return5y")):
-        start = _shift_months(end, months).isoformat()
+    windows = {"returnMtd": date(end.year, end.month, 1), "returnYtd": date(end.year, 1, 1),
+               **{field: _shift_months(end, months) for months, field in
+                  ((1, "return1m"), (3, "return3m"), (6, "return6m"), (12, "return1y"),
+                   (36, "return3y"), (60, "return5y"))}}
+    for field, beginning in windows.items():
+        start = beginning.isoformat()
         prior = [when for when in points if when <= start]
         if not prior or (date.fromisoformat(start)-date.fromisoformat(max(prior))).days > 7:
             continue
@@ -441,9 +546,25 @@ def _industry_reverse(args):
     if not masters or len(masters) > 100000:
         raise ValueError("A bounded complete active canonical fund catalog is required")
     records, evidence, names = [], [], {}
+    eligible, undisclosed, not_applicable = 0, 0, 0
+    expiry = datetime.now().timestamp()+min(args.ttl_seconds, 86400)
     for master in masters:
         code = master["fund_code"]
+        with database.get_db().transaction(read_only=True) as conn:
+            jobs = store._sql(conn, "SELECT recorded_at FROM open_fund_product_batch WHERE product_id=264 "
+                              "AND scope_kind='fund' AND scope_key=? AND status='ready' "
+                              "ORDER BY recorded_at DESC,batch_id DESC LIMIT 1", (code,), fetch=True)
+            proof = store.disclosure_state(conn, 264, code, after=jobs[0]['recorded_at'] if jobs else 0)
+        if proof:
+            undisclosed += int(proof['status'] == 'not_disclosed')
+            not_applicable += int(proof['status'] == 'not_applicable')
+            expiry = min(expiry, proof['valid_until'])
+            evidence.append({'fundCode': code, 'eligibility': proof['status'],
+                             'source_version': proof['version_id'], 'sha256': proof['evidence_sha256']})
+            continue
+        eligible += 1
         body = store.query_product(264, {"fundCode": code, "pageNum": 1, "pageSize": 500})
+        expiry = min(expiry, body["valid_until"])
         if body["total"] != len(body["items"]):
             raise ValueError("A catalog member's industry snapshot was truncated")
         if not all(method.startswith("em-native-industry-nav-current-v1:") for method in body["method_version"]):
@@ -459,13 +580,24 @@ def _industry_reverse(args):
         raise ValueError("Supported reverse products are 262/268 with bounded complete rows")
     today = date.today().isoformat()
     digest = collectors.evidence(evidence)
+    if not eligible:
+        raise NotDisclosedError('no_catalog_fund_disclosed_industry_yet', 'complete-catalog-disclosure-eligibility',
+                                {'catalog_fund_count': len(masters), 'eligible_fund_count': 0,
+                                 'undisclosed_fund_count': undisclosed, 'not_applicable_fund_count': not_applicable,
+                                 'sha256': digest}, valid_until=expiry)
+    remaining = int(expiry-datetime.now().timestamp())
+    if remaining <= 0:
+        raise LookupError('Industry source eligibility expired while materializing')
     return store.ingest(args.product, records, scope_kind="global", scope_key="*", window_start=today,
                         window_end=today, source_name="ifund:complete-active-catalog-disclosed-industry",
-                        method_version="complete-active-catalog-industry-nav-reverse-v1:"+digest[:12],
+                        method_version="verified-disclosed-catalog-industry-nav-reverse-v2:"+digest[:12],
                         evidence_uri="https://api.fund.eastmoney.com/f10/HYPZ/", evidence_sha256=digest,
                         complete_window=True, available_fields={"fundCode", "industryCode", "industryName",
                                                                "holdingRatioLatest"},
-                        ttl_seconds=min(args.ttl_seconds, 86400))
+                        ttl_seconds=min(args.ttl_seconds, remaining),
+                        scope_metadata={'catalog_fund_count': len(masters), 'eligible_fund_count': eligible,
+                                        'undisclosed_fund_count': undisclosed,
+                                        'not_applicable_fund_count': not_applicable})
 
 
 def stock_return_rows(portfolio, quotes, fund_code, ts_code, asof, capitalizations=None):
@@ -524,7 +656,9 @@ def _collect_stock_returns(master, asof):
                                               "start_date": f"{year-1}0101", "end_date": asof.replace("-", "")})
     reports = [row for row in portfolio if row.get("ann_date") and day(row["ann_date"]) <= asof]
     if not reports:
-        raise ValueError("No disclosed portfolio observations")
+        raise NotDisclosedError("no_stock_portfolio_disclosed_in_window", "official-tushare-fund-portfolio",
+                                {"ts_code": master["ts_code"], "observed_rows": len(portfolio),
+                                 "as_of": asof, "sha256": collectors.evidence(portfolio)})
     period = max(day(row["end_date"]) for row in reports)
     symbols = sorted({row["symbol"] for row in reports if day(row["end_date"]) == period})
     if not 1 <= len(symbols) <= 100:

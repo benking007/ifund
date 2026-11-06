@@ -17,6 +17,7 @@ import fcntl
 import json
 import math
 import os
+import re
 import threading
 import time
 from pathlib import Path
@@ -26,7 +27,7 @@ import requests
 from app.common.network import HTTP_TIMEOUT
 
 
-ENDPOINT = os.getenv("TUSHARE_ENDPOINT", "http://api.tushare.pro")
+ENDPOINT = os.getenv("TUSHARE_ENDPOINT", "https://api.tushare.pro")
 DEFAULT_ENV_FILE = Path(
     os.getenv(
         "TUSHARE_TOKEN_FILE",
@@ -59,6 +60,9 @@ def _token_from_file(path: Path = DEFAULT_ENV_FILE) -> str:
         lines = path.read_text(encoding="utf-8").splitlines()
     except OSError:
         return ""
+    plain = "\n".join(lines).strip()
+    if re.fullmatch(r"[0-9a-fA-F]{40,80}", plain):
+        return plain
     for line in lines:
         line = line.strip()
         if not line or line.startswith("#") or "=" not in line:
@@ -190,7 +194,7 @@ class _SharedGlobalLimiter:
     def wait(self) -> float:
         """原子预留一个全局请求槽，并等待到该时刻。"""
 
-        def reserve(state: dict) -> float:
+        def reserve(state: dict) -> tuple[float, int]:
             now = time.time()
             current = float(state["current_rate_per_min"])
             recovery_after = _env_float(
@@ -206,15 +210,21 @@ class _SharedGlobalLimiter:
             slot = max(now, float(state.get("next_at") or 0.0))
             state["next_at"] = slot + 60.0 / effective_rate
             state["updated_at"] = now
-            return max(0.0, slot - now)
+            return max(0.0, slot - now), int(state.get("rate_limit_count") or 0)
 
-        wait_seconds = self._locked_update(reserve)
-        if wait_seconds > 0:
-            time.sleep(wait_seconds)
-        return wait_seconds
+        slept = 0.0
+        while True:
+            wait_seconds, generation = self._locked_update(reserve)
+            if wait_seconds > 0:
+                time.sleep(wait_seconds)
+                slept += wait_seconds
+            current = self._locked_update(lambda state: int(state.get("rate_limit_count") or 0))
+            if current == generation:
+                return slept
 
     def on_rate_limit(self, attempt: int, error: BaseException) -> float:
         """降低共享速率档位，并把下一请求推迟到退避窗口之后。"""
+        del error  # Provider messages may contain credentials; keep only a constant event label.
         backoff = min(
             _env_float("FIN_DATA_TUSHARE_BACKOFF_MAX", 480.0),
             _env_float("FIN_DATA_TUSHARE_BACKOFF_BASE", 60.0) * (2 ** max(0, attempt)),
@@ -231,7 +241,7 @@ class _SharedGlobalLimiter:
             state["next_at"] = max(float(state.get("next_at") or 0.0), now + backoff)
             state["rate_limit_count"] = int(state.get("rate_limit_count") or 0) + 1
             state["updated_at"] = now
-            state["last_rate_limit_error"] = str(error)[:500]
+            state["last_rate_limit_error"] = "provider_rate_limited"
 
         self._locked_update(reduce)
         return backoff

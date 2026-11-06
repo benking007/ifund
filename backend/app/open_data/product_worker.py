@@ -13,6 +13,8 @@ from . import product_eastmoney as eastmoney
 from . import product_store as store
 from . import product_additional as additional
 from .product_contracts import DATE_FIELDS, day
+from .product_outcomes import NotDisclosedError
+from . import product_base, product_etf_mapping, product_etf_generation
 
 
 def _window(records, product, start, end):
@@ -96,8 +98,33 @@ def _computed(args, start, end):
     return 255, records, {"adj_nav": nav_raw, "benchmark": raw}, "aligned-daily-return-pearson-calendar-v1"
 
 
-def collect(args):  # pylint: disable=too-many-branches
+def collect(args):  # pylint: disable=too-many-branches,too-many-return-statements,too-many-statements
     """One bounded collector invocation; an error never marks a window ready."""
+    from . import product_reports as reports  # pylint: disable=import-outside-toplevel
+    if args.kind == 'etf-directory':
+        return product_etf_generation.sync_directory(args)
+    if args.kind in product_etf_generation.KINDS:
+        return product_etf_generation.materialize(args)
+    if args.kind in product_etf_mapping.KINDS:
+        return product_etf_mapping.collect(args)
+    if args.kind in product_base.KINDS:
+        return product_base.collect(args)
+    if args.kind == "purchase-status-all":
+        return additional.collect_purchase_all(args)
+    if args.kind in reports.KINDS:
+        return reports.collect(args)
+    if args.kind in {"manager-history", "manager-history-global"}:
+        from . import product_manager_history as history  # pylint: disable=import-outside-toplevel
+        return history.collect_scope(args) if args.kind == "manager-history" else history.materialize(args)
+    if args.kind == "fee-history":
+        from .product_fee_history import collect as collect_fees  # pylint: disable=import-outside-toplevel
+        return collect_fees(args)
+    if args.kind == "awards":
+        from .product_awards import collect as collect_awards  # pylint: disable=import-outside-toplevel
+        return collect_awards(args)
+    if args.kind in {"concept-exposure", "concept-reverse"}:
+        from . import product_concepts as concepts  # pylint: disable=import-outside-toplevel
+        return concepts.collect_scope(args) if args.kind == "concept-exposure" else concepts.materialize(args)
     if args.kind in additional.KINDS:
         return additional.ingest_collection(args)
     start, end = day(args.start), day(args.end)
@@ -186,16 +213,30 @@ def main(argv=None):
     """Run migrations explicitly; all data acquisition stays outside requests."""
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
-    commands.add_parser("migrate")
+    migration = commands.add_parser("migrate")
+    migration.add_argument("--base-schema", action="store_true",
+                           help="Explicitly migrate the existing source/auth schema before product tables")
+    universe = commands.add_parser("universe")
+    from .product_universe import KINDS  # pylint: disable=import-outside-toplevel
+    universe.add_argument("--kind", required=True, choices=KINDS)
     upload = commands.add_parser("ingest")
     upload.add_argument("--file", required=True, help="Normalized records, source evidence and verified scope envelope")
     upload.add_argument("--attest-window-complete", action="store_true", required=True)
     fetch = commands.add_parser("collect")
+    from .product_reports import KINDS as report_kinds  # pylint: disable=import-outside-toplevel
     fetch.add_argument("--kind", required=True, choices=["money-income", "announcements", "managers", "margin",
                                                        "pcf-components", "index-quotes", "configured-provider",
                                                        "premium", "correlations", "manager-history",
                                                        "asset-allocation", "financial-indicators",
-                                                       "benchmark-components", *sorted(additional.KINDS)])
+                                                       "benchmark-components", *sorted(additional.KINDS),
+                                                       *sorted(report_kinds), "awards", "concept-exposure",
+                                                       "concept-reverse", "fee-history", "manager-history-global",
+                                                       "purchase-status-all", *product_base.KINDS,
+                                                       *product_etf_mapping.KINDS,
+                                                       *product_etf_generation.KINDS, "etf-directory"])
+    fetch.add_argument("--holding-type", choices=["stock", "bond"], default="stock")
+    fetch.add_argument("--bootstrap-days", type=int, default=35)
+    fetch.add_argument("--lookback-days", type=int, default=7)
     fetch.add_argument("--product", type=int)
     fetch.add_argument("--fund-code")
     fetch.add_argument("--manager-name")
@@ -211,17 +252,32 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         if args.command == "migrate":
+            if args.base_schema:
+                from app import db as database  # pylint: disable=import-outside-toplevel
+                database.init_db((Path(__file__).parents[2]/"schema_sqlite.sql").read_text(encoding="utf-8"))
             store.migrate()
-            result = {"migration": "open-fund-products-v1", "status": "applied"}
+            result = {"migration": "open-fund-products-v2-etf-generation", "schemaVersion": 6, "status": "applied"}
+        elif args.command == "universe":
+            from .product_universe import members  # pylint: disable=import-outside-toplevel
+            result = members(args.kind)
         elif args.command == "ingest":
             payload = json.loads(Path(args.file).read_text(encoding="utf-8"))
             payload["complete_window"] = args.attest_window_complete
             result = store.ingest(**payload)
         else:
             result = collect(args)
+    except NotDisclosedError as exc:
+        print(json.dumps({'status': exc.status, 'quality': {'status': exc.status, 'complete': True,
+                          'row_count': 0, 'verified_empty': False, 'reason': exc.reason, 'source': exc.source,
+                          'evidence': exc.evidence, 'observed_at': exc.observed_at, 'valid_until': exc.valid_until}}))
+        return 0
     except Exception as exc:  # pylint: disable=broad-exception-caught
         # Do not print provider payloads/URLs/headers or potential credentials.
-        print(json.dumps({"status": "failed", "error_type": type(exc).__name__}))
+        failure = {"status": "failed", "error_type": type(exc).__name__}
+        if args.command == 'migrate' and getattr(exc, 'args', ())[:1] == (1419,):
+            failure.update(error_code='MYSQL_TRIGGER_BINLOG_DBA_CONFIGURATION_REQUIRED',
+                           action='DBA must configure log_bin_trust_function_creators=1 or install reviewed triggers')
+        print(json.dumps(failure))
         return 1
     print(json.dumps(result, ensure_ascii=False))
     return 0

@@ -269,6 +269,8 @@ def test_tushare_pagination_must_exhaust_and_uses_official_https(monkeypatch):
     from types import SimpleNamespace  # pylint: disable=import-outside-toplevel
     source = SimpleNamespace(ENDPOINT='http://api.tushare.pro', call=lambda *_args: [{'id': 1}, {'id': 2}])
     monkeypatch.setitem(sys.modules, 'app.fund_nav.fetch.tushare_client', source)
+    import app.fund_nav.fetch as package  # pylint: disable=import-outside-toplevel
+    monkeypatch.setattr(package, 'tushare_client', source, raising=False)
     with pytest.raises(ValueError, match='ignored pagination'):
         collectors.collect_tushare('etf_sh_cons', {'ts_code': '510300.SH'}, page_size=2)
     assert source.ENDPOINT == 'https://api.tushare.pro'

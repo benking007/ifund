@@ -75,3 +75,24 @@ class TushareRetryTests(TestCase):
         self.assertEqual(post.call_count, 2)
         self.assertEqual(limiter.wait.call_count, 2)
         limiter.on_rate_limit.assert_called_once()
+
+
+def test_other_worker_backoff_invalidates_an_already_reserved_slot(tmp_path, monkeypatch):
+    now=[100.0];delays=[];triggered=[False]
+    monkeypatch.setenv('FIN_DATA_TUSHARE_LIMITER_STATE',str(tmp_path/'shared.json'))
+    monkeypatch.setenv('IFUND_TUSHARE_RATE_PER_MIN','20')
+    monkeypatch.setattr(tushare_client.time,'time',lambda:now[0])
+    first=tushare_client._SharedGlobalLimiter()
+    second=tushare_client._SharedGlobalLimiter()
+    def sleep(seconds):
+        delays.append(seconds)
+        if not triggered[0]:
+            triggered[0]=True
+            second.on_rate_limit(0,RuntimeError('must-not-persist-provider-payload'))
+        now[0]+=seconds
+    monkeypatch.setattr(tushare_client.time,'sleep',sleep)
+    assert first.wait()==0
+    assert first.wait()>=60
+    state=json.loads((tmp_path/'shared.json').read_text())
+    assert state['rate_limit_count']==1 and 'must-not-persist' not in json.dumps(state)
+    assert len(delays)==2

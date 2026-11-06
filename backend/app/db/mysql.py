@@ -10,8 +10,8 @@ schema file.  The converter is intentionally small and deterministic: it
 rewrites SQLite's auto-increment/default syntax, gives ``TEXT`` columns a
 MySQL-safe type, removes unsupported ``IF NOT EXISTS`` from index DDL, and
 maps SQLite partial indexes to MySQL indexes.  Unique partial indexes use a
-functional ``IF(..., 1, NULL)`` key part, so the converted schema targets
-MySQL 8.0.13+ (the version family that supports functional indexes).
+nullable generated ``IF(..., 1, NULL)`` column plus an ordinary unique
+index, supported by both MySQL 8 and MariaDB without functional-index syntax.
 """
 
 # The schema converter and backend intentionally live together so init_db can
@@ -21,6 +21,7 @@ MySQL 8.0.13+ (the version family that supports functional indexes).
 from __future__ import annotations
 
 import atexit
+import hashlib
 import os
 import re
 import threading
@@ -513,7 +514,7 @@ def _quote_index_part(part: str) -> str:
     return f"`{match.group(1)}`{direction}"
 
 
-def _convert_index_statement(statement: str) -> str | None:
+def _convert_index_statement(statement: str) -> list[str] | None:
     pattern = re.compile(
         r"^CREATE\s+(?P<unique>UNIQUE\s+)?INDEX\s+"
         r"(?:IF\s+NOT\s+EXISTS\s+)?(?P<index>`?[A-Za-z_][A-Za-z0-9_$]*`?)\s+"
@@ -529,15 +530,17 @@ def _convert_index_statement(statement: str) -> str | None:
     table = match.group("table").strip("`")
     parts = [_quote_index_part(part) for part in _split_csv(match.group("columns"))]
     where = (match.group("where") or "").strip()
+    preparatory = []
     if where and unique:
-        # MySQL has no WHERE clause on indexes. A nullable functional key part
-        # preserves the useful unique-when-predicate-is-true behavior because
-        # InnoDB permits multiple NULLs in a unique index.
-        parts.append(f"((IF({where}, 1, NULL)))")
-    return (
-        f"CREATE {'UNIQUE ' if unique else ''}INDEX `{index_name}` ON `{table}` "
-        f"({', '.join(parts)})"
-    )
+        # A nullable generated key preserves partial uniqueness on both engines.
+        # MariaDB does not accept MySQL 8 functional-index key syntax.
+        digest = hashlib.sha256((table+index_name+where).encode()).hexdigest()[:16]
+        column = "__partial_"+digest
+        preparatory.append(f"ALTER TABLE `{table}` ADD COLUMN `{column}` TINYINT "
+                           f"GENERATED ALWAYS AS (IF({where}, 1, NULL)) STORED")
+        parts.append(f"`{column}`")
+    return [*preparatory, f"CREATE {'UNIQUE ' if unique else ''}INDEX `{index_name}` ON `{table}` "
+            f"({', '.join(parts)})"]
 
 
 def _convert_table_statement(statement: str, indexed_columns: set[str]) -> str:
@@ -569,7 +572,7 @@ def _convert_schema_sql(schema_sql: str) -> list[str]:
     for statement in statements:
         index_statement = _convert_index_statement(statement)
         if index_statement is not None:
-            converted.append(index_statement)
+            converted.extend(index_statement)
         elif re.match(r"^CREATE\s+TABLE\b", statement.strip(), flags=re.IGNORECASE):
             converted.append(_convert_table_statement(statement, indexed_columns))
         else:
@@ -746,7 +749,7 @@ class MysqlDatabase(Database):
         return getattr(self._local, "transaction_depth", 0) > 0
 
     @contextmanager
-    def transaction(self, *, read_only: bool = False) -> Iterator:
+    def transaction(self, *, read_only: bool = False, consistent_snapshot: bool = False) -> Iterator:
         """Run an atomic transaction, optionally READ ONLY, with nested savepoints."""
         depth = getattr(self._local, "transaction_depth", 0)
         if depth:
@@ -774,7 +777,12 @@ class MysqlDatabase(Database):
         discard_connection = False
         try:
             try:
-                if read_only:
+                if consistent_snapshot:
+                    with connection.cursor() as cursor:
+                        cursor.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ")
+                        cursor.execute("START TRANSACTION WITH CONSISTENT SNAPSHOT"+
+                                       (", READ ONLY" if read_only else ""))
+                elif read_only:
                     with connection.cursor() as cursor:
                         cursor.execute("START TRANSACTION READ ONLY")
                 else:
@@ -1118,7 +1126,9 @@ class MysqlDatabase(Database):
                     try:
                         cursor.execute(statement)
                     except pymysql.MySQLError as exc:
-                        if _is_duplicate_index(exc):
+                        generated_exists = (_error_code(exc) == 1060 and statement.startswith("ALTER TABLE")
+                                            and "GENERATED ALWAYS AS" in statement)
+                        if _is_duplicate_index(exc) or generated_exists:
                             continue
                         raise
             connection.commit()

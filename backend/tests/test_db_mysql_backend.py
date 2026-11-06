@@ -188,7 +188,8 @@ class MysqlDatabaseTests(unittest.TestCase):
         self.assertIn(
             "CREATE INDEX `ix_users_username` ON `users` (`username`)", statements[1]
         )
-        self.assertIn("CREATE UNIQUE INDEX `ux_running`", statements[2])
+        self.assertIn("GENERATED ALWAYS AS (IF(status = 'running', 1, NULL)) STORED", statements[2])
+        self.assertIn("CREATE UNIQUE INDEX `ux_running`", statements[3])
         self.assertNotIn(" WHERE status = 'running'", statements[2])
         self.connection.commit.assert_called_once()
 

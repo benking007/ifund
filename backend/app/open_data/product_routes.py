@@ -24,6 +24,15 @@ def register_product_routes(bp):
             query = json.loads(text)
             if not isinstance(query, dict):
                 raise ValueError("Expected object")
+            if product in {142, 143}:
+                from .product_etf_generation import query as etf_query  # pylint: disable=import-outside-toplevel
+                return jsonify(etf_query(product, query))
+            if product == 252:
+                from .product_manager_history import query as history_query  # pylint: disable=import-outside-toplevel
+                return jsonify(history_query(query))
+            if product in {263, 267}:
+                from .product_concepts import query as concept_query  # pylint: disable=import-outside-toplevel
+                return jsonify(concept_query(product, query))
             return jsonify(query_product(product, query))
         except (ValueError, KeyError, TypeError):
             return jsonify({"error": "invalid_request"}), 400

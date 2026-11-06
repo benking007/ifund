@@ -1,0 +1,3 @@
+
+# Preserve original upstream fixture bytes, including publisher whitespace.
+backend/tests/fixtures/** -whitespace
