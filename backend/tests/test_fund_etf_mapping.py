@@ -76,12 +76,14 @@ def test_cls_native_memberships_cannot_be_substituted_by_ths():
                                source_identity=('cls_market_products', 'memberships', 'CLS'))
 
 
-def test_downstream_concept_facts_respect_shorter_actual_source_expiry():
+def test_membership_observation_needs_time_zone_and_is_not_in_future():
     import time  # pylint: disable=import-outside-toplevel
     now = time.time()
-    response = {'subjectSnapshots': [{'observedAt': datetime.fromtimestamp(now, timezone.utc).isoformat(),
-                                      'valid_until': now+600}]}
-    assert 598 <= concepts.membership_lifetime([response], 86400) <= 600
-    response['subjectSnapshots'][0]['valid_until'] = now-1
-    with pytest.raises(ValueError):
-        concepts.membership_lifetime([response], 86400)
+    old = {'subjectSnapshots': [{'observedAt': datetime.fromtimestamp(now-30*86400, timezone.utc).isoformat()}]}
+    concepts.check_observed([old])
+    future = {'subjectSnapshots': [{'observedAt': datetime.fromtimestamp(now+3600, timezone.utc).isoformat()}]}
+    with pytest.raises(ValueError, match='future'):
+        concepts.check_observed([future])
+    naive = {'subjectSnapshots': [{'observedAt': '2026-11-06T00:00:00'}]}
+    with pytest.raises(ValueError, match='time zone'):
+        concepts.check_observed([naive])

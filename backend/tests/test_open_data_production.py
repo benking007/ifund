@@ -180,9 +180,10 @@ def test_operator_pat_is_owned_hash_only_private_file_and_revoked(app, tmp_path,
     assert secret.read_text().strip() == raw and 'ifd_' not in capsys.readouterr().out
 
 
-def test_strict_reader_new_expired_fund_scope_cannot_revive_old_global(app, monkeypatch):
+def test_strict_reader_serves_any_age_and_bad_new_fund_scope_cannot_revive_old_global(app, monkeypatch):
     import time  # pylint: disable=import-outside-toplevel
     from argparse import Namespace  # pylint: disable=import-outside-toplevel
+    from app.open_data import product_base_read  # pylint: disable=import-outside-toplevel
     from app.open_data.product_base import _publish  # pylint: disable=import-outside-toplevel,protected-access
     client, _ = app
     monkeypatch.setenv('IFUND_OPEN_REQUIRE_BASE_WATERMARK', '1')
@@ -190,14 +191,19 @@ def test_strict_reader_new_expired_fund_scope_cannot_revive_old_global(app, monk
     database.insert('fund_nav', {'fund_code': '110011', 'trade_date': '2026-11-05', 'nav': 4,
                                  'acc_nav': 6, 'adj_nav': 8, 'adj_src': 'tushare'})
     assert client.get('/api/open-data/v1/fund/nav?fund_code=110011').status_code == 503
-    args = Namespace(kind='base-nav', fund_code=None, ttl_seconds=86400)
+    args = Namespace(kind='base-nav', fund_code=None)
     with database.get_db().transaction() as conn:
         _publish(conn, args, 1, {'isolated': 'verified-source'}, '2026-11-05', '2026-11-05')
     assert client.get('/api/open-data/v1/fund/nav?fund_code=110011').status_code == 200
+    real_time = time.time
+    monkeypatch.setattr(product_base_read.time, 'time', lambda: real_time()+365*86400)
+    assert client.get('/api/open-data/v1/fund/nav?fund_code=110011').status_code == 200
+    monkeypatch.setattr(product_base_read.time, 'time', real_time)
     args.fund_code = '110011'
     with database.get_db().transaction() as conn:
         _publish(conn, args, 1, {'isolated': 'new-source'}, '2026-11-05', '2026-11-05')
-        store._sql(conn, "UPDATE open_fund_base_watermark SET valid_until=? WHERE scope_id='110011'", (time.time()-1,))
+        store._sql(conn, "UPDATE open_fund_base_watermark SET observed_at=? WHERE scope_id='110011'",
+                   (time.time()+3600,))
     assert client.get('/api/open-data/v1/fund/nav?fund_code=110011').status_code == 503
 
 

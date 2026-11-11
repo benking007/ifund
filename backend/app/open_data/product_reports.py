@@ -393,4 +393,4 @@ def collect(args):
                         source_name='issuer:periodic-report',
                         method_version='exact-issuer-report-class-columns-v1',
                         evidence_uri=endpoint, evidence_sha256=collectors.evidence(evidence),
-                        complete_window=True, ttl_seconds=min(args.ttl_seconds, 86400))
+                        complete_window=True)

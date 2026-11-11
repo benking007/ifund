@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS open_fund_product_batch (
     source_name VARCHAR(128) NOT NULL, method_version VARCHAR(128) NOT NULL,
     evidence_sha256 VARCHAR(64) NOT NULL, evidence_uri VARCHAR(2048) NOT NULL,
     status VARCHAR(16) NOT NULL, coverage VARCHAR(16) NOT NULL,
-    row_count INTEGER NOT NULL, recorded_at DOUBLE NOT NULL, valid_until DOUBLE NOT NULL,
+    row_count INTEGER NOT NULL, recorded_at DOUBLE NOT NULL,
     capabilities_json LONGTEXT NOT NULL);
 
 CREATE TABLE IF NOT EXISTS open_fund_product_fact (

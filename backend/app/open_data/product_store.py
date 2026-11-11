@@ -20,7 +20,7 @@ BASE_SCHEMA = """CREATE TABLE IF NOT EXISTS open_fund_base_watermark (
 version_id VARCHAR(32) PRIMARY KEY,kind VARCHAR(32) NOT NULL,scope_id VARCHAR(32) NOT NULL,
 window_start VARCHAR(10) NOT NULL,window_end VARCHAR(10) NOT NULL,row_count INTEGER NOT NULL,
 source_name VARCHAR(128) NOT NULL,method_version VARCHAR(128) NOT NULL,evidence_sha256 VARCHAR(64) NOT NULL,
-observed_at DOUBLE NOT NULL,valid_until DOUBLE NOT NULL,metadata_json LONGTEXT NOT NULL)"""
+observed_at DOUBLE NOT NULL,metadata_json LONGTEXT NOT NULL)"""
 
 SCHEMA = (
     """CREATE TABLE IF NOT EXISTS open_fund_product_batch (
@@ -30,7 +30,7 @@ SCHEMA = (
     source_name VARCHAR(128) NOT NULL, method_version VARCHAR(128) NOT NULL,
     evidence_sha256 VARCHAR(64) NOT NULL, evidence_uri VARCHAR(2048) NOT NULL,
     status VARCHAR(16) NOT NULL, coverage VARCHAR(16) NOT NULL,
-    row_count INTEGER NOT NULL, recorded_at DOUBLE NOT NULL, valid_until DOUBLE NOT NULL,
+    row_count INTEGER NOT NULL, recorded_at DOUBLE NOT NULL,
     capabilities_json LONGTEXT NOT NULL,scope_metadata_json LONGTEXT)""",
     """CREATE TABLE IF NOT EXISTS open_fund_product_fact (
     batch_id VARCHAR(32) NOT NULL, product_id INTEGER NOT NULL,
@@ -42,14 +42,14 @@ SCHEMA = (
 DIRECTORY_SCHEMA = (
     """CREATE TABLE IF NOT EXISTS open_fund_manager_directory_batch (
     snapshot_id VARCHAR(32) PRIMARY KEY, declared_count INTEGER NOT NULL,
-    evidence_sha256 VARCHAR(64) NOT NULL, recorded_at DOUBLE NOT NULL, valid_until DOUBLE NOT NULL)""",
+    evidence_sha256 VARCHAR(64) NOT NULL, recorded_at DOUBLE NOT NULL)""",
     """CREATE TABLE IF NOT EXISTS open_fund_manager_directory (
     snapshot_id VARCHAR(32) NOT NULL, manager_id VARCHAR(32) NOT NULL, manager_name VARCHAR(128) NOT NULL,
     PRIMARY KEY(snapshot_id,manager_id))""",
 )
 CONCEPT_SCHEMA = (
     """CREATE TABLE IF NOT EXISTS open_fund_concept_generation (
-    generation_id VARCHAR(32) PRIMARY KEY,observed_at DOUBLE NOT NULL,valid_until DOUBLE NOT NULL,
+    generation_id VARCHAR(32) PRIMARY KEY,observed_at DOUBLE NOT NULL,
     scope_count INTEGER NOT NULL,fact_count INTEGER NOT NULL,dictionary_count INTEGER NOT NULL,
     method_version VARCHAR(128) NOT NULL,eligible_count INTEGER NOT NULL,undisclosed_count INTEGER NOT NULL,
     not_applicable_count INTEGER NOT NULL)""",
@@ -70,7 +70,7 @@ ELIGIBILITY_SCHEMA = (
     """CREATE TABLE IF NOT EXISTS open_fund_disclosure_eligibility (
     version_id VARCHAR(32) PRIMARY KEY,product_id INTEGER NOT NULL,fund_code VARCHAR(6) NOT NULL,
     status VARCHAR(20) NOT NULL,source_name VARCHAR(128) NOT NULL,evidence_json LONGTEXT NOT NULL,
-    evidence_sha256 VARCHAR(64) NOT NULL,observed_at DOUBLE NOT NULL,valid_until DOUBLE NOT NULL)""",
+    evidence_sha256 VARCHAR(64) NOT NULL,observed_at DOUBLE NOT NULL)""",
 )
 
 INDEXES = {
@@ -82,6 +82,11 @@ INDEXES = {
 }
 
 
+DROPPED_VALID_UNTIL = ("open_fund_base_watermark", "open_fund_product_batch", "open_fund_manager_directory_batch",
+                       "open_fund_concept_generation", "open_fund_disclosure_eligibility", "open_fund_etf_directory",
+                       "open_fund_etf_generation")
+
+
 def _sql(conn, statement, params=(), *, fetch=False):
     cursor = conn.cursor()
     try:
@@ -89,6 +94,13 @@ def _sql(conn, statement, params=(), *, fetch=False):
         return [dict(row) for row in cursor.fetchall()] if fetch else cursor.rowcount
     finally:
         cursor.close()
+
+
+def _columns(conn, table):
+    if isinstance(conn, sqlite3.Connection):
+        return {row['name'] for row in _sql(conn, 'PRAGMA table_info('+table+')', fetch=True)}
+    return {row['COLUMN_NAME'] for row in _sql(conn, 'SELECT COLUMN_NAME FROM information_schema.columns '
+            'WHERE table_schema=DATABASE() AND table_name=?', (table,), fetch=True)}
 
 
 def migrate():
@@ -106,13 +118,13 @@ def migrate():
                                                       'not_applicable_count': 'INTEGER NOT NULL DEFAULT 0'},
                      'open_fund_concept_fund': {'eligibility_status': "VARCHAR(20) NOT NULL DEFAULT 'eligible'"}}
         for table, fields in additions.items():
-            existing = ({row['name'] for row in _sql(conn, 'PRAGMA table_info('+table+')', fetch=True)}
-                        if isinstance(conn, sqlite3.Connection) else
-                        {row['COLUMN_NAME'] for row in _sql(conn, 'SELECT COLUMN_NAME FROM information_schema.columns '
-                         'WHERE table_schema=DATABASE() AND table_name=?', (table,), fetch=True)})
+            existing = _columns(conn, table)
             for field, definition in fields.items():
                 if field not in existing:
                     _sql(conn, 'ALTER TABLE '+table+' ADD COLUMN '+field+' '+definition)
+        for table in DROPPED_VALID_UNTIL:
+            if 'valid_until' in _columns(conn, table):
+                _sql(conn, 'ALTER TABLE '+table+' DROP COLUMN valid_until')
         for name, (table, columns) in INDEXES.items():
             if isinstance(conn, sqlite3.Connection):
                 _sql(conn, f"CREATE INDEX IF NOT EXISTS {name} ON {table} ({columns})")
@@ -127,7 +139,7 @@ def migrate():
 # pylint: disable=too-many-arguments,too-many-locals
 def ingest(product, records, *, scope_kind, scope_key, window_start, window_end,
            source_name, method_version, evidence_uri, evidence_sha256,
-           complete_window, coverage="partial", ttl_seconds=86400, available_fields=None, scope_metadata=None):
+           complete_window, coverage="partial", available_fields=None, scope_metadata=None):
     """Atomically publish an attested, complete source window with exact rows.
 
     records are {record_key: provider natural identity, data: frozen public
@@ -136,9 +148,8 @@ def ingest(product, records, *, scope_kind, scope_key, window_start, window_end,
     """
     if product not in contracts() or scope_kind not in {"fund", "benchmark", "manager", "global"}:
         raise ValueError("Invalid product scope")
-    if (complete_window is not True or coverage not in {"partial", "full"}
-            or isinstance(ttl_seconds, bool) or not 0 < ttl_seconds <= 604800):
-        raise ValueError("Only verified complete windows with bounded freshness may be published")
+    if complete_window is not True or coverage not in {"partial", "full"}:
+        raise ValueError("Only verified complete windows may be published")
     if not source_name or not method_version or not evidence_uri or not re.fullmatch(r"[0-9a-f]{64}", evidence_sha256):
         raise ValueError("Source, method and evidence are required")
     if any(host in evidence_uri.lower() for host in ("invetbot", "investoday")):
@@ -196,11 +207,10 @@ def ingest(product, records, *, scope_kind, scope_key, window_start, window_end,
     if records and all(isinstance(record.get("is_etf"), bool) for record in records):
         capabilities.add("__is_etf__")
     now, batch = time.time(), uuid.uuid4().hex
-    ttl = min(ttl_seconds, 30) if product == 226 else ttl_seconds
     with database.get_db().transaction() as conn:
-        _sql(conn, "INSERT INTO open_fund_product_batch VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        _sql(conn, "INSERT INTO open_fund_product_batch VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
              (batch, product, scope_kind, scope_key, start, end, source_name, method_version,
-              evidence_sha256, evidence_uri, "ready", coverage, len(prepared), now, now+ttl,
+              evidence_sha256, evidence_uri, "ready", coverage, len(prepared), now,
               json.dumps(sorted(capabilities)), json.dumps(scope_metadata)))
         for row in prepared:
             _sql(conn, "INSERT INTO open_fund_product_fact VALUES(?,?,?,?,?,?,?,?,?,?,?)", (batch, product, *row))
@@ -208,7 +218,7 @@ def ingest(product, records, *, scope_kind, scope_key, window_start, window_end,
             "quality": {"status": "ready", "complete": True, "row_count": len(prepared),
                         "verified_empty": not prepared, "coverage_start": start, "coverage_end": end,
                         "source": source_name, "method_version": method_version, "observed_at": now,
-                        "valid_until": now+ttl, "dataset_scope": scope_metadata}}
+                        "dataset_scope": scope_metadata}}
 # pylint: enable=too-many-arguments,too-many-locals
 
 
@@ -304,10 +314,6 @@ def _approved_jobs(jobs, scopes, start, end, *, strict_window=True):
             raise LookupError("No single verified source covers this scope and window")
         chosen = (_coverage_shards(authority, start, end) if strict_window else
                   [max(authority, key=lambda row: (row["recorded_at"], row["batch_id"]))])
-        # Expiry is checked AFTER choosing the authoritative version. An older
-        # longer-lived value must never resurrect a superseded correction.
-        if any(job["valid_until"] <= time.time() for job in chosen):
-            raise LookupError("The latest covering source version has expired")
         selected.extend(chosen)
     return selected
 
@@ -442,7 +448,6 @@ def query_product(product, query):  # pylint: disable=too-many-locals
     return {"items": rows, "total": total, "page": page, "page_size": size,
             "source": "ifund_products", "method_version": sorted({job["method_version"] for job in jobs}),
             "coverage": "full" if all(job["coverage"] == "full" for job in jobs) else "partial",
-            "valid_until": min(job["valid_until"] for job in jobs),
             "scope_metadata": [json.loads(job.get("scope_metadata_json") or "{}") for job in jobs],
             "window_start": min(job["window_start"] for job in jobs),
             "window_end": max(job["window_end"] for job in jobs),
@@ -450,10 +455,8 @@ def query_product(product, query):  # pylint: disable=too-many-locals
 
 
 
-def publish_manager_directory(rows, declared_count, evidence_sha256, ttl_seconds=3600):
+def publish_manager_directory(rows, declared_count, evidence_sha256):
     """Atomically mirror a fully enumerated source-defined current manager directory."""
-    if not isinstance(ttl_seconds, int) or isinstance(ttl_seconds, bool) or not 0 < ttl_seconds <= 604800:
-        raise ValueError("Directory TTL must be a bounded integer")
     if (len(rows) != declared_count or not 1 <= declared_count <= 20000
             or len({row["id"] for row in rows}) != len(rows)
             or not re.fullmatch(r"[0-9a-f]{64}", evidence_sha256)):
@@ -464,8 +467,8 @@ def publish_manager_directory(rows, declared_count, evidence_sha256, ttl_seconds
             raise ValueError("Unverified manager directory identity")
     snapshot, now = uuid.uuid4().hex, time.time()
     with database.get_db().transaction() as conn:
-        _sql(conn, "INSERT INTO open_fund_manager_directory_batch VALUES(?,?,?,?,?)",
-             (snapshot, declared_count, evidence_sha256, now, now+min(ttl_seconds, 3600)))
+        _sql(conn, "INSERT INTO open_fund_manager_directory_batch VALUES(?,?,?,?)",
+             (snapshot, declared_count, evidence_sha256, now))
         for row in rows:
             _sql(conn, "INSERT INTO open_fund_manager_directory VALUES(?,?,?)", (snapshot, row["id"], row["name"]))
     today = date.today().isoformat()
@@ -474,18 +477,18 @@ def publish_manager_directory(rows, declared_count, evidence_sha256, ttl_seconds
                         "coverage_start": today, "coverage_end": today,
                         "source": "eastmoney:complete-current-manager-directory",
                         "method_version": "strict-id-sorted-directory-v1",
-                        "observed_at": now, "valid_until": now+min(ttl_seconds, 3600)}}
+                        "observed_at": now}}
 
 
 def manager_identity(name, *, conn=None):
-    """Only one exact name in a fresh, physically complete directory can resolve."""
+    """Only one exact name in the newest physically complete directory can resolve."""
     if conn is None:
         with database.get_db().transaction(read_only=True) as connection:
             return manager_identity(name, conn=connection)
     batches = _sql(conn, "SELECT * FROM open_fund_manager_directory_batch "
                    "ORDER BY recorded_at DESC,snapshot_id DESC LIMIT 1", fetch=True)
-    if not batches or batches[0]["valid_until"] <= time.time():
-        raise LookupError("The latest complete public manager directory must be fresh; no older fallback")
+    if not batches:
+        raise LookupError("No complete public manager directory has been collected")
     batch = batches[0]
     rows = _sql(conn, "SELECT manager_id,manager_name FROM open_fund_manager_directory WHERE snapshot_id=?",
                 (batch["snapshot_id"],), fetch=True)
@@ -509,7 +512,7 @@ def prune_purchase_snapshots():
 
     This product has no historical event date. Retaining every four-minute
     full-universe revision would create millions of redundant facts daily.
-    It never deletes the latest authority, including when that latest expires.
+    It never deletes the latest authority.
     """
     with database.get_db().transaction() as conn:
         rows = _sql(conn, "SELECT batch_id FROM open_fund_product_batch WHERE product_id=238 "
@@ -521,24 +524,23 @@ def prune_purchase_snapshots():
     return len(rows)
 
 
-def record_disclosure_state(product, fund_code, source, evidence, *, ttl_seconds=86400, status='not_disclosed'):
+def record_disclosure_state(product, fund_code, source, evidence, *, status='not_disclosed'):
     """Persist verified non-disclosure evidence separately from any financial facts."""
     if (product not in {142, 143, 263, 264} or not re.fullmatch(r'[0-9]{6}', fund_code) or not evidence
             or status not in {'not_disclosed', 'not_applicable'}):
         raise ValueError('Reviewed disclosure eligibility source required')
     raw = json.dumps(evidence, ensure_ascii=False, allow_nan=False, sort_keys=True, separators=(',', ':'))
-    if len(raw.encode()) > 8000000 or not source or not 0 < ttl_seconds <= 86400:
+    if len(raw.encode()) > 8000000 or not source:
         raise ValueError('Bounded source eligibility evidence required')
     version, now = uuid.uuid4().hex, time.time()
     with database.get_db().transaction() as conn:
-        _sql(conn, 'INSERT INTO open_fund_disclosure_eligibility VALUES(?,?,?,?,?,?,?,?,?)',
-             (version, product, fund_code, status, source, raw, hashlib.sha256(raw.encode()).hexdigest(),
-              now, now+ttl_seconds))
-    return {'version_id': version, 'observed_at': now, 'valid_until': now+ttl_seconds}
+        _sql(conn, 'INSERT INTO open_fund_disclosure_eligibility VALUES(?,?,?,?,?,?,?,?)',
+             (version, product, fund_code, status, source, raw, hashlib.sha256(raw.encode()).hexdigest(), now))
+    return {'version_id': version, 'observed_at': now}
 
 
 def disclosure_state(conn, product, fund_code, *, after=0):
-    """Select the latest evidence before freshness checks; never revive an old eligibility."""
+    """Select the latest evidence before integrity checks; never revive an old eligibility."""
     rows = _sql(conn, 'SELECT * FROM open_fund_disclosure_eligibility WHERE product_id=? AND fund_code=? '
                 'ORDER BY observed_at DESC,version_id DESC LIMIT 1', (product, fund_code), fetch=True)
     if not rows:
@@ -547,10 +549,9 @@ def disclosure_state(conn, product, fund_code, *, after=0):
     if row['observed_at'] <= after:
         return None
     encoded = row['evidence_json'].encode()
-    if (row['status'] not in {'not_disclosed', 'not_applicable'} or row['valid_until'] <= time.time()
-            or len(encoded) > 8000000
+    if (row['status'] not in {'not_disclosed', 'not_applicable'} or len(encoded) > 8000000
             or hashlib.sha256(encoded).hexdigest() != row['evidence_sha256']):
-        raise LookupError('Latest disclosure eligibility evidence expired or corrupted')
+        raise LookupError('Latest disclosure eligibility evidence corrupted')
     proof = json.loads(row['evidence_json'])
     if not proof or proof.get('fund_code') != fund_code:
         raise LookupError('Disclosure evidence subject mismatch')

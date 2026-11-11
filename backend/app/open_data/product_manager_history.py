@@ -4,7 +4,6 @@ from __future__ import annotations
 from datetime import date
 import html
 import re
-import time
 
 from app import db as database
 from . import product_store as store, product_collectors as collectors, product_eastmoney as tables
@@ -64,7 +63,7 @@ def collect_scope(args):
     return store.ingest(252, history_rows(document, args.fund_code), scope_kind='fund', scope_key=args.fund_code,
                         window_start=today, window_end=today, source_name='eastmoney:manager-team-tenures',
                         method_version=METHOD, evidence_uri=uri, evidence_sha256=collectors.evidence(document),
-                        complete_window=True, available_fields=FIELDS, ttl_seconds=min(args.ttl_seconds, 86400))
+                        complete_window=True, available_fields=FIELDS)
 
 
 def _catalog(conn):
@@ -77,10 +76,9 @@ def _catalog(conn):
     return [row['fund_code'] for row in rows]
 
 
-def materialize(args):
-    """Unknown, expired or physically missing fund snapshots never produce a global empty list."""
-    records, evidence, now = [], [], time.time()
-    lifetime = min(args.ttl_seconds, 86400)
+def materialize(_args):
+    """Unknown or physically missing fund snapshots never produce a global empty list."""
+    records, evidence = [], []
     with database.get_db().transaction(read_only=True) as conn:
         # pylint: disable=protected-access
         codes = _catalog(conn)
@@ -88,7 +86,7 @@ def materialize(args):
             jobs = store._sql(conn, "SELECT * FROM open_fund_product_batch WHERE product_id=252 "
                               "AND scope_kind='fund' AND scope_key=? AND status='ready' "
                               'ORDER BY recorded_at DESC,batch_id DESC LIMIT 1', (code,), fetch=True)
-            if not jobs or jobs[0]['method_version'] != METHOD or jobs[0]['valid_until'] <= now:
+            if not jobs or jobs[0]['method_version'] != METHOD:
                 raise LookupError('A catalog fund lacks complete current historical tenures')
             job = jobs[0]
             store._verify_batch_storage(conn, 252, jobs, [job['batch_id']])
@@ -102,7 +100,6 @@ def materialize(args):
                 records.append({'record_key': code+':'+value['tenureStartDate'], 'data': value})
             if len(records) > 100000:
                 raise LookupError('Historical-tenure population budget exceeded')
-            lifetime = min(lifetime, job['valid_until']-now)
             evidence.append(job['evidence_sha256'])
         # pylint: enable=protected-access
     today = date.today().isoformat()
@@ -110,7 +107,7 @@ def materialize(args):
                         source_name='eastmoney:complete-catalog-manager-team-tenures',
                         method_version=METHOD+':'+collectors.evidence(codes)[:16],
                         evidence_uri='https://fundf10.eastmoney.com/', evidence_sha256=collectors.evidence(evidence),
-                        complete_window=True, available_fields=FIELDS, ttl_seconds=max(1, int(lifetime)))
+                        complete_window=True, available_fields=FIELDS)
 
 
 def query(values):

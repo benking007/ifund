@@ -27,10 +27,10 @@ def db(tmp_path, monkeypatch):
 
 
 def args(kind):
-    return Namespace(kind=kind, ttl_seconds=86400)
+    return Namespace(kind=kind)
 
 
-def directory(monkeypatch, codes=('510300', '158008'), ttl=3600):
+def directory(monkeypatch, codes=('510300', '158008'), observed_at=None):
     # A controlled two-member test cohort, not a claim about the live national denominator.
     rows = sorted([{'fund_code': code, 'symbol': code+('.SH' if code=='510300' else '.SZ'),
                     'name': 'actual-source-role', 'found_date': '2026-08-19' if code=='158008' else '2012-05-04'}
@@ -38,26 +38,26 @@ def directory(monkeypatch, codes=('510300', '158008'), ttl=3600):
     body = {'source': 'fin_data_etf_directory', 'product': 'listed_etfs', 'complete': True,
             'items': rows, 'listed_count': len(rows), 'source_snapshot': 'a'*32,
             'directory_version': hashlib.sha256(gen._encode(rows).encode()).hexdigest(),
-            'observed_at': time.time(), 'valid_until': time.time()+ttl}
+            'observed_at': time.time() if observed_at is None else observed_at}
     monkeypatch.setattr(gen.concepts, '_source', lambda *_args, **_kwargs: body)
     gen.sync_directory(args('etf-directory'))
     return body
 
 
-def stage(product, cohort, *, rows=None, ttl=3600):
+def stage(product, cohort, *, rows=None):
     rows = REAL[str(product)] if rows is None else rows
     return store.ingest(product, [{'record_key': str(index), 'data': row, 'is_etf': True}
                                  for index, row in enumerate(rows)],
                         scope_kind='fund', scope_key='510300', window_start='2025-12-31', window_end='2026-06-30',
                         source_name='issuer:complete-etf-portfolio+governed-classification',
                         method_version=MAPPING_METHODS[product], evidence_uri='https://pdf.dfcfw.com/',
-                        evidence_sha256='b'*64, complete_window=True, ttl_seconds=ttl,
+                        evidence_sha256='b'*64, complete_window=True,
                         scope_metadata={'directory_version': cohort['directory_version'],
                                         'scope_version': gen.scope_version(next(row for row in cohort['items']
                                                                                if row['fund_code']=='510300'))})
 
 
-def absence(product, cohort, code='158008', ttl=3600):
+def absence(product, cohort, code='158008'):
     row = next(row for row in cohort['items'] if row['fund_code']==code)
     period = '2025-12-31' if product==142 else '2026-06-30'
     status = 'not_applicable' if row['found_date'] > period else 'not_disclosed'
@@ -66,7 +66,7 @@ def absence(product, cohort, code='158008', ttl=3600):
                                           'required_report_period': period,
                                           'directory_version': cohort['directory_version'],
                                           'scope_version': gen.scope_version(row)},
-                                         status=status, ttl_seconds=ttl)
+                                         status=status)
 
 
 @pytest.mark.parametrize('product,kind,selector,code', [
@@ -113,15 +113,21 @@ def test_added_or_removed_etf_invalidates_both_old_selectors(db, monkeypatch):
             gen.query(142, query)
 
 
-def test_new_expired_directory_never_falls_back_to_old_fresh_one(db, monkeypatch):
+def test_new_corrupted_directory_never_falls_back_to_old_one(db, monkeypatch):
     assert db
     directory(monkeypatch)
-    directory(monkeypatch, ttl=1)
+    directory(monkeypatch)
     with db.transaction() as conn:
-        store._sql(conn, 'UPDATE open_fund_etf_directory SET valid_until=? WHERE version_id=('
-                   'SELECT version_id FROM open_fund_etf_directory ORDER BY recorded_at DESC LIMIT 1)', (time.time()-1,))
-    with pytest.raises(LookupError, match='expired'):
+        store._sql(conn, 'UPDATE open_fund_etf_directory SET payload_hash=? WHERE version_id=('
+                   'SELECT version_id FROM open_fund_etf_directory ORDER BY recorded_at DESC LIMIT 1)', ('0'*64,))
+    with pytest.raises(LookupError, match='corrupted'):
         gen.members()
+
+
+def test_future_directory_observation_is_rejected(db, monkeypatch):
+    assert db
+    with pytest.raises(ValueError, match='observation time'):
+        directory(monkeypatch, observed_at=time.time()+3600)
 
 
 def test_any_other_page_missing_fact_invalidates_complete_generation(db, monkeypatch):
@@ -135,15 +141,13 @@ def test_any_other_page_missing_fact_invalidates_complete_generation(db, monkeyp
         gen.query(143, {'fundCodes': ['510300'], 'pageNum': 1, 'pageSize': 1})
 
 
-def test_shortest_actual_source_lease_limits_whole_version(db, monkeypatch):
+def test_published_version_has_no_expiry_and_stays_readable(db, monkeypatch):
     assert db
-    cohort=directory(monkeypatch,ttl=600);stage(142,cohort,ttl=300);absence(142,cohort,ttl=100)
+    cohort=directory(monkeypatch, observed_at=1000.0);stage(142,cohort);absence(142,cohort)
     result=gen.materialize(args('industry-etf-reverse'))
-    assert result['quality']['valid_until'] <= time.time()+100
-    with db.transaction() as conn:
-        store._sql(conn, 'UPDATE open_fund_etf_generation SET valid_until=?', (time.time()-1,))
-    with pytest.raises(LookupError, match='expired'):
-        gen.query(142, {'industryCodes': [REAL['142'][0]['industryCode']]})
+    body = gen.query(142, {'industryCodes': [REAL['142'][0]['industryCode']]})
+    assert 'valid_until' not in result['quality'] and 'valid_until' not in body
+    assert body['generation'] == result['generation'] and body['total'] > 0
 
 
 def test_latest_unknown_directory_context_or_unreviewed_method_is_not_blessed(db, monkeypatch):

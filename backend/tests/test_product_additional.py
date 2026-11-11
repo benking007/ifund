@@ -157,7 +157,7 @@ def test_industry_reverse_requires_every_active_catalog_member(source):
                  window_end='2026-11-06', source_name='eastmoney', method_version='em-native-industry-nav-current-v1:real',
                  evidence_uri='https://api.fund.eastmoney.com/f10/HYPZ/', evidence_sha256='a'*64,
                  complete_window=True)
-    args = SimpleNamespace(product=262, ttl_seconds=86400)
+    args = SimpleNamespace(product=262)
     additional._industry_reverse(args)  # pylint: disable=protected-access
     assert store.query_product(262, {'industryCode': '25'})['items'][0]['holdingRatioLatest'] == 27.09
     database.insert('fund_basic_ext', {'fund_code': '005827', 'ts_code': '005827.OF', 'status': 'L', 'source': 'tushare'})
@@ -233,17 +233,17 @@ def test_actual_stock_ytd_ipo_does_not_use_listing_day_as_year_start():
         additional.stock_return_rows(sample['portfolio'], sample['quotes'], '161725', '161725.SZ', '2026-11-06')
 
 
-def test_expired_new_ambiguous_directory_never_resurrects_older_unique_snapshot(source, monkeypatch):
+def test_new_ambiguous_directory_never_resurrects_older_unique_snapshot(source, monkeypatch):
     _, db = source
     with db.transaction() as conn:
         conn.execute('DELETE FROM open_fund_manager_directory')
         conn.execute('DELETE FROM open_fund_manager_directory_batch')
     monkeypatch.setattr(store.time, 'time', lambda: 1000)
-    store.publish_manager_directory([{'id': '30000001', 'name': '同名'}], 1, 'c'*64, ttl_seconds=3600)
+    store.publish_manager_directory([{'id': '30000001', 'name': '同名'}], 1, 'c'*64)
     assert store.manager_identity('同名') == '30000001'
-    monkeypatch.setattr(store.time, 'time', lambda: 1010)
+    monkeypatch.setattr(store.time, 'time', lambda: 10**10)
+    assert store.manager_identity('同名') == '30000001'
     store.publish_manager_directory([{'id': '30000001', 'name': '同名'}, {'id': '30000002', 'name': '同名'}],
-                                    2, 'd'*64, ttl_seconds=1)
-    monkeypatch.setattr(store.time, 'time', lambda: 1012)
+                                    2, 'd'*64)
     with pytest.raises(LookupError):
         store.manager_identity('同名')

@@ -44,9 +44,8 @@ def _publish(conn, args, count, evidence, start, end, metadata=None):
     scope = args.fund_code or '*'
     if args.kind == 'base-holdings':
         scope += ':'+getattr(args, 'holding_type', 'stock')
-    ttl = min(args.ttl_seconds, 86400)
     payload = (uuid.uuid4().hex, args.kind, scope, start, end, count, source, method,
-               collectors.evidence(evidence), now, now+ttl, json.dumps(metadata or {}, ensure_ascii=False))
+               collectors.evidence(evidence), now, json.dumps(metadata or {}, ensure_ascii=False))
     # pylint: disable=protected-access
     store._sql(conn, 'INSERT INTO open_fund_base_watermark VALUES ('+','.join('?' for _ in payload)+')', payload)
     # Retain the current and previous observation per scope without unbounded growth.
@@ -58,7 +57,7 @@ def _publish(conn, args, count, evidence, start, end, metadata=None):
     return {'status': 'ready', 'kind': args.kind, 'scope_id': scope, 'quality': {
         'status': 'ready', 'complete': True, 'row_count': count, 'verified_empty': count == 0,
         'source': source, 'method_version': method, 'coverage_start': start, 'coverage_end': end,
-        'observed_at': now, 'valid_until': now+ttl, 'evidence_sha256': payload[8], **(metadata or {})}}
+        'observed_at': now, 'evidence_sha256': payload[8], **(metadata or {})}}
 
 
 def _master(args):

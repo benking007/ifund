@@ -52,30 +52,25 @@ def _directory_body(body):
     expected = hashlib.sha256(_encode(sorted(rows, key=lambda row: row['symbol'])).encode()).hexdigest()
     if body.get('directory_version') != expected:
         raise ValueError('ETF cohort fingerprint mismatch')
-    now = time.time()
-    if (any(type(body.get(field)) not in (int, float) or not math.isfinite(body[field])
-            for field in ('observed_at', 'valid_until')) or body['observed_at'] > now+60
-            or body['valid_until'] <= now or body['valid_until'] <= body['observed_at']):
-        raise ValueError('ETF directory source expired or clock invalid')
+    observed = body.get('observed_at')
+    if type(observed) not in (int, float) or not math.isfinite(observed) or observed > time.time()+60:
+        raise ValueError('ETF directory observation time is invalid')
     return sorted(rows, key=lambda row: row['fund_code'])
 
 
-def sync_directory(args):
+def sync_directory(_args):
     """An offline fixed source call; discovery and requests subsequently read local SQL only."""
     body = concepts._source('etf_directory')
     rows = _directory_body(body)
     now, version = time.time(), uuid.uuid4().hex
-    expiry = min(body['valid_until'], body['observed_at']+min(args.ttl_seconds, 172800))
-    if expiry <= now:
-        raise ValueError('ETF directory is outside the configured source lease')
     encoded = _encode(rows)
     with database.get_db().transaction() as conn:
-        store._sql(conn, 'INSERT INTO open_fund_etf_directory VALUES(?,?,?,?,?,?,?,?,?)',
-                   (version, body['directory_version'], body['source_snapshot'], body['observed_at'], now, expiry,
+        store._sql(conn, 'INSERT INTO open_fund_etf_directory VALUES(?,?,?,?,?,?,?,?)',
+                   (version, body['directory_version'], body['source_snapshot'], body['observed_at'], now,
                     len(rows), encoded, hashlib.sha256(encoded.encode()).hexdigest()))
     day = datetime.fromtimestamp(body['observed_at'], timezone.utc).date().isoformat()
     return {'directory_version': version, 'quality': {'status': 'ready', 'complete': True, 'row_count': len(rows),
-            'verified_empty': False, 'observed_at': body['observed_at'], 'valid_until': expiry,
+            'verified_empty': False, 'observed_at': body['observed_at'],
             'coverage_start': day, 'coverage_end': day, 'source': 'official-etf-basic-governed-full-directory',
             'method_version': 'complete-etf-denominator-v1'}}
 
@@ -87,16 +82,14 @@ def _directory(conn):
         raise LookupError('Complete ETF denominator has not been synchronized')
     snapshot = snapshots[0]
     raw = snapshot['payload_json'].encode()
-    if (len(raw) > 8000000 or snapshot['valid_until'] <= time.time()
-            or hashlib.sha256(raw).hexdigest() != snapshot['payload_hash']):
-        raise LookupError('Newest ETF directory expired or corrupted')
+    if len(raw) > 8000000 or hashlib.sha256(raw).hexdigest() != snapshot['payload_hash']:
+        raise LookupError('Newest ETF directory corrupted')
     rows = json.loads(raw)
     if not isinstance(rows, list) or len(rows) != snapshot['row_count']:
         raise LookupError('ETF denominator physical row count differs')
     _directory_body({'source': 'fin_data_etf_directory', 'product': 'listed_etfs', 'complete': True,
                      'items': rows, 'listed_count': snapshot['row_count'], 'directory_version': snapshot['cohort_hash'],
-                     'source_snapshot': snapshot['source_snapshot'], 'observed_at': snapshot['observed_at'],
-                     'valid_until': snapshot['valid_until']})
+                     'source_snapshot': snapshot['source_snapshot'], 'observed_at': snapshot['observed_at']})
     return snapshot, rows
 
 
@@ -155,8 +148,7 @@ def _copy_scope(conn, generation, product, code, job):
     return len(records), size
 
 
-def _plan_sources(conn, product, rows, expiry):
-    now = time.time()
+def _plan_sources(conn, product, rows):
     counts = {'eligible': 0, 'not_disclosed': 0, 'not_applicable': 0}
     evidence, plans = [], []
     for row in rows:
@@ -176,20 +168,18 @@ def _plan_sources(conn, product, rows, expiry):
                         or not isinstance(declared, str) or row['found_date'] <= declared):
                     raise LookupError('ETF non-applicability contradicts the official setup date')
             status, source_version, scope_rows = proof['status'], proof['version_id'], 0
-            expiry = min(expiry, proof['valid_until'])
         else:
-            if not jobs or jobs[0]['valid_until'] <= now:
-                raise LookupError('ETF directory member lacks a fresh complete report or eligibility proof')
+            if not jobs:
+                raise LookupError('ETF directory member lacks a complete report or eligibility proof')
             job = jobs[0]
             metadata = json.loads(job.get('scope_metadata_json') or '{}')
             if metadata.get('scope_version') != scope_version(row):
                 raise LookupError('ETF staged report belongs to another denominator version')
             status, source_version, scope_rows = 'eligible', job['batch_id'], job['row_count']
-            expiry = min(expiry, job['valid_until'])
         counts[status] += 1
         evidence.append((code, source_version, status, scope_rows))
         plans.append((code, source_version, status, scope_rows, job))
-    return counts, evidence, plans, expiry
+    return counts, evidence, plans
 
 
 def materialize(args):
@@ -200,14 +190,13 @@ def materialize(args):
     with database.get_db().transaction(consistent_snapshot=True) as conn:
         prove(conn, store._sql)
         directory, rows = _directory(conn)
-        expiry = min(directory['valid_until'], now+min(args.ttl_seconds, 86400))
-        counts, evidence, plans, expiry = _plan_sources(conn, product, rows, expiry)
+        counts, evidence, plans = _plan_sources(conn, product, rows)
         fingerprint = collectors.evidence(evidence)
         existing = store._sql(conn, 'SELECT * FROM open_fund_etf_generation WHERE product_id=? '
                               'ORDER BY observed_at DESC,generation_id DESC LIMIT 1', (product,), fetch=True)
         reuse = (existing and existing[0]['method_version'] == METHOD
                  and existing[0]['cohort_hash'] == directory['cohort_hash']
-                 and existing[0]['evidence_hash'] == fingerprint and existing[0]['valid_until'] > now)
+                 and existing[0]['evidence_hash'] == fingerprint)
         if reuse:
             version = existing[0]
             actual = store._sql(conn, 'SELECT COUNT(*) AS n FROM open_fund_etf_generation_fact '
@@ -222,7 +211,7 @@ def materialize(args):
         if reuse:
             version = existing[0]
             generation, facts = version['generation_id'], version['fact_count']
-            expiry, published = min(expiry, version['valid_until']), version['observed_at']
+            published = version['observed_at']
         else:
             facts, total_bytes, published = 0, 0, now
             for code, source_version, status, expected_count, job in plans:
@@ -236,10 +225,8 @@ def materialize(args):
                     raise ValueError('Complete ETF mapping generation exceeds configured bounded capacity')
                 store._sql(conn, 'INSERT INTO open_fund_etf_generation_scope VALUES(?,?,?,?,?)',
                            (generation, code, source_version, status, expected_count))
-            if expiry <= time.time():
-                raise LookupError('An ETF source expired while materializing the whole directory')
-            store._sql(conn, 'INSERT INTO open_fund_etf_generation VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-                       (generation, product, directory['cohort_hash'], directory['version_id'], published, expiry,
+            store._sql(conn, 'INSERT INTO open_fund_etf_generation VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)',
+                       (generation, product, directory['cohort_hash'], directory['version_id'], published,
                         len(rows), counts['eligible'], counts['not_disclosed'], counts['not_applicable'], facts,
                         total_bytes, METHOD, fingerprint))
     prune_versions(product)
@@ -248,10 +235,10 @@ def materialize(args):
     if not counts['eligible']:
         raise NotDisclosedError('no_etf_in_the_complete_directory_has_disclosed_the_required_report',
                                 'complete-etf-directory-and-verified-report-eligibility', scope,
-                                observed_at=published, valid_until=expiry)
+                                observed_at=published)
     day = datetime.fromtimestamp(published, timezone.utc).date().isoformat()
     return {'generation': generation, 'reused': bool(reuse), 'quality': {'status': 'ready', 'complete': True,
-            'row_count': facts, 'verified_empty': facts == 0, 'observed_at': published, 'valid_until': expiry,
+            'row_count': facts, 'verified_empty': facts == 0, 'observed_at': published,
             'coverage_start': day, 'coverage_end': day, 'source': 'full-governed-etf-reports',
             'method_version': METHOD, 'dataset_scope': scope}}
 
@@ -292,9 +279,8 @@ def query(product, values):
             raise LookupError('A complete shared ETF mapping version has not been published')
         version = versions[0]
         if (version['method_version'] != METHOD or version['cohort_hash'] != directory['cohort_hash']
-                or version['scope_count'] != len(rows)
-                or version['valid_until'] <= time.time() or not version['eligible_count']):
-            raise LookupError('Newest whole-ETF mapping cohort changed, expired or has no disclosed reports')
+                or version['scope_count'] != len(rows) or not version['eligible_count']):
+            raise LookupError('Newest whole-ETF mapping cohort changed or has no disclosed reports')
         generation = version['generation_id']
         scopes = store._sql(conn, 'SELECT fund_code,row_count,eligibility_status,source_version '
                            'FROM open_fund_etf_generation_scope '
@@ -347,7 +333,6 @@ def query(product, values):
     return {'items': result, 'total': total, 'page': page, 'page_size': size, 'source': 'ifund_products',
             'generation': generation, 'directory_version': version['cohort_hash'],
             'method_version': [METHOD], 'coverage': 'complete-governed-etf-disclosed-direct-A-equity-method',
-            'valid_until': min(version['valid_until'], directory['valid_until']),
             'dataset_scope': {'catalog_fund_count': version['scope_count'],
             'eligible_fund_count': version['eligible_count'], 'undisclosed_fund_count': version['undisclosed_count'],
             'not_applicable_fund_count': version['not_applicable_count']}}

@@ -75,4 +75,4 @@ def collect(args):
                         source_name='china-securities-journal:organizer-primary-result-list',
                         method_version='exact-profile-product-name-22nd-edition-v1', evidence_uri=SOURCES[0]['url'],
                         evidence_sha256=collectors.evidence(proof), complete_window=True,
-                        available_fields=FIELDS, ttl_seconds=min(args.ttl_seconds, 86400))
+                        available_fields=FIELDS)

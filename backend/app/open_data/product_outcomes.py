@@ -9,7 +9,7 @@ class NotDisclosedError(ValueError):
 
     status = 'not_disclosed'
 
-    def __init__(self, reason, source, evidence, *, observed_at=None, valid_until=None):
+    def __init__(self, reason, source, evidence, *, observed_at=None):
         super().__init__(reason)
         self.reason = reason
         self.source = source
@@ -17,7 +17,6 @@ class NotDisclosedError(ValueError):
             raise ValueError("Verified non-disclosure requires source evidence")
         self.evidence = evidence
         self.observed_at = time.time() if observed_at is None else observed_at
-        self.valid_until = self.observed_at+86400 if valid_until is None else valid_until
 
 
 class NotApplicableError(NotDisclosedError):

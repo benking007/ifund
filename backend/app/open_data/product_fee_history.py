@@ -117,4 +117,4 @@ def collect(args):
                         window_start=start, window_end=end, source_name='issuer:fee-amendments', method_version=METHOD,
                         evidence_uri=endpoint, evidence_sha256=collectors.evidence({'index': announcements,
                                                                                    'pdfs': evidence}),
-                        complete_window=True, available_fields=FIELDS, ttl_seconds=min(args.ttl_seconds, 86400))
+                        complete_window=True, available_fields=FIELDS)
