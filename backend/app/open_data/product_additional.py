@@ -81,7 +81,7 @@ def purchase_rows(document, fund_code):
                                 "remark": "当前申购状态："+row[5]+"；当前赎回状态："+row[6]})]
 
 
-def collect_purchase_all(args):
+def collect_purchase_all(_args):
     """One full source response and one atomic batch, never N identical downloads."""
     import requests  # pylint: disable=import-outside-toplevel
     with requests.Session() as session:
@@ -108,8 +108,7 @@ def collect_purchase_all(args):
                         source_name='eastmoney:complete-current-purchase-index',
                         method_version='one-full-source-snapshot-purchase-status-v2',
                         evidence_uri='https://fund.eastmoney.com/Data/Fund_JJJZ_Data.aspx',
-                        evidence_sha256=collectors.evidence(raw), complete_window=True,
-                        ttl_seconds=min(args.ttl_seconds, 300))
+                        evidence_sha256=collectors.evidence(raw), complete_window=True)
     result['pruned_old_snapshots'] = store.prune_purchase_snapshots()
     return result
 
@@ -345,11 +344,11 @@ def ingest_collection(args):
         proof = not_yet_reportable(master, args.end)
         if proof:
             version = store.record_disclosure_state(264, code, 'official-canonical-fund-inception', proof,
-                                                    ttl_seconds=min(args.ttl_seconds, 86400), status='not_applicable')
+                                                    status='not_applicable')
             raise NotApplicableError('fund_not_established_in_completed_reporting_period',
                                      'official-canonical-fund-inception',
                                      {**proof, 'eligibility_version': version['version_id']},
-                                     observed_at=version['observed_at'], valid_until=version['valid_until'])
+                                     observed_at=version['observed_at'])
     if args.ts_code and args.ts_code != master["ts_code"]:
         raise ValueError("Requested and canonical fund roles differ")
     if args.kind == "pcf-header" and (master.get("market") != "E" or not master["ts_code"].endswith(".SH")):
@@ -379,9 +378,8 @@ def ingest_collection(args):
                 product, records, raw, method, source, uri = _public_collect(session, args.kind, code, end)
             except NotDisclosedError as exc:
                 if args.kind == 'industry-exposure':
-                    version = store.record_disclosure_state(264, code, exc.source, exc.evidence,
-                                                            ttl_seconds=min(args.ttl_seconds, 86400))
-                    exc.observed_at, exc.valid_until = version['observed_at'], version['valid_until']
+                    version = store.record_disclosure_state(264, code, exc.source, exc.evidence)
+                    exc.observed_at = version['observed_at']
                     exc.evidence = {'fund_code': code, 'eligibility_version': version['version_id'],
                                     'index_sha256': collectors.evidence(exc.evidence)}
                 raise
@@ -398,8 +396,7 @@ def ingest_collection(args):
         fields = {"fundCode", "industryCode", "industryName", "holdingRatioLatest"}
     return store.ingest(product, records, scope_kind="fund", scope_key=code, window_start=start, window_end=end,
                         source_name=source, method_version=method, evidence_uri=uri,
-                        evidence_sha256=collectors.evidence(raw), complete_window=True, available_fields=fields,
-                        ttl_seconds=min(args.ttl_seconds, 300 if product == 238 else 86400))
+                        evidence_sha256=collectors.evidence(raw), complete_window=True, available_fields=fields)
 
 
 def _collect_performance(args, master):
@@ -534,7 +531,7 @@ def _collect_manager(args):
     return store.ingest(251, records, scope_kind="manager", scope_key=args.manager_name,
                         window_start=today, window_end=today, source_name=source, method_version=method,
                         evidence_uri=uri, evidence_sha256=collectors.evidence({"profile": document, "curve": payload}),
-                        complete_window=True, ttl_seconds=min(args.ttl_seconds, 86400))
+                        complete_window=True)
 
 
 def _industry_reverse(args):
@@ -547,7 +544,6 @@ def _industry_reverse(args):
         raise ValueError("A bounded complete active canonical fund catalog is required")
     records, evidence, names = [], [], {}
     eligible, undisclosed, not_applicable = 0, 0, 0
-    expiry = datetime.now().timestamp()+min(args.ttl_seconds, 86400)
     for master in masters:
         code = master["fund_code"]
         with database.get_db().transaction(read_only=True) as conn:
@@ -558,13 +554,11 @@ def _industry_reverse(args):
         if proof:
             undisclosed += int(proof['status'] == 'not_disclosed')
             not_applicable += int(proof['status'] == 'not_applicable')
-            expiry = min(expiry, proof['valid_until'])
             evidence.append({'fundCode': code, 'eligibility': proof['status'],
                              'source_version': proof['version_id'], 'sha256': proof['evidence_sha256']})
             continue
         eligible += 1
         body = store.query_product(264, {"fundCode": code, "pageNum": 1, "pageSize": 500})
-        expiry = min(expiry, body["valid_until"])
         if body["total"] != len(body["items"]):
             raise ValueError("A catalog member's industry snapshot was truncated")
         if not all(method.startswith("em-native-industry-nav-current-v1:") for method in body["method_version"]):
@@ -584,17 +578,13 @@ def _industry_reverse(args):
         raise NotDisclosedError('no_catalog_fund_disclosed_industry_yet', 'complete-catalog-disclosure-eligibility',
                                 {'catalog_fund_count': len(masters), 'eligible_fund_count': 0,
                                  'undisclosed_fund_count': undisclosed, 'not_applicable_fund_count': not_applicable,
-                                 'sha256': digest}, valid_until=expiry)
-    remaining = int(expiry-datetime.now().timestamp())
-    if remaining <= 0:
-        raise LookupError('Industry source eligibility expired while materializing')
+                                 'sha256': digest})
     return store.ingest(args.product, records, scope_kind="global", scope_key="*", window_start=today,
                         window_end=today, source_name="ifund:complete-active-catalog-disclosed-industry",
                         method_version="verified-disclosed-catalog-industry-nav-reverse-v2:"+digest[:12],
                         evidence_uri="https://api.fund.eastmoney.com/f10/HYPZ/", evidence_sha256=digest,
                         complete_window=True, available_fields={"fundCode", "industryCode", "industryName",
                                                                "holdingRatioLatest"},
-                        ttl_seconds=min(args.ttl_seconds, remaining),
                         scope_metadata={'catalog_fund_count': len(masters), 'eligible_fund_count': eligible,
                                         'undisclosed_fund_count': undisclosed,
                                         'not_applicable_fund_count': not_applicable})
@@ -714,7 +704,7 @@ def directory_rows(pages):
     return rows
 
 
-def _collect_directory(args):
+def _collect_directory(_args):
     import requests  # pylint: disable=import-outside-toplevel,import-error
     from concurrent.futures import ThreadPoolExecutor  # pylint: disable=import-outside-toplevel
     endpoint = "https://fund.eastmoney.com/data/FundDataPortfolio_Interface.aspx"
@@ -729,4 +719,4 @@ def _collect_directory(args):
     with ThreadPoolExecutor(max_workers=4) as executor:
         pages = [first, *executor.map(fetch, range(2, count+1))]
     rows = directory_rows(pages)
-    return store.publish_manager_directory(rows, len(rows), collectors.evidence(pages), args.ttl_seconds)
+    return store.publish_manager_directory(rows, len(rows), collectors.evidence(pages))

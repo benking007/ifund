@@ -76,7 +76,7 @@ def dictionary():
 
 def exposure_rows(stocks, memberships, names, fund_code, *,
                   source_identity=('open_market_products', 'concept_memberships', 'THS')):
-    """Each requested stock needs a fresh complete subject snapshot, including zero."""
+    """Each requested stock needs a complete subject snapshot, including zero."""
     expected = {row['stock_code'] for row in stocks}
     covered, rows = set(), []
     for body in memberships:
@@ -130,24 +130,16 @@ def exposure_rows(stocks, memberships, names, fund_code, *,
              'holdingWeightAnnual': round(value, 8)}} for code, value in sorted(totals.items())]
 
 
-def membership_lifetime(responses, ttl_seconds):
-    """Clip downstream facts to each actual source lease, never extend a shorter TTL."""
-    now, lifetimes = time.time(), [ttl_seconds, 86400]
+def check_observed(responses):
+    """Each membership snapshot needs an explicit, non-future observation time."""
+    now = time.time()
     for body in responses:
         for snapshot in body['subjectSnapshots']:
             stamp = datetime.fromisoformat(snapshot['observedAt'].replace('Z', '+00:00'))
             if stamp.tzinfo is None:
                 raise ValueError('Source observation needs an explicit time zone')
-            observed = stamp.timestamp()
-            expiry = snapshot.get('valid_until', observed+48*3600)
-            if (type(expiry) not in (int, float) or not math.isfinite(expiry) or not math.isfinite(observed)
-                    or observed > now+60 or expiry <= observed):
-                raise ValueError('Invalid current membership source lifetime')
-            lifetimes.append(min(expiry, observed+48*3600)-now)
-    lifetime = min(lifetimes)
-    if lifetime <= 0:
-        raise ValueError('Current membership source expired')
-    return max(1, int(lifetime))
+            if stamp.timestamp() > now+60:
+                raise ValueError('Membership source observation is in the future')
 
 
 def collect_scope(args):
@@ -159,23 +151,22 @@ def collect_scope(args):
     proof = not_yet_reportable(master, args.end, semiannual=True)
     if proof:
         version = store.record_disclosure_state(263, args.fund_code, 'official-canonical-fund-inception', proof,
-                                                ttl_seconds=min(args.ttl_seconds, 86400), status='not_applicable')
+                                                status='not_applicable')
         raise NotApplicableError('fund_not_established_in_completed_reporting_period',
                                  'official-canonical-fund-inception',
                                  {**proof, 'eligibility_version': version['version_id']},
-                                 observed_at=version['observed_at'], valid_until=version['valid_until'])
+                                 observed_at=version['observed_at'])
     reports = report_index(args.fund_code)
     candidates = [row for row in reports if re.search(r'20[0-9]{2}年(?:年度|中期|半年度)报告', row.get('TITLE', ''))]
     if not candidates:
         proof = {'fund_code': args.fund_code, 'source_rows': len(reports), 'index': reports,
                  'required_report': 'annual-or-semiannual-full-equity', 'sha256': collectors.evidence(reports),
                  'index_uri': 'https://api.fund.eastmoney.com/f10/JJGG/'}
-        version = store.record_disclosure_state(263, args.fund_code, 'official-complete-periodic-report-index', proof,
-                                                ttl_seconds=min(args.ttl_seconds, 86400))
+        version = store.record_disclosure_state(263, args.fund_code, 'official-complete-periodic-report-index', proof)
         raise NotDisclosedError('full_portfolio_not_yet_disclosed', 'official-complete-periodic-report-index',
                                 {'fund_code': args.fund_code, 'index_sha256': proof['sha256'],
                                  'source_rows': len(reports), 'eligibility_version': version['version_id']},
-                                observed_at=version['observed_at'], valid_until=version['valid_until'])
+                                observed_at=version['observed_at'])
     metadata = latest_period_versions(candidates, periodic=True, latest_only=True)[-1]
     from .product_report_cache import load_report  # pylint: disable=import-outside-toplevel
     report = load_report(metadata, args.fund_code, parser=parse_document, periodic=True)
@@ -198,7 +189,7 @@ def collect_scope(args):
             raise ValueError('ETF role flag conflicts with governed asset type')
     elif master.get('market') != 'O':
         raise ValueError('An actual exchange/nonexchange fund role is required')
-    lifetime = membership_lifetime(memberships, args.ttl_seconds)
+    check_observed(memberships)
     for row in records:
         row['is_etf'] = is_etf
     return store.ingest(263, records, scope_kind='fund', scope_key=args.fund_code,
@@ -206,8 +197,7 @@ def collect_scope(args):
                         source_name='issuer:full-portfolio+governed-current-ths', method_version=METHOD,
                         evidence_uri='https://api.fund.eastmoney.com/f10/JJGG/',
                         evidence_sha256=collectors.evidence({'pdf': report['hash'], 'memberships': memberships}),
-                        complete_window=True, available_fields=FIELDS,
-                        ttl_seconds=max(1, int(lifetime)))
+                        complete_window=True, available_fields=FIELDS)
 
 
 def _write_many(conn, statement, records):
@@ -220,12 +210,11 @@ def _write_many(conn, statement, records):
         cursor.close()
 
 
-def materialize(args):
+def materialize(_args):
     """Publish one atomic complete-catalog generation; incomplete catalog never replaces it."""
     names = dictionary()
     generation, count, now = uuid.uuid4().hex, 0, time.time()
     eligible, undisclosed, not_applicable = 0, 0, 0
-    valid_until = now+min(args.ttl_seconds, 86400)
     with database.get_db().transaction() as conn:
         # pylint: disable=protected-access
         masters = store._sql(conn, "SELECT fund_code FROM fund_basic_ext WHERE status='L' AND source='tushare' "
@@ -239,17 +228,15 @@ def materialize(args):
             proof = store.disclosure_state(conn, 263, master['fund_code'],
                                            after=jobs[0]['recorded_at'] if jobs else 0)
             if proof:
-                valid_until = min(valid_until, proof['valid_until'])
                 undisclosed += int(proof['status'] == 'not_disclosed')
                 not_applicable += int(proof['status'] == 'not_applicable')
                 store._sql(conn, 'INSERT INTO open_fund_concept_fund VALUES(?,?,?,?,?,?)',
                            (generation, master['fund_code'], proof['version_id'], '', 0, proof['status']))
                 continue
-            if (not jobs or jobs[0]['method_version'] != METHOD or jobs[0]['valid_until'] <= now):
-                raise ValueError('A catalog member has no fresh complete concept exposure')
+            if not jobs or jobs[0]['method_version'] != METHOD:
+                raise ValueError('A catalog member has no complete concept exposure')
             eligible += 1
             job = jobs[0]
-            valid_until = min(valid_until, job['valid_until'])
             store._verify_batch_storage(conn, 263, jobs, [job['batch_id']])
             facts = store._sql(conn, 'SELECT payload_json,etf_flag FROM open_fund_product_fact WHERE batch_id=?',
                                (job['batch_id'],), fetch=True)
@@ -273,8 +260,8 @@ def materialize(args):
                         len(normalized), 'eligible'))
         _write_many(conn, 'INSERT INTO open_fund_concept_dictionary VALUES(?,?,?)',
                     [(generation, code, name) for code, name in names.items()])
-        store._sql(conn, 'INSERT INTO open_fund_concept_generation VALUES(?,?,?,?,?,?,?,?,?,?)',
-                   (generation, now, valid_until, len(masters), count, len(names), METHOD,
+        store._sql(conn, 'INSERT INTO open_fund_concept_generation VALUES(?,?,?,?,?,?,?,?,?)',
+                   (generation, now, len(masters), count, len(names), METHOD,
                     eligible, undisclosed, not_applicable))
         # pylint: enable=protected-access
     status = 'ready' if eligible else ('not_disclosed' if undisclosed else 'not_applicable')
@@ -284,7 +271,7 @@ def materialize(args):
                          'not_applicable_funds': not_applicable, 'catalog_funds': len(masters)},
             'dataset_scope': {'eligible_fund_count': eligible, 'undisclosed_fund_count': undisclosed,
                               'not_applicable_fund_count': not_applicable, 'catalog_fund_count': len(masters)},
-            'observed_at': now, 'valid_until': valid_until,
+            'observed_at': now,
             'coverage_start': datetime.now(timezone.utc).date().isoformat(),
             'coverage_end': datetime.now(timezone.utc).date().isoformat(), 'source': 'issuer-full-portfolios+THS',
             'method_version': METHOD}}
@@ -302,8 +289,8 @@ def query(product, values):
         # pylint: disable=protected-access
         generations = store._sql(conn, 'SELECT * FROM open_fund_concept_generation '
                                 'ORDER BY observed_at DESC,generation_id DESC LIMIT 1', fetch=True)
-        if not generations or generations[0]['valid_until'] <= time.time():
-            raise LookupError('Latest complete concept generation missing or expired')
+        if not generations:
+            raise LookupError('Latest complete concept generation missing')
         meta = generations[0]
         generation = meta['generation_id']
         if not meta['eligible_count']:

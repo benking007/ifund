@@ -57,7 +57,6 @@ def unavailable_base(_exc):
 @bp.get("/_ready")
 def open_data_ready():
     """Authenticated, bounded read-only schema and current-fact readiness."""
-    import time  # pylint: disable=import-outside-toplevel
     from .product_store import _sql  # pylint: disable=import-outside-toplevel,protected-access
     try:
         with database.get_db().transaction(read_only=True) as conn:
@@ -68,31 +67,30 @@ def open_data_ready():
                 'fund_holdings': 'fund_code,quarter,holding_type,asset_code,hold_amount,hold_market_value,hold_ratio',
                 'fund_manager_tenure': 'fund_code,managers,start_date,end_date,tenure_return',
                 'fund_div_split': 'fund_code,event_type,ex_date',
-                'open_fund_base_watermark': 'version_id,kind,scope_id,row_count,observed_at,valid_until',
-                'open_fund_product_batch': 'batch_id,product_id,scope_kind,scope_key,recorded_at,valid_until,'
+                'open_fund_base_watermark': 'version_id,kind,scope_id,row_count,observed_at',
+                'open_fund_product_batch': 'batch_id,product_id,scope_kind,scope_key,recorded_at,'
                                            'row_count,scope_metadata_json',
-                'open_fund_etf_directory': 'version_id,cohort_hash,valid_until,row_count,payload_hash',
-                'open_fund_etf_generation': 'generation_id,product_id,cohort_hash,valid_until,fact_count,scope_count',
+                'open_fund_etf_directory': 'version_id,cohort_hash,row_count,payload_hash',
+                'open_fund_etf_generation': 'generation_id,product_id,cohort_hash,fact_count,scope_count',
                 'open_fund_etf_generation_scope': 'generation_id,fund_code,source_version,eligibility_status,row_count',
                 'open_fund_etf_generation_fact': 'generation_id,fund_code,association_code,annual_weight,payload_hash',
                 'open_fund_product_fact': 'batch_id,product_id,fund_code,event_date,payload_json,etf_flag',
-                'open_fund_manager_directory_batch': 'snapshot_id,declared_count,recorded_at,valid_until',
+                'open_fund_manager_directory_batch': 'snapshot_id,declared_count,recorded_at',
                 'open_fund_manager_directory': 'snapshot_id,manager_id,manager_name',
                 'open_fund_concept_generation': 'generation_id,scope_count,fact_count,dictionary_count,'
-                                                'valid_until,eligible_count,undisclosed_count,'
-                                                'not_applicable_count',
+                                                'eligible_count,undisclosed_count,not_applicable_count',
                 'open_fund_concept_fact': 'generation_id,fund_code,concept_code,weight_nav,report_period,is_etf',
                 'open_fund_concept_fund': 'generation_id,fund_code,batch_id,report_period,row_count',
                 'open_fund_concept_dictionary': 'generation_id,concept_code,concept_name',
                 'open_fund_disclosure_eligibility': 'version_id,product_id,fund_code,status,'
-                                                  'evidence_sha256,valid_until'}
+                                                  'evidence_sha256'}
             for table, columns in required.items():
                 _sql(conn, 'SELECT '+columns+' FROM '+table+' WHERE 1=0', fetch=True)
             products = _sql(conn, "WITH newest AS (SELECT *,ROW_NUMBER() OVER(PARTITION BY product_id,"
                             "scope_kind,scope_key ORDER BY recorded_at DESC,batch_id DESC) AS rn "
                             "FROM open_fund_product_batch WHERE status='ready') "
                             "SELECT product_id,scope_kind,COUNT(*) AS scopes,MAX(recorded_at) AS observed_at,"
-                            "MIN(valid_until) AS valid_until,SUM(row_count) AS attested_rows "
+                            "SUM(row_count) AS attested_rows "
                             "FROM newest WHERE rn=1 GROUP BY product_id,scope_kind LIMIT 300",
                             fetch=True)
             scoped = _sql(conn, "SELECT product_id,LENGTH(scope_metadata_json) AS bytes,"
@@ -108,7 +106,7 @@ def open_data_ready():
                     latest_scope[row['product_id']] = json.loads(row['metadata'])
             for row in products:
                 row['dataset_scope'] = latest_scope.get(row['product_id'], {})
-            # Readiness needs actual fresh published facts; table existence is
+            # Readiness needs actual published facts; table existence is
             # reported independently and must not make an empty deployment green.
             global_status = any(row['product_id'] == 238 and row['scope_kind'] == 'global'
                                 for row in products)
@@ -118,33 +116,32 @@ def open_data_ready():
                                 else 'read_cache')
                 if global_status and row['product_id'] == 238 and row['scope_kind'] == 'fund':
                     row['stage'] = 'superseded'
-            generations = _sql(conn, 'SELECT observed_at,valid_until,scope_count,fact_count,eligible_count,'
+            generations = _sql(conn, 'SELECT observed_at,scope_count,fact_count,eligible_count,'
                                'undisclosed_count,not_applicable_count '
                                'FROM open_fund_concept_generation ORDER BY observed_at DESC LIMIT 1', fetch=True)
             if generations:
                 products.extend({'product_id': number, 'scope_kind': 'global', 'scopes': generations[0]['scope_count'],
                                  'observed_at': generations[0]['observed_at'],
-                                 'valid_until': generations[0]['valid_until'],
                                  'attested_rows': generations[0]['fact_count'],
                                  'eligible_fund_count': generations[0]['eligible_count'],
                                  'undisclosed_fund_count': generations[0]['undisclosed_count'],
                                  'not_applicable_fund_count': generations[0]['not_applicable_count'],
                                  'stage': 'read_cache' if generations[0]['eligible_count'] else 'not_disclosed'}
                                 for number in (263, 267))
-            etfs = _sql(conn, 'SELECT * FROM (SELECT product_id,observed_at,valid_until,scope_count,fact_count,'
+            etfs = _sql(conn, 'SELECT * FROM (SELECT product_id,observed_at,scope_count,fact_count,'
                         'eligible_count,undisclosed_count,not_applicable_count,method_version,ROW_NUMBER() OVER('
                         'PARTITION BY product_id ORDER BY observed_at DESC,generation_id DESC) AS rn '
                         'FROM open_fund_etf_generation) latest WHERE rn=1', fetch=True)
             products.extend({'product_id': row['product_id'], 'scope_kind': 'global',
-                             'observed_at': row['observed_at'], 'valid_until': row['valid_until'],
-                             'scopes': row['scope_count'], 'attested_rows': row['fact_count'],
+                             'observed_at': row['observed_at'], 'scopes': row['scope_count'],
+                             'attested_rows': row['fact_count'],
                              'eligible_fund_count': row['eligible_count'],
                              'undisclosed_fund_count': row['undisclosed_count'],
                              'not_applicable_fund_count': row['not_applicable_count'],
                              'stage': 'read_cache' if (row['eligible_count']
                                                       and row['method_version'].endswith('v2-bound-immutable'))
                              else 'not_disclosed'} for row in etfs)
-            base = _sql(conn, 'SELECT kind,scope_id,row_count,observed_at,valid_until,window_start,window_end '
+            base = _sql(conn, 'SELECT kind,scope_id,row_count,observed_at,window_start,window_end '
                         'FROM (SELECT *,ROW_NUMBER() OVER (PARTITION BY kind,scope_id '
                         'ORDER BY observed_at DESC,version_id DESC) AS rank_no FROM open_fund_base_watermark) latest '
                         'WHERE rank_no=1 ORDER BY observed_at DESC LIMIT 300', fetch=True)
@@ -153,15 +150,14 @@ def open_data_ready():
                              'base-tenures': (232, 239, 250), 'base-returns': (249,)}
             for item in base:
                 products.extend({'product_id': number, 'scope_kind': item['scope_id'], 'scopes': 1,
-                                 'observed_at': item['observed_at'], 'valid_until': item['valid_until'],
-                                 'attested_rows': item['row_count'], 'stage': 'read_cache',
+                                 'observed_at': item['observed_at'], 'attested_rows': item['row_count'],
+                                 'stage': 'read_cache',
                                  'window_start': item['window_start'], 'window_end': item['window_end']}
                                 for number in base_products.get(item['kind'], ()) if item['row_count'] > 0
                                 and (item['kind'] != 'base-holdings' or
                                      (number == 258 and item['scope_id'].endswith(':stock')) or
                                      (number == 261 and item['scope_id'].endswith(':bond'))))
-            current = [row for row in products
-                       if row["valid_until"] > time.time() and row['stage'] == 'read_cache']
+            current = [row for row in products if row['stage'] == 'read_cache']
         return jsonify({"service": "ifund-open-data", "schemaVersion": 6, "database": "ok",
                         "ready": bool(current), "status": "ready" if current else "not_ready", "products": products,
                         "fresh_product_count": len({row["product_id"] for row in current}),

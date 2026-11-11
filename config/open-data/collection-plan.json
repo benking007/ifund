@@ -26,7 +26,6 @@
         236
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "global",
       "depends_on": [],
       "start_policy": "rolling_actual_source_window",
@@ -39,8 +38,6 @@
         "collect",
         "--kind",
         "base-master",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}"
       ],
@@ -59,7 +56,6 @@
         237
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "global",
       "depends_on": [
         "ifund-base-master"
@@ -74,8 +70,6 @@
         "collect",
         "--kind",
         "base-categories",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}"
       ],
@@ -95,7 +89,6 @@
         246
       ],
       "interval_seconds": 14400,
-      "ttl_seconds": 86400,
       "universe": "global",
       "depends_on": [
         "ifund-base-master"
@@ -110,8 +103,6 @@
         "collect",
         "--kind",
         "base-nav",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--lookback-days",
@@ -132,7 +123,6 @@
       "kind": "etf-directory",
       "products": [],
       "interval_seconds": 43200,
-      "ttl_seconds": 172800,
       "universe": "global",
       "depends_on": [
         "ifund-base-master"
@@ -147,8 +137,6 @@
         "collect",
         "--kind",
         "etf-directory",
-        "--ttl-seconds",
-        "172800",
         "--end",
         "{end}"
       ],
@@ -167,7 +155,6 @@
         256
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "active_funds",
       "depends_on": [
         "ifund-base-master"
@@ -182,8 +169,6 @@
         "collect",
         "--kind",
         "base-dividends",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--fund-code",
@@ -214,7 +199,6 @@
         257
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "active_funds",
       "depends_on": [
         "ifund-base-master"
@@ -229,8 +213,6 @@
         "collect",
         "--kind",
         "base-splits",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--fund-code",
@@ -261,7 +243,6 @@
         258
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "active_funds",
       "depends_on": [
         "ifund-base-master"
@@ -276,8 +257,6 @@
         "collect",
         "--kind",
         "base-holdings",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--fund-code",
@@ -310,7 +289,6 @@
         261
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "active_funds",
       "depends_on": [
         "ifund-base-master"
@@ -325,8 +303,6 @@
         "collect",
         "--kind",
         "base-holdings",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--fund-code",
@@ -361,7 +337,6 @@
         250
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "active_funds",
       "depends_on": [
         "ifund-base-master"
@@ -376,8 +351,6 @@
         "collect",
         "--kind",
         "base-tenures",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--fund-code",
@@ -408,7 +381,6 @@
         249
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "unit_nav_funds",
       "depends_on": [
         "ifund-base-nav"
@@ -423,8 +395,6 @@
         "collect",
         "--kind",
         "base-returns",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--fund-code",
@@ -455,7 +425,6 @@
         238
       ],
       "interval_seconds": 240,
-      "ttl_seconds": 300,
       "universe": "global",
       "depends_on": [],
       "start_policy": "latest",
@@ -468,8 +437,6 @@
         "collect",
         "--kind",
         "purchase-status-all",
-        "--ttl-seconds",
-        "300",
         "--end",
         "{end}"
       ],
@@ -488,7 +455,6 @@
         241
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "active_funds",
       "depends_on": [
         "ifund-base-master"
@@ -503,8 +469,6 @@
         "collect",
         "--kind",
         "investment-scope",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--fund-code",
@@ -535,7 +499,6 @@
         244
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "active_funds",
       "depends_on": [
         "ifund-base-master"
@@ -550,8 +513,6 @@
         "collect",
         "--kind",
         "company-profile",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--fund-code",
@@ -582,7 +543,6 @@
         248
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "unit_nav_funds",
       "depends_on": [
         "ifund-base-master"
@@ -597,8 +557,6 @@
         "collect",
         "--kind",
         "peer-returns",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--fund-code",
@@ -629,7 +587,6 @@
         264
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "active_funds",
       "depends_on": [
         "ifund-base-master"
@@ -644,8 +601,6 @@
         "collect",
         "--kind",
         "industry-exposure",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--fund-code",
@@ -674,7 +629,6 @@
       "kind": "manager-directory",
       "products": [],
       "interval_seconds": 1800,
-      "ttl_seconds": 3600,
       "universe": "global",
       "depends_on": [],
       "start_policy": "latest",
@@ -687,8 +641,6 @@
         "collect",
         "--kind",
         "manager-directory",
-        "--ttl-seconds",
-        "3600",
         "--end",
         "{end}"
       ],
@@ -707,7 +659,6 @@
         251
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "unique_current_managers",
       "depends_on": [
         "ifund-manager-directory",
@@ -723,8 +674,6 @@
         "collect",
         "--kind",
         "manager-intervals",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--manager-id",
@@ -753,7 +702,6 @@
       "kind": "manager-history",
       "products": [],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "active_funds",
       "depends_on": [
         "ifund-base-master"
@@ -768,8 +716,6 @@
         "collect",
         "--kind",
         "manager-history",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--fund-code",
@@ -800,7 +746,6 @@
         269
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "stock_holding_funds",
       "depends_on": [
         "ifund-base-master",
@@ -816,8 +761,6 @@
         "collect",
         "--kind",
         "holding-stock-returns",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--fund-code",
@@ -848,7 +791,6 @@
         270
       ],
       "interval_seconds": 14400,
-      "ttl_seconds": 86400,
       "universe": "sse_exchange_funds",
       "depends_on": [
         "ifund-base-master"
@@ -863,8 +805,6 @@
         "collect",
         "--kind",
         "pcf-header",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--fund-code",
@@ -895,7 +835,6 @@
         271
       ],
       "interval_seconds": 14400,
-      "ttl_seconds": 86400,
       "universe": "exchange_funds",
       "depends_on": [
         "ifund-base-master"
@@ -910,8 +849,6 @@
         "collect",
         "--kind",
         "pcf-components",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--fund-code",
@@ -944,7 +881,6 @@
         272
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "exchange_funds",
       "depends_on": [
         "ifund-base-master"
@@ -959,8 +895,6 @@
         "collect",
         "--kind",
         "premium",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--fund-code",
@@ -993,7 +927,6 @@
         273
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "active_funds",
       "depends_on": [
         "ifund-base-master"
@@ -1008,8 +941,6 @@
         "collect",
         "--kind",
         "financial-indicators",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--fund-code",
@@ -1042,7 +973,6 @@
         259
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "active_funds",
       "depends_on": [
         "ifund-base-master"
@@ -1057,8 +987,6 @@
         "collect",
         "--kind",
         "asset-allocation",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--fund-code",
@@ -1089,7 +1017,6 @@
         247
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "money_funds",
       "depends_on": [
         "ifund-base-master"
@@ -1104,8 +1031,6 @@
         "collect",
         "--kind",
         "money-income",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--fund-code",
@@ -1138,7 +1063,6 @@
         223
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "active_funds",
       "depends_on": [
         "ifund-base-master"
@@ -1153,8 +1077,6 @@
         "collect",
         "--kind",
         "announcements",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--fund-code",
@@ -1187,7 +1109,6 @@
         255
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "benchmark_verified_funds",
       "depends_on": [
         "ifund-base-master"
@@ -1202,8 +1123,6 @@
         "collect",
         "--kind",
         "correlations",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--fund-code",
@@ -1240,7 +1159,6 @@
         240
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "active_funds",
       "depends_on": [
         "ifund-base-master"
@@ -1255,8 +1173,6 @@
         "collect",
         "--kind",
         "benchmark-components",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--fund-code",
@@ -1287,7 +1203,6 @@
         262
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "global",
       "depends_on": [
         "ifund-industry-exposure"
@@ -1302,8 +1217,6 @@
         "collect",
         "--kind",
         "industry-reverse",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--product",
@@ -1326,7 +1239,6 @@
         268
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "global",
       "depends_on": [
         "ifund-industry-exposure"
@@ -1341,8 +1253,6 @@
         "collect",
         "--kind",
         "industry-reverse",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--product",
@@ -1365,7 +1275,6 @@
         243
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "timeout_seconds": 3600,
       "universe": "active_funds",
       "universe_command": [
@@ -1394,9 +1303,7 @@
         "--ts-code",
         "{ts_code}",
         "--end",
-        "{end}",
-        "--ttl-seconds",
-        "86400"
+        "{end}"
       ],
       "watermark": {
         "table": "open_fund_product_batch",
@@ -1412,7 +1319,6 @@
         253
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "timeout_seconds": 3600,
       "universe": "benchmark_verified_funds",
       "universe_command": [
@@ -1442,8 +1348,6 @@
         "{ts_code}",
         "--end",
         "{end}",
-        "--ttl-seconds",
-        "86400",
         "--start",
         "{start}",
         "--benchmark-code",
@@ -1465,7 +1369,6 @@
         274
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "timeout_seconds": 3600,
       "universe": "active_funds",
       "universe_command": [
@@ -1496,9 +1399,7 @@
         "--start",
         "{start}",
         "--end",
-        "{end}",
-        "--ttl-seconds",
-        "86400"
+        "{end}"
       ],
       "watermark": {
         "table": "open_fund_product_batch",
@@ -1514,7 +1415,6 @@
         260
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "timeout_seconds": 3600,
       "universe": "fof_funds",
       "universe_command": [
@@ -1546,9 +1446,7 @@
         "--start",
         "{start}",
         "--end",
-        "{end}",
-        "--ttl-seconds",
-        "86400"
+        "{end}"
       ],
       "watermark": {
         "table": "open_fund_product_batch",
@@ -1564,7 +1462,6 @@
         234
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "timeout_seconds": 3600,
       "universe": "active_funds",
       "universe_command": [
@@ -1595,9 +1492,7 @@
         "--start",
         "{start}",
         "--end",
-        "{end}",
-        "--ttl-seconds",
-        "86400"
+        "{end}"
       ],
       "watermark": {
         "table": "open_fund_product_batch",
@@ -1613,7 +1508,6 @@
         266
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "timeout_seconds": 3600,
       "universe": "active_funds",
       "universe_command": [
@@ -1644,9 +1538,7 @@
         "--start",
         "{start}",
         "--end",
-        "{end}",
-        "--ttl-seconds",
-        "86400"
+        "{end}"
       ],
       "watermark": {
         "table": "open_fund_product_batch",
@@ -1662,7 +1554,6 @@
         242
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "timeout_seconds": 3600,
       "universe": "active_funds",
       "universe_command": [
@@ -1693,9 +1584,7 @@
         "--start",
         "{start}",
         "--end",
-        "{end}",
-        "--ttl-seconds",
-        "86400"
+        "{end}"
       ],
       "watermark": {
         "table": "open_fund_product_batch",
@@ -1711,7 +1600,6 @@
         265
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "timeout_seconds": 3600,
       "universe": "active_funds",
       "universe_command": [
@@ -1742,9 +1630,7 @@
         "--start",
         "{start}",
         "--end",
-        "{end}",
-        "--ttl-seconds",
-        "86400"
+        "{end}"
       ],
       "watermark": {
         "table": "open_fund_product_batch",
@@ -1760,7 +1646,6 @@
         243
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "timeout_seconds": 3600,
       "universe": "active_funds",
       "universe_command": [
@@ -1791,9 +1676,7 @@
         "--start",
         "{start}",
         "--end",
-        "{end}",
-        "--ttl-seconds",
-        "86400"
+        "{end}"
       ],
       "watermark": {
         "table": "open_fund_product_batch",
@@ -1807,7 +1690,6 @@
       "kind": "concept-exposure",
       "products": [],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "timeout_seconds": 3600,
       "universe": "active_funds",
       "universe_command": [
@@ -1838,9 +1720,7 @@
         "--start",
         "{start}",
         "--end",
-        "{end}",
-        "--ttl-seconds",
-        "86400"
+        "{end}"
       ],
       "watermark": {
         "table": "open_fund_product_batch",
@@ -1856,7 +1736,6 @@
         252
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "timeout_seconds": 3600,
       "universe": "global",
       "depends_on": [
@@ -1872,8 +1751,6 @@
         "collect",
         "--kind",
         "manager-history-global",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}"
       ],
@@ -1893,7 +1770,6 @@
         267
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "timeout_seconds": 3600,
       "universe": "global",
       "depends_on": [
@@ -1909,8 +1785,6 @@
         "collect",
         "--kind",
         "concept-reverse",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}"
       ],
@@ -1928,7 +1802,6 @@
       "kind": "industry-etf-mapping",
       "products": [],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "verified_etf_funds",
       "depends_on": [
         "ifund-etf-directory"
@@ -1943,8 +1816,6 @@
         "collect",
         "--kind",
         "industry-etf-mapping",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--fund-code",
@@ -1973,7 +1844,6 @@
       "kind": "concept-etf-mapping",
       "products": [],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "verified_etf_funds",
       "depends_on": [
         "ifund-etf-directory"
@@ -1988,8 +1858,6 @@
         "collect",
         "--kind",
         "concept-etf-mapping",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}",
         "--fund-code",
@@ -2020,7 +1888,6 @@
         254
       ],
       "interval_seconds": 43200,
-      "ttl_seconds": 86400,
       "universe": "unique_benchmarks",
       "depends_on": [
         "ifund-base-master"
@@ -2043,9 +1910,7 @@
         "--start",
         "{start}",
         "--end",
-        "{end}",
-        "--ttl-seconds",
-        "86400"
+        "{end}"
       ],
       "universe_command": [
         "python",
@@ -2069,7 +1934,6 @@
         142
       ],
       "interval_seconds": 1800,
-      "ttl_seconds": 86400,
       "universe": "global",
       "depends_on": [
         "ifund-etf-directory",
@@ -2085,8 +1949,6 @@
         "collect",
         "--kind",
         "industry-etf-reverse",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}"
       ],
@@ -2107,7 +1969,6 @@
         143
       ],
       "interval_seconds": 1800,
-      "ttl_seconds": 86400,
       "universe": "global",
       "depends_on": [
         "ifund-etf-directory",
@@ -2123,8 +1984,6 @@
         "collect",
         "--kind",
         "concept-etf-reverse",
-        "--ttl-seconds",
-        "86400",
         "--end",
         "{end}"
       ],

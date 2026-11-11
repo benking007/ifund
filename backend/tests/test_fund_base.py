@@ -21,7 +21,7 @@ def db(tmp_path, monkeypatch):
 
 
 def args(kind, **values):
-    return Namespace(kind=kind, fund_code=None, start='0001-01-01', end='2026-11-05', ttl_seconds=86400,
+    return Namespace(kind=kind, fund_code=None, start='0001-01-01', end='2026-11-05',
                      lookback_days=7, **values)
 
 

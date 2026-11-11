@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import os
 import math
-import time
 from datetime import date
 import json
 from pathlib import Path
@@ -92,7 +91,7 @@ def _allocations():
         rows = store._sql(conn, 'WITH latest AS (SELECT *,ROW_NUMBER() OVER (PARTITION BY scope_key '
                           'ORDER BY recorded_at DESC,batch_id DESC) AS rn FROM open_fund_product_batch '
                           "WHERE product_id=259 AND scope_kind='fund' AND status='ready') "
-                          'SELECT b.scope_key,b.row_count,b.valid_until,b.window_end,f.payload_json '
+                          'SELECT b.scope_key,b.row_count,b.window_end,f.payload_json '
                           'FROM latest b LEFT JOIN open_fund_product_fact f ON f.batch_id=b.batch_id '
                           'WHERE b.rn=1 LIMIT 100001', fetch=True)
         # pylint: enable=protected-access
@@ -104,7 +103,7 @@ def _allocations():
     result = {}
     for code, physical in grouped.items():
         row = physical[0]
-        if len(physical) != 1 or row['row_count'] != 1 or row['valid_until'] <= time.time():
+        if len(physical) != 1 or row['row_count'] != 1:
             continue
         try:
             fact = json.loads(row['payload_json'])
@@ -132,7 +131,7 @@ def _stock_evidence(row):
 def _managers():
     with database.get_db().transaction(read_only=True) as conn:
         # pylint: disable=protected-access
-        latest = store._sql(conn, 'SELECT snapshot_id,valid_until,declared_count '
+        latest = store._sql(conn, 'SELECT snapshot_id,declared_count '
                            'FROM open_fund_manager_directory_batch ORDER BY recorded_at DESC LIMIT 1', fetch=True)
         if not latest:
             raise ValueError('Complete manager directory must be collected first')
@@ -146,7 +145,7 @@ def _managers():
             names.setdefault(row['manager_name'], []).append(row['manager_id'])
         result = [{'scope_id': ids[0], 'manager_id': ids[0], 'manager_name': name}
                   for name, ids in names.items() if len(ids) == 1]
-        # Freshness and exact identity are checked again per collection.
+        # Exact identity is checked again per collection.
         if result:
             store.manager_identity(result[0]['manager_name'], conn=conn)
     return {'complete': True, 'members': result, 'universe': 'unique_current_managers',

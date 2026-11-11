@@ -106,12 +106,11 @@ def _disclosed_stock_rows(report):
     return rows
 
 
-def _absence(product, fund_code, error, ttl):
+def _absence(product, fund_code, error):
     evidence = {'fund_code': fund_code, **error.evidence}
-    version = store.record_disclosure_state(product, fund_code, error.source, evidence,
-                                            ttl_seconds=min(ttl, 86400), status=error.status)
+    version = store.record_disclosure_state(product, fund_code, error.source, evidence, status=error.status)
     raise type(error)(error.reason, error.source, {**evidence, 'eligibility_version': version['version_id']},
-                      observed_at=version['observed_at'], valid_until=version['valid_until'])
+                      observed_at=version['observed_at'])
 
 
 def _etf_role(master):
@@ -175,7 +174,7 @@ def _check_reportable(master, product, args):
                 'official-complete-etf-directory-setup-date', {'fund_code': args.fund_code,
                 'found_date': master['found_date'], 'required_report_period': previous.isoformat(),
                 'directory_version': master['directory_version'],
-                'scope_version': master['scope_version']}), args.ttl_seconds)
+                'scope_version': master['scope_version']}))
 
 
 
@@ -200,7 +199,7 @@ def collect(args):
             {'fund_code': args.fund_code, 'index_sha256': collectors.evidence(index),
              'directory_version': master['directory_version'], 'scope_version': master['scope_version'],
              'index_rows': len(index),
-             'required_report': 'annual' if product == 142 else 'annual-or-semiannual'}), args.ttl_seconds)
+             'required_report': 'annual' if product == 142 else 'annual-or-semiannual'}))
     metadata = latest_period_versions(candidates, periodic=True, latest_only=True)[-1]
     report = load_report(metadata, args.fund_code, parser=parse_document, periodic=True)
     stocks = complete_domestic_stocks(report)
@@ -211,7 +210,6 @@ def collect(args):
                              codes=','.join(row['stock_code'] for row in stocks[offset:offset+20]),
                              end_date=date.today().isoformat(), page=1, page_size=100))
         records = industry_rows(report, stocks, responses, args.fund_code, master.get('name'))
-        ttl = min(args.ttl_seconds, 86400)
         method = 'annual-full-domestic-portfolio-current-sw1-gross-assets-v1'
     else:
         responses = [concepts._source('cls_memberships',  # pylint: disable=protected-access
@@ -233,14 +231,14 @@ def collect(args):
             record['data'].pop('holdingWeightLatest', None)
             record['data'].update(publishDate=report['published'], endDate=report['period'], conceptCategory='C01',
                                   fundName=master.get('name'))
-        ttl = concepts.membership_lifetime(responses, args.ttl_seconds)
+        concepts.check_observed(responses)
         method = 'full-domestic-etf-portfolio-current-cls-nav-association-v1'
     result = store.ingest(product, records, scope_kind='fund', scope_key=args.fund_code,
                         window_start=report['period'], window_end=report['period'],
                         source_name='issuer:complete-etf-portfolio+governed-classification', method_version=method,
                         evidence_uri='https://pdf.dfcfw.com/pdf/H2_'+metadata['ID']+'_1.pdf',
                         evidence_sha256=collectors.evidence({'report': report['hash'], 'classifications': responses}),
-                        complete_window=True, available_fields=FIELDS[product], ttl_seconds=max(1, int(ttl)),
+                        complete_window=True, available_fields=FIELDS[product],
                         scope_metadata={'directory_version': master['directory_version'],
                                         'scope_version': master['scope_version']})
     from .product_etf_generation import prune_staging  # pylint: disable=import-outside-toplevel

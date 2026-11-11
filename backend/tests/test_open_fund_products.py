@@ -55,8 +55,6 @@ def test_partial_coverage_does_not_claim_an_unavailable_filter(product_db):
         query(announcementID=17)
     with pytest.raises(ValueError):
         publish([], complete_window=1)
-    with pytest.raises(ValueError):
-        publish([], ttl_seconds=True)
 
 
 def test_revisions_filter_after_dedup_and_page_has_true_total(product_db, monkeypatch):
@@ -83,8 +81,7 @@ def test_source_authority_does_not_mix_disjoint_sources_or_methods(product_db, m
     publish([], window_start='2026-10-16')
     assert query()['total'] == 0
     monkeypatch.setattr(store.time, 'time', lambda: 2000000000)
-    with pytest.raises(LookupError):
-        query()
+    assert query()['total'] == 0
 
 
 def test_batch_validation_atomic_and_same_provider_key_scoped_by_fund(product_db):
@@ -287,28 +284,27 @@ def test_unknown_capability_and_unvalidated_metadata_cannot_be_published(product
         validate_row(273, {'fundCode': '110011', 'reportType': 'F', 'reportPeriodEnd': '2026-12-31'})
 
 
-def test_expired_new_covering_snapshot_never_falls_back_to_long_lived_old(product_db, monkeypatch):
+def test_newest_covering_snapshot_stays_readable_and_old_one_never_returns(product_db, monkeypatch):
     assert product_db
     monkeypatch.setattr(store.time, 'time', lambda: 1000)
-    publish([announcement('旧结论')], ttl_seconds=3600)
+    publish([announcement('旧结论')])
     monkeypatch.setattr(store.time, 'time', lambda: 1010)
-    publish([announcement('更正结论')], ttl_seconds=1)
+    publish([announcement('更正结论')])
     assert query()['items'][0]['title'] == '更正结论'
-    monkeypatch.setattr(store.time, 'time', lambda: 1012)
-    with pytest.raises(LookupError):
-        query()
+    monkeypatch.setattr(store.time, 'time', lambda: 10**10)
+    body = query()
+    assert body['items'][0]['title'] == '更正结论' and 'valid_until' not in body
 
 
-def test_complete_empty_new_snapshot_removes_old_fact_and_does_not_resurrect_after_expiry(product_db, monkeypatch):
+def test_complete_empty_new_snapshot_removes_old_fact_and_never_resurrects(product_db, monkeypatch):
     assert product_db
     monkeypatch.setattr(store.time, 'time', lambda: 1000)
-    publish([announcement('已删除')], ttl_seconds=3600)
+    publish([announcement('已删除')])
     monkeypatch.setattr(store.time, 'time', lambda: 1010)
-    publish([], ttl_seconds=1)
+    publish([])
     assert query()['total'] == 0
-    monkeypatch.setattr(store.time, 'time', lambda: 1012)
-    with pytest.raises(LookupError):
-        query()
+    monkeypatch.setattr(store.time, 'time', lambda: 10**10)
+    assert query()['total'] == 0
 
 
 def test_latest_covering_capability_does_not_fall_back_to_older_version(product_db, monkeypatch):
@@ -321,3 +317,50 @@ def test_latest_covering_capability_does_not_fall_back_to_older_version(product_
     publish([announcement('新快照无此字段')])
     with pytest.raises(LookupError):
         query(announcementID=17)
+
+
+def test_migrate_drops_legacy_valid_until_and_keeps_rows(tmp_path, monkeypatch):
+    from app.open_data.product_etf_schema import SCHEMA as etf_schema  # pylint: disable=import-outside-toplevel
+    db = SqliteDatabase(str(tmp_path/'legacy.db'))
+    monkeypatch.setitem(database._STATE, 'db', db)  # pylint: disable=protected-access
+    database.init_db((Path(__file__).parents[1]/'schema_sqlite.sql').read_text())
+    statements = (store.BASE_SCHEMA, *etf_schema, *store.SCHEMA, *store.DIRECTORY_SCHEMA, *store.CONCEPT_SCHEMA,
+                  *store.ELIGIBILITY_SCHEMA)
+    with db.transaction() as conn:
+        for statement in statements:
+            table = statement.split()[5]
+            legacy = statement[:statement.rindex(')')]+',valid_until DOUBLE NOT NULL)'
+            store._sql(conn, legacy if table in store.DROPPED_VALID_UNTIL else statement)  # pylint: disable=protected-access
+        conn.execute("INSERT INTO open_fund_manager_directory_batch VALUES('s1',1,?,1000,4600)", ('c'*64,))
+        for table in store.DROPPED_VALID_UNTIL:
+            assert 'valid_until' in store._columns(conn, table)  # pylint: disable=protected-access
+    store.migrate()
+    store.migrate()
+    with db.transaction(read_only=True) as conn:
+        for table in store.DROPPED_VALID_UNTIL:
+            assert 'valid_until' not in store._columns(conn, table)  # pylint: disable=protected-access
+        assert conn.execute('SELECT COUNT(*) FROM open_fund_manager_directory_batch').fetchone()[0] == 1
+    publish([announcement()])
+    assert query()['total'] == 1
+
+
+def test_worker_accepts_and_ignores_ttl_seconds(monkeypatch, capsys):
+    from app.open_data import product_worker as worker  # pylint: disable=import-outside-toplevel
+    seen = {}
+
+    def collect(args):
+        seen['args'] = args
+        return {'status': 'ready'}
+    monkeypatch.setattr(worker, 'collect', collect)
+    assert worker.main(['collect', '--kind', 'base-master', '--ttl-seconds', '86400', '--end', '2026-11-11']) == 0
+    assert seen['args'].kind == 'base-master' and '"ready"' in capsys.readouterr().out
+    assert '--ttl-seconds' not in worker_help(worker)
+
+
+def worker_help(worker):
+    import contextlib  # pylint: disable=import-outside-toplevel
+    import io  # pylint: disable=import-outside-toplevel
+    output = io.StringIO()
+    with contextlib.redirect_stdout(output), pytest.raises(SystemExit):
+        worker.main(['collect', '-h'])
+    return output.getvalue()

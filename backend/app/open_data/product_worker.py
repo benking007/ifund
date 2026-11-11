@@ -205,8 +205,7 @@ def collect(args):  # pylint: disable=too-many-branches,too-many-return-statemen
     return store.ingest(product, _window(records, product, start, end),
                         scope_kind=_scope(args)[0], scope_key=_scope(args)[1], window_start=start, window_end=end,
                         source_name=source, method_version=method, evidence_uri=uri,
-                        evidence_sha256=collectors.evidence(raw), complete_window=True,
-                        ttl_seconds=args.ttl_seconds, available_fields=available)
+                        evidence_sha256=collectors.evidence(raw), complete_window=True, available_fields=available)
 
 
 def main(argv=None):
@@ -248,7 +247,8 @@ def main(argv=None):
     fetch.add_argument("--pcf-headers")
     fetch.add_argument("--start", default="0001-01-01")
     fetch.add_argument("--end", default=date.today().isoformat())
-    fetch.add_argument("--ttl-seconds", type=int, default=86400)
+    # Accepted and ignored so older schedulers that still pass it keep working.
+    fetch.add_argument("--ttl-seconds", type=int, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
     try:
         if args.command == "migrate":
@@ -269,7 +269,7 @@ def main(argv=None):
     except NotDisclosedError as exc:
         print(json.dumps({'status': exc.status, 'quality': {'status': exc.status, 'complete': True,
                           'row_count': 0, 'verified_empty': False, 'reason': exc.reason, 'source': exc.source,
-                          'evidence': exc.evidence, 'observed_at': exc.observed_at, 'valid_until': exc.valid_until}}))
+                          'evidence': exc.evidence, 'observed_at': exc.observed_at}}))
         return 0
     except Exception as exc:  # pylint: disable=broad-exception-caught
         # Do not print provider payloads/URLs/headers or potential credentials.

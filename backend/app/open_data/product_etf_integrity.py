@@ -65,8 +65,8 @@ def prove(conn, sql):
         sql(conn, statement, record)
         _rejected(conn, sql, 'UPDATE open_fund_etf_generation_fact SET association_code=? WHERE generation_id=?',
                   ('710001', key), 'etf_fact_immutable')
-        sql(conn, 'INSERT INTO open_fund_etf_generation VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-            (key, 142, 'a'*64, 'b'*32, 0, 1, 1, 1, 0, 0, 1, len(raw), 'guard-probe-rolled-back', 'c'*64))
+        sql(conn, 'INSERT INTO open_fund_etf_generation VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)',
+            (key, 142, 'a'*64, 'b'*32, 0, 1, 1, 0, 0, 1, len(raw), 'guard-probe-rolled-back', 'c'*64))
         other = json.dumps({'fundCode': '999998', 'industryCode': '710000', 'holdingAssetAnnual': 0})
         _rejected(conn, sql, statement, (key, '999998', '710000', 0, other,
                   hashlib.sha256(other.encode()).hexdigest()), 'etf_fact_published')

@@ -77,7 +77,7 @@ def test_concept_global_generation_exact_pages_zero_and_physical_integrity(sourc
     rows, names, _, _ = actual_exposure
     _publish_concept(copy.deepcopy(rows))
     monkeypatch.setattr(concepts, 'dictionary', lambda: names)
-    result = concepts.materialize(SimpleNamespace(ttl_seconds=86400))
+    result = concepts.materialize(SimpleNamespace())
     assert result['quality']['row_count'] == len(rows)
     code = rows[0]['data']['conceptCode']
     query = {'conceptCode': code, 'pageSize': 1, 'pageNum': 1}
@@ -101,13 +101,13 @@ def test_catalog_addition_never_looks_like_zero_exposure(source, actual_exposure
     rows, names, _, _ = actual_exposure
     _publish_concept(copy.deepcopy(rows))
     monkeypatch.setattr(concepts, 'dictionary', lambda: names)
-    concepts.materialize(SimpleNamespace(ttl_seconds=86400))
+    concepts.materialize(SimpleNamespace())
     database.insert('fund_basic_ext', {'fund_code': '006581', 'ts_code': '006581.OF',
                                        'status': 'L', 'source': 'tushare'})
     with pytest.raises(LookupError, match='uncovered'):
         concepts.query(263, {'conceptCode': rows[0]['data']['conceptCode']})
     with pytest.raises(ValueError, match='catalog member'):
-        concepts.materialize(SimpleNamespace(ttl_seconds=86400))
+        concepts.materialize(SimpleNamespace())
 
 
 def test_actual_manager_teams_global_population_filtered_after_full_manifest(source):
@@ -117,7 +117,7 @@ def test_actual_manager_teams_global_population_filtered_after_full_manifest(sou
                  source_name='eastmoney:manager-team-tenures', method_version=history.METHOD,
                  evidence_uri='https://fundf10.eastmoney.com/', evidence_sha256='b'*64,
                  complete_window=True)
-    history.materialize(SimpleNamespace(ttl_seconds=86400))
+    history.materialize(SimpleNamespace())
     body = history.query({'fundManagerName': '张坤', 'pageSize': 1, 'pageNum': 2})
     assert body['total'] == 2 and len(body['items']) == 1
     assert all('date' not in row for row in body['items'])
@@ -173,12 +173,12 @@ def test_real_new_fund_has_no_completed_report_period_and_is_not_zero_exposure(s
         raise AssertionError('Inception proves this completed report cannot exist; do not infer from failed source')
     monkeypatch.setattr(reports, 'report_index', must_not_fetch)
     with pytest.raises(NotApplicableError) as error:
-        concepts.collect_scope(SimpleNamespace(fund_code=code, end='2026-11-06', ttl_seconds=86400))
+        concepts.collect_scope(SimpleNamespace(fund_code=code, end='2026-11-06'))
     assert error.value.evidence['latest_completed_report_period'] == '2026-06-30'
     rows, names, _, _ = actual_exposure
     _publish_concept(copy.deepcopy(rows))
     monkeypatch.setattr(concepts, 'dictionary', lambda: names)
-    output = concepts.materialize(SimpleNamespace(ttl_seconds=86400))
+    output = concepts.materialize(SimpleNamespace())
     assert output['quality']['dataset_scope'] == {'catalog_fund_count': 2, 'eligible_fund_count': 1,
                                                'undisclosed_fund_count': 0, 'not_applicable_fund_count': 1}
     body = concepts.query(263, {'conceptCode': rows[0]['data']['conceptCode']})
@@ -187,16 +187,16 @@ def test_real_new_fund_has_no_completed_report_period_and_is_not_zero_exposure(s
     assert source
 
 
-def test_non_disclosure_evidence_is_bounded_fresh_not_a_fact_or_old_version_fallback(source):
-    import time  # pylint: disable=import-outside-toplevel
+def test_non_disclosure_evidence_is_hash_bound_not_a_fact_or_old_version_fallback(source):
     proof = {'fund_code': '110011', 'source_rows': 0, 'index': [], 'index_sha256': 'a'*64}
-    first = store.record_disclosure_state(263, '110011', 'full-verified-index', proof, ttl_seconds=3600)
-    second = store.record_disclosure_state(263, '110011', 'full-verified-index', proof, ttl_seconds=1)
+    first = store.record_disclosure_state(263, '110011', 'full-verified-index', proof)
+    second = store.record_disclosure_state(263, '110011', 'full-verified-index', proof)
+    assert set(second) == {'version_id', 'observed_at'}
     with database.get_db().transaction() as conn:
-        store._sql(conn, 'UPDATE open_fund_disclosure_eligibility SET valid_until=? WHERE version_id=?',
-                   (time.time()-1, second['version_id']))  # pylint: disable=protected-access
+        store._sql(conn, 'UPDATE open_fund_disclosure_eligibility SET evidence_sha256=? WHERE version_id=?',
+                   ('0'*64, second['version_id']))  # pylint: disable=protected-access
     with database.get_db().transaction(read_only=True) as conn:
-        with pytest.raises(LookupError, match='expired'):
+        with pytest.raises(LookupError, match='corrupted'):
             store.disclosure_state(conn, 263, '110011')
         assert store._sql(conn, 'SELECT COUNT(*) AS n FROM open_fund_product_fact', fetch=True)[0]['n'] == 0
     assert first['version_id'] != second['version_id'] and source
@@ -207,7 +207,7 @@ def test_all_unreported_catalog_is_not_a_verified_empty_financial_product(source
     proof = {'fund_code': '110011', 'source_rows': 0, 'index': [], 'sha256': 'a'*64}
     store.record_disclosure_state(263, '110011', 'full-verified-index', proof)
     monkeypatch.setattr(concepts, 'dictionary', lambda: names)
-    output = concepts.materialize(SimpleNamespace(ttl_seconds=86400))
+    output = concepts.materialize(SimpleNamespace())
     assert output['quality']['status'] == 'not_disclosed'
     assert output['quality']['complete'] is True and output['quality']['verified_empty'] is False
     assert output['quality']['evidence']['undisclosed_funds'] == 1
@@ -224,16 +224,16 @@ def test_industry_reverse_declares_actual_new_fund_exclusion_separately_from_ver
     database.insert('fund_basic_ext', {**master, 'fund_code': code, 'source': 'tushare'})
     with pytest.raises(NotApplicableError):
         additional.ingest_collection(SimpleNamespace(kind='industry-exposure', fund_code=code,
-                                                     end='2026-11-06', start='0001-01-01', ttl_seconds=86400))
+                                                     end='2026-11-06', start='0001-01-01'))
     payload = json.loads((FIXTURES/'additional-industry-20261106.json').read_text())
     rows = additional.industry_rows(payload, '110011')
     store.ingest(264, rows, scope_kind='fund', scope_key='110011', window_start='2026-11-06', window_end='2026-11-06',
                  source_name='actual-industry-source', method_version='em-native-industry-nav-current-v1:real',
                  evidence_uri='https://api.fund.eastmoney.com/f10/HYPZ/', evidence_sha256='a'*64, complete_window=True)
-    result = additional._industry_reverse(SimpleNamespace(product=262, ttl_seconds=86400))
+    result = additional._industry_reverse(SimpleNamespace(product=262))
     assert result['quality']['dataset_scope'] == {'catalog_fund_count': 2, 'eligible_fund_count': 1,
                                                 'undisclosed_fund_count': 0, 'not_applicable_fund_count': 1}
     body = store.query_product(262, {'industryCode': rows[0]['data']['industryCode']})
     assert body['scope_metadata'][0]['not_applicable_fund_count'] == 1
-    assert body['valid_until'] == pytest.approx(result['quality']['valid_until'])
+    assert 'valid_until' not in body and 'valid_until' not in result['quality']
     assert source

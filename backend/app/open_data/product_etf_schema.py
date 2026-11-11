@@ -7,11 +7,11 @@ MAPPING_METHODS = {142: 'annual-full-domestic-portfolio-current-sw1-gross-assets
 SCHEMA = (
     """CREATE TABLE IF NOT EXISTS open_fund_etf_directory (
     version_id VARCHAR(32) PRIMARY KEY,cohort_hash VARCHAR(64) NOT NULL,source_snapshot VARCHAR(32) NOT NULL,
-    observed_at DOUBLE NOT NULL,recorded_at DOUBLE NOT NULL,valid_until DOUBLE NOT NULL,row_count INTEGER NOT NULL,
+    observed_at DOUBLE NOT NULL,recorded_at DOUBLE NOT NULL,row_count INTEGER NOT NULL,
     payload_json LONGTEXT NOT NULL,payload_hash VARCHAR(64) NOT NULL)""",
     """CREATE TABLE IF NOT EXISTS open_fund_etf_generation (
     generation_id VARCHAR(32) PRIMARY KEY,product_id INTEGER NOT NULL,cohort_hash VARCHAR(64) NOT NULL,
-    directory_version VARCHAR(32) NOT NULL,observed_at DOUBLE NOT NULL,valid_until DOUBLE NOT NULL,
+    directory_version VARCHAR(32) NOT NULL,observed_at DOUBLE NOT NULL,
     scope_count INTEGER NOT NULL,eligible_count INTEGER NOT NULL,undisclosed_count INTEGER NOT NULL,
     not_applicable_count INTEGER NOT NULL,fact_count INTEGER NOT NULL,payload_bytes BIGINT NOT NULL,
     method_version VARCHAR(128) NOT NULL,evidence_hash VARCHAR(64) NOT NULL)""",

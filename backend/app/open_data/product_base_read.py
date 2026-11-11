@@ -1,4 +1,4 @@
-"""Production-reader freshness for legacy base tables, without implicit fetches."""
+"""Production-reader watermark presence for legacy base tables, without implicit fetches."""
 from __future__ import annotations
 
 import os
@@ -14,7 +14,7 @@ TABLE_KINDS = {'funds': 'base-master', 'fund_types': 'base-categories', 'fund_ba
 
 
 def require_base(table):
-    """Newest applicable scope wins BEFORE expiry; no old-global resurrection."""
+    """A collected watermark must exist for the requested scope; no implicit fetch."""
     if os.getenv('IFUND_OPEN_REQUIRE_BASE_WATERMARK', '0') != '1':
         return
     kind = TABLE_KINDS.get(table)
@@ -33,10 +33,9 @@ def require_base(table):
             # Source write scopes have already been validated by _arguments.
             scopes = [code+suffix] if suffix else [code, '*']
             # pylint: disable=protected-access
-            rows = store._sql(conn, 'SELECT observed_at,valid_until FROM open_fund_base_watermark '
+            rows = store._sql(conn, 'SELECT observed_at FROM open_fund_base_watermark '
                               'WHERE kind=? AND scope_id IN ('+','.join('?' for _ in scopes)+') '
                               'ORDER BY observed_at DESC,version_id DESC LIMIT 1', (kind, *scopes), fetch=True)
             # pylint: enable=protected-access
-            if (not rows or rows[0]['valid_until'] <= time.time()
-                    or rows[0]['observed_at'] > time.time()+60):
-                raise LookupError('The newest base-source observation is missing or expired')
+            if not rows or rows[0]['observed_at'] > time.time()+60:
+                raise LookupError('The newest base-source observation is missing or from the future')
